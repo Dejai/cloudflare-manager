@@ -43,7 +43,7 @@
 <script>
     MyDom.ready( async () => {
         try {
-            var test = await MyFetch.call("/helloworld", {"responseType": "text"});
+            var test = await MyFetch.call("GET", "/helloworld", {"responseType": "text"});
             console.log(test);
         } catch(err){
             console.error(err);
