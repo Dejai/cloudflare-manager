@@ -100,7 +100,7 @@ async function onAddAccess(){
 async function onOpenAccessModal(){
     var groups = MyPageManager.getContent("Groups");
     var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", groups);
-    MyDom.setContent("#accessForm #group", {"innerHTML": groupOpts});
+    MyDom.setContent("#accessForm #group", {"innerHTML": "<option></option>" + groupOpts});
     MyDom.addClass("#accessFormModal.modalContainer", "open");
 }
 

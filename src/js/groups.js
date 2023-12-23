@@ -23,8 +23,11 @@ async function onShowGroups() {
 // Get the Group & its files
 async function onSelectGroup(option){
     try {
+        console.log(option);
         var key = option.getAttribute("data-group-key") ?? "";
-        var group = MyPageManager.getContent("Groups")?.filter(x => x.GroupKey == key)?.[0];
+        console.log(key);
+        var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == key)?.[0];
+        console.log(group);
         MyDom.fillForm("#groupDetailsForm", group);
         MyDom.hideContent(".hideOnGroupSelected");
         MyDom.showContent(".showOnGroupSelected");
@@ -36,9 +39,29 @@ async function onSelectGroup(option){
 // Save Adventure details
 async function  onSaveGroupDetails(){
     try {
-        console.log("Coming soon");
+        var formDetails = MyDom.getFormDetails("#groupDetailsForm");
+        var fields = formDetails?.fields;
+        var errors = formDetails?.errors;
+        console.log(formDetails);
+        if(errors.length > 0){
+            var errorMessage = errors.join(" ; ");
+            setNotifyMessage(errorMessage, 10);
+            return;
+        }
+        var results = await MyFetch.call("POST", "https://files.dejaithekid.com/group", { body: JSON.stringify(fields) });
+        if( (results?.status ?? 400) == 200 ) {
+            setNotifyMessage("Group details saved!");
+        } else {
+            setNotifyMessage(results?.message + " " + results?.data, 10);
+        }
     } catch(err){
         MyLogger.LogError(err);
         setNotifyMessage(err.Message, 10);
     }
+}
+
+async function onAddGroup(){
+    MyDom.fillForm("#groupDetailsForm", {});
+    MyDom.hideContent(".hideOnGroupSelected");
+    MyDom.showContent(".showOnGroupSelected");
 }

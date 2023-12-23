@@ -117,10 +117,8 @@ class Adventure {
 // The "Group" object
 class Group {
     constructor(detailsJson={}){
-        this.Name = detailsJson?.name ?? "";
         this.Key = detailsJson?.key ?? "";
-        this.GroupKey = this.Key;
-        this.Users = detailsJson?.users ?? "";
+        this.Name = detailsJson?.name ?? "";
     }
 }
 
