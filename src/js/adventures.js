@@ -65,7 +65,6 @@ async function loadAdventureFilesByID(adventureID) {
     }
 }
 
-
 // Save Adventure details
 async function  onSaveAdventureDetails(){
     try {
@@ -74,33 +73,26 @@ async function  onSaveAdventureDetails(){
         var errors = formDetails["errors"] ?? [];
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            setNotifyMessage(errorMessage, 10);
+            MyPageManager.setNotifyMessage(errorMessage, 10);
             return;
         }
         var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == fields?.adventureID)?.[0];
         if(adventure){
             adventure.update(fields);
         }
+        
         // Submit this one to be saved in Cloudflare
         var results = await MyFetch.call("POST", `${MyCloudFlare.Endpoint}/adventure/`, { body: JSON.stringify(fields)} );
-        if( (results?.status ?? 400) == 200 ) {
-            setNotifyMessage("Adventure details saved!");
-        } else {
-            setNotifyMessage(results?.message + " " + results?.data, 10);
-        }
+        MyPageManager.setResultsMessage(results);
+
+        // Add adventures to be synced
+        MyPageManager.addToBySynced("adventures");
+
     } catch(err){
         MyLogger.LogError(err);
-        setNotifyMessage(err.Message, 10);
+        MyPageManager.setNotifyMessage(err.Message, 10);
     }
 }
-
-// Sync the adventures
-async function onSyncAdventures(){
-    var results = await MyFetch.call("GET", `${MyCloudFlare.Endpoint}/adventures/sync`);
-    console.log(results);
-    setNotifyMessage(results?.Message ?? "Sync done?", 10);
-}
-
 
 // Open the modal
 function onOpenModal(cell){
@@ -128,7 +120,7 @@ async function onSaveFile() {
         
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            setNotifyMessage(errorMessage, 10);
+            MyPageManager.setNotifyMessage(errorMessage, 10);
             return;
         }
         console.log(fields);
@@ -138,13 +130,13 @@ async function onSaveFile() {
         var videoID = fields?.contentID;
         var results = await MyFetch.call("POST", `${MyCloudFlare.Endpoint}/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
         if( (results?.status ?? 400) == 200 ) {
-            setNotifyMessage("File details saved!");
+            MyPageManager.setNotifyMessage("File details saved!");
         } else {
-            setNotifyMessage(results?.message + " " + results?.data, 10);
+            MyPageManager.setNotifyMessage(results?.message + " " + results?.data, 10);
         }
         onCloseModal();
     } catch(err){
         MyLogger.LogError(err);
-        setNotifyMessage(err.Message, 10);
+        MyPageManager.setNotifyMessage(err.Message, 10);
     }
 }

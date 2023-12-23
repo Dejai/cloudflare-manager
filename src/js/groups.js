@@ -48,12 +48,11 @@ async function  onSaveGroupDetails(){
             setNotifyMessage(errorMessage, 10);
             return;
         }
+
+        // Save changes in cloudflare
         var results = await MyFetch.call("POST", "https://files.dejaithekid.com/group", { body: JSON.stringify(fields) });
-        if( (results?.status ?? 400) == 200 ) {
-            setNotifyMessage("Group details saved!");
-        } else {
-            setNotifyMessage(results?.message + " " + results?.data, 10);
-        }
+        MyPageManager.setResultsMessage(results);
+
     } catch(err){
         MyLogger.LogError(err);
         setNotifyMessage(err.Message, 10);

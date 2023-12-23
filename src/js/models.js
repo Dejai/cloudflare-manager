@@ -60,20 +60,21 @@ class FileManagerPage {
 
 }
 
-
 // A way to manage list of things on the page
 class PageManager { 
 
     constructor(){
         this.Content = {};
+        this.ToBeSynced = new Set();
     }
 
-    hasKey(key){
-        return Object.keys(this.Content).includes(key);
-    }
-
+    // CHeck if content mapped
+    hasContentKey(key){ return Object.keys(this.Content).includes(key); }
+    // Get existing content
+    getContent(key){ return this.Content[key] ?? []; }
+    // Adding content
     addContent(key, content){
-        if(!this.hasKey(key) ){
+        if(!this.hasContentKey(key) ){
             this.Content[key] = [];
         }
         if(Array.isArray(content)){
@@ -82,10 +83,46 @@ class PageManager {
             this.Content[key] = content;
         }
     }
+
+    // Keep track of things to be synced
+    addToBySynced(val){ this.ToBeSynced.add(val); }
+    async onSync() {
+        try {
+            for(var val of this.ToBeSynced){
+                MyPageManager.setNotifyMessage(`Syncing ${val}`, 2);
+                var results = await MyFetch.call("GET", `https://syncer.the-dancinglion.workers.dev//${val}`);
+                this.setResultsMessage(results);
+            }
     
-    getContent(key){
-        return this.Content[key] ?? [];
+        } catch(err) {
+            MyLogger.LogError(err);
+            MyPageManager.setNotifyMessage("Error: " + err.message, 10);
+        }
     }
+
+    // Notifications
+    setNotifyMessage(content="", clearAfter=3){
+        MyDom.setContent("#messageSection", {"innerHTML": content});
+        MyDom.addClass("#messageSection", "active");
+        var clearAfterMs = clearAfter*1000;
+        setTimeout( ()=>{
+            MyDom.removeClass("#messageSection", "active");
+        }, clearAfterMs);
+    }
+    // Set a notify message based on resuts
+    setResultsMessage(results){
+        console.log(results);
+        var message = results?.message ?? "";
+        var type = results?.type ?? "Content";
+
+        if( message == "OK" ) {
+            this.setNotifyMessage(`${type} saved!`);
+        } else {
+            var errMessage = `Could not save ${type}; ${message}`;
+            this.setNotifyMessage(errMessage, 10);
+        }
+    }
+    
 }
 
 // The "Adventure" object

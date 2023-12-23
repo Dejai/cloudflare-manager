@@ -83,10 +83,16 @@ async function onAddAccess(){
             var scope = fields?.scope?.toLowerCase();
             var group = fields?.group?.toLowerCase();
             userAccess[scope] = group;
+
             // Save this access
-            console.log(userAccess);
-            var resp = await MyFetch.call("POST", `https://files.dejaithekid.com/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
+            var results = await MyFetch.call("POST", `https://files.dejaithekid.com/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
+            MyPageManager.setResultsMessage(results);
+
+            // Add access to be synced
+            MyPageManager.addToBySynced("access");
+            
             onCloseAccessModal();
+            
         }
     } catch(err){
         MyLogger.LogError(err);
