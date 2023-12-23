@@ -2,52 +2,68 @@
 <html>
 <head>
 	<title>Cloudflare Manager</title>
-	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.0.6">
+    <base href="./">
+	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.0.13">
+    <link rel="stylesheet" href="src/css/main.css?v=1.0.13">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body class="dtk-margin-0 dtk-theme-cauldron">
     <div id="menuSection" class="dtk-theme-cauldron dtk-menu-sticky">
 		<div id="menuItems" style="height:44px;">
-			<div class="menuItem menuItemLeft">
-                <h2>Cloudflare Manager</h2>
-			</div>
-            <div class="menuItem menuItemLeft" style="z-index:50">
-                <div id="searchBarSection" class="searchBarSection">
-                    <i id="searchToggleIcon" class="fa-solid fa-magnifying-glass pointer searchIcons" onclick="toggleSearchBar()"></i> 
-                    <input id="searchBarInput" type="text" placeholder="Search files ... " onkeyup="onSearchFiles()" autocomplete="off">
-                    <i id="searchClearIcon" class="fa-solid fa-xmark hidden searchIcons pointer" aria-hidden="true" onclick="onClearSearch()"></i>
-                </div>
+			<div class="menuItem menuItemLeft" style="z-index:10">
+                <h2 style="border-right:3px solid #D4D1CD; padding-right:1%;"> Cloudflare Manager </h2>
+
                 <div id="loginSection" style="padding-left:1%;">
                     <span id="authLink" class="pointer loginAction" data-auth-action="logout" onclick="MyAuth.onAuthAction(this.getAttribute('data-auth-action'))">
                         <i class="fa-regular fa-circle-user"></i>
                         <span id="loginAction"></span>
                     </span>
                 </div>
-            </div>
-            <div class="menuItem menuItemLeft" style="z-index:10">
-                <div id="messageSection">MESSAGE</div>
-            </div>
+                <div id="messageSection" style="padding-left:3%">
+                    MESSAGE
+                </div>
+
+			</div>
+            <!-- <div class="menuItem menuItemLeft" style="z-index:50">
+                <div id="searchBarSection" class="searchBarSection">
+                    <i id="searchToggleIcon" class="fa-solid fa-magnifying-glass pointer searchIcons" onclick="toggleSearchBar()"></i> 
+                    <input id="searchBarInput" type="text" placeholder="Search files ... " onkeyup="onSearchFiles()" autocomplete="off">
+                    <i id="searchClearIcon" class="fa-solid fa-xmark hidden searchIcons pointer" aria-hidden="true" onclick="onClearSearch()"></i>
+                </div>
+                
+            </div> -->
 		</div>
+        <hr/>
 	</div>
-    <hr/>
-    <div>
-        <h2>Testing Cloudflare Functions</h2>
+    <div class="hideOnInitialLoad" style="padding-left:5%;">
+        <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
     </div>
+
+    <div class="hidden showOnInitialLoad">
+        <h2 class="cf-manage-tab pointer" onclick="onShowAdventures()">Adventures</h2>
+        <h2 class="cf-manage-tab pointer" onclick="onShowGroups()">Groups</h2>
+        <h2 class="cf-manage-tab pointer" onclick="onShowUsers()">Users</h2>
+    </div>
+
+    <!-- Where the content will live -->
+    <div id="contentSection"></div>
+
+
+    <!-- Modal section -->
+    <div id="modalSection"></div>
+
+
+    
 </body>
 <!-- Common Scripts -->
-<script src="https://dejai.github.io/scripts/js/v2/my.js?v1.0.6"></script>
-<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v1.0.6"></script>
-<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v1.0.6"></script>
-
-<script>
-    MyDom.ready( async () => {
-        try {
-            var test = await MyFetch.call("GET", "/helloworld", {"responseType": "text"});
-            console.log(test);
-        } catch(err){
-            console.error(err);
-        }
-    });
-</script>
+<script src="https://dejai.github.io/scripts/js/v2/my.js?v1.0.13"></script>
+<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v1.0.13"></script>
+<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v1.0.13"></script>
+<!-- Manager Scripts -->
+<script src="src/js/models.js?v1.0.13"></script>
+<script src="src/js/adventures.js?v1.0.13"></script>
+<script src="src/js/groups.js?v1.0.13"></script>
+<script src="src/js/users.js?v1.0.13"></script>
+<script src="src/js/main.js?v1.0.13"></script>
 </html>
