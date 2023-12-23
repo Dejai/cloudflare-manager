@@ -1,6 +1,6 @@
 // Get the list of adventures
 async function getListOfAdventures(){
-    var adventures = await MyFetch.call("GET", `https://files.dejaithekid.com/adventures/?key=manage`);
+    var adventures = await MyFetch.call("GET", `https://files.dejaithekid.com/adventures/`);
     adventures = adventures.map(result => new Adventure(result));
     adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
     MyPageManager.addContent("Adventures", adventures);

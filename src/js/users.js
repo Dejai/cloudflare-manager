@@ -4,6 +4,7 @@
 async function getListOfUsers(){
     var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
     users = users.map(result => new User(result));
+    users = users.filter(x => x.UserKey == "fyfield-derrick-116003882696645465577");
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
 }
@@ -78,18 +79,14 @@ async function onAddAccess(){
         var userKey = MyDom.getContent("#addAccessButton")?.value;
         var accessKey = "Access-" + userKey;
         var userAccess = MyPageManager.getContent(accessKey)?.Access ?? undefined;
-        console.log("User Access");
-        console.log(userAccess);
-        console.log(MyPageManager);
         if(userAccess != undefined){
             var fields = details?.fields ?? "";
             var scope = fields?.scope?.toLowerCase();
             var group = fields?.group?.toLowerCase();
             userAccess[scope] = group;
-    
             // Save this access
+            console.log(userAccess);
             var resp = await MyFetch.call("POST", `https://files.dejaithekid.com/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
-            console.log(resp);
             onCloseAccessModal();
         }
     } catch(err){
