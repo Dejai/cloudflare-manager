@@ -4,7 +4,6 @@
 async function getListOfUsers(){
     var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
     users = users.map(result => new User(result));
-    users = users.filter(x => x.UserKey == "fyfield-derrick-116003882696645465577");
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
 }

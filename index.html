@@ -3,8 +3,8 @@
 <head>
 	<title>Cloudflare Manager</title>
     <base href="./">
-	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.0.13">
-    <link rel="stylesheet" href="src/css/main.css?v=1.0.13">
+	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.1.0">
+    <link rel="stylesheet" href="src/css/main.css?v=1.1.0">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -31,39 +31,31 @@
                     <input id="searchBarInput" type="text" placeholder="Search files ... " onkeyup="onSearchFiles()" autocomplete="off">
                     <i id="searchClearIcon" class="fa-solid fa-xmark hidden searchIcons pointer" aria-hidden="true" onclick="onClearSearch()"></i>
                 </div>
-                
             </div> -->
 		</div>
         <hr/>
 	</div>
-    <div class="hideOnInitialLoad" style="padding-left:5%;">
-        <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
-    </div>
 
-    <div class="hidden showOnInitialLoad">
-        <h2 class="cf-manage-tab pointer" onclick="onShowAdventures()">Adventures</h2>
-        <h2 class="cf-manage-tab pointer" onclick="onShowGroups()">Groups</h2>
-        <h2 class="cf-manage-tab pointer" onclick="onShowUsers()">Users</h2>
+    <!-- Main content -->
+    <div id="mainContent">
+        <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
     </div>
 
     <!-- Where the content will live -->
     <div id="contentSection"></div>
 
-
     <!-- Modal section -->
     <div id="modalSection"></div>
-
-
     
 </body>
 <!-- Common Scripts -->
-<script src="https://dejai.github.io/scripts/js/v2/my.js?v1.0.13"></script>
-<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v1.0.13"></script>
-<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v1.0.13"></script>
+<script src="https://dejai.github.io/scripts/js/v2/my.js?v1.1.0"></script>
+<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v1.1.0"></script>
+<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v1.1.0"></script>
 <!-- Manager Scripts -->
-<script src="src/js/models.js?v1.0.13"></script>
-<script src="src/js/adventures.js?v1.0.13"></script>
-<script src="src/js/groups.js?v1.0.13"></script>
-<script src="src/js/users.js?v1.0.13"></script>
-<script src="src/js/main.js?v1.0.13"></script>
+<script src="src/js/models.js?v1.1.0"></script>
+<script src="src/js/adventures.js?v1.1.0"></script>
+<script src="src/js/groups.js?v1.1.0"></script>
+<script src="src/js/users.js?v1.1.0"></script>
+<script src="src/js/main.js?v1.1.0"></script>
 </html>

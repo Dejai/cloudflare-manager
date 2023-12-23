@@ -41,10 +41,9 @@ MyDom.ready( async () => {
         var userSection = await MyTemplates.getTemplateAsync("templates/sections/user-section.html", {});
         MyDom.setContent("#contentSection", { "innerHTML": userSection }, true);
 
-        // Show things after loading
-        MyDom.hideContent(".hideOnInitialLoad");
-        MyDom.showContent(".showOnInitialLoad");
-
+        // Show something
+        await showMainContent();
+        
         // Load modals
         var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
         var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
@@ -67,15 +66,28 @@ MyDom.ready( async () => {
     // if(existingAdventureID != undefined){
     //     loadAdventureByID(existingAdventureID);
     // }
-
-    // Get old stuff & convert to new stuff
-    // var cards = await MyTrello.GetCardsByListName("Adventures");
-    // for(var c of cards){
-    //     var d = c["start"]?.split("T")?.[0];
-    //     var n = c["name"]; 
-    //     console.log(n + " : " + d);
-    // }
 });
+
+// Show content based on results of loads
+async function showMainContent(){
+    var templateName = "";
+    var isLoggedIn = await MyAuth.isLoggedIn();
+    if(!isLoggedIn) {
+        templateName = "loginRequired"
+    } else {
+        var advs = MyPageManager.getContent("Users")?.length ?? 0;
+        var groups = MyPageManager.getContent("Users")?.length ?? 0;
+        var users = MyPageManager.getContent("Users")?.length ?? 0;
+        if(advs > 0 && groups > 0 && users > 0){
+            templateName = "manageTabs"
+        } else { 
+            templateName = "unAuthorized"
+        }
+    }
+    
+    var template = await MyTemplates.getTemplateAsync(`./templates/_shared/${templateName}.html`, {});
+    MyDom.setContent("#mainContent", {"innerHTML": template});
+}
 
 /******** GETTING STARTED: Loading the Adventures & Labels; Check if logged in user***************************/
 
