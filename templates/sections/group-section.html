@@ -1,0 +1,30 @@
+<div id="groupsTabSection" style="position:relative" class="hidden showOnGroupsLoaded hideOnTabSwitch">
+
+    <!-- Shows the list of adventures to pick from -->
+    <button onclick="onAddGroup()">Add Group</button>
+    <div id="listOfGroups" style="position:absolute; width:20%;padding-top:3%"></div>
+
+    <!-- The Group details & list of users -->
+    <div id="groupDetailsSection"  style="position:absolute; width:70%; margin-left:20%;">
+
+       <div class="hidden showOnGroupSelected">
+           <h3 id="groupName">The Details</h3>
+
+           <div id="groupDetailsForm">
+               <div class="groupDetailsFormSubsection">
+                   <button onclick="onSaveGroupDetails()">SAVE</button>
+               </div>
+               
+               <div class="groupDetailsFormSubsection">
+                   <label for="name">Name: </label><br/>
+                   <input id="name" type="text" name="name" placeholder="Enter Group Name" style="width:50%" required />
+               </div>
+   
+               <div class="groupDetailsFormSubsection">
+                   <label for="name">Key: </label><br/>
+                   <input id="key" type="text" name="key" placeholder="Enter Group Name" style="width:50%" required />
+               </div>
+           </div>
+       </div>
+   </div>
+</div>

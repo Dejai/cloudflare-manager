@@ -1,0 +1,53 @@
+<div id="fileFormModal" class="modalContainer">
+    <div id="fileModalForm" class="dtk-theme-cauldron-inverse modalContent">
+
+        <input id="contentID" type="text" name="contentID" value="" required hidden/>
+        <br/>
+        <input type="text" name="adventure" value="" style="width:90%;" required hidden />
+
+        <div class="fileFormRow">
+            <div class="fileFormColumn third">
+                <p>Date:</p>
+                <input type="text" name="date" id="date" value="" />
+            </div>
+            <div class="fileFormColumn third">
+                <p>Order:</p>
+                <input type="number" min="1" max="20" name="order" id="order" value="" />
+            </div>
+        </div>
+        <div class="fileFormRow">
+            <div class="fileFormColumn third">
+                <p>File Name:</p>
+                <input type="text" name="name" id="name" value="" required />
+            </div>
+            <div class="fileFormColumn third">
+                <p>Creator:</p>
+                <input type="text" name="creator" id="creator" value="" required />
+            </div>
+            <div class="fileFormColumn quarter">
+                <p>Show Creator?:</p>
+                <select name="showCreator" id="showCreator">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="fileFormRow">
+            <div class="fileFormColumn third">
+                <p>File Preview Time:</p>
+                <input type="text" name="preview" id="preview" value="" placeholder="Format: 0m0s" required />
+            </div>
+        </div>
+        <div class="fileFormRow">
+            <div class="fileFormColumn">
+                <p>Description:</p>
+                <textarea id="description" name="description" style="margin-left:2%;">
+                </textarea>
+            </div>
+        </div>
+        <div class="fileFormRow">
+            <button class="modalCloser2" onclick="onCloseModal()">CLOSE</button> &nbsp;
+            <button class="modelCloser2" onclick="onSaveFile()">SAVE</button>
+        </div>
+    </div>
+</div>

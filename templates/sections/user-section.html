@@ -1,0 +1,59 @@
+<div id="usersTabSection" style="position:relative" class="hidden showOnUsersLoaded hideOnTabSwitch">
+
+    <!-- Shows the list of adventures to pick from -->
+    <div id="listOfUsers" style="position:absolute; width:20%;padding-top:3%"></div>
+
+    <!-- The User details & list of users -->
+    <div id="userDetailsSection"  style="position:absolute; width:70%; margin-left:20%;">
+
+       <div class="hidden showOnUserSelected">
+            <button onclick="onSyncUsersAndAccess()">SYNC</button>
+           <h3 id="userName">The Details</h3>
+
+           <div id="userDetailsForm">
+               <div class="userDetailsFormSubsection">
+                   <label for="firstName">First Name: </label><br/>
+                   <input id="firstName" type="text" name="firstName" placeholder="Enter User Name" style="width:50%" readonly />
+               </div>
+
+               <div class="userDetailsFormSubsection">
+                    <label for="lastName">Last Name: </label><br/>
+                    <input id="lastName" type="text" name="lastName" placeholder="Enter User Name" style="width:50%" readonly />
+                </div>
+                <div class="userDetailsFormSubsection">
+                    <label for="emailAddress">Email: </label><br/>
+                    <input id="emailAddress" type="text" name="emailAddress" placeholder="Enter User Name" style="width:50%" readonly />
+                </div>
+                <div class="userDetailsFormSubsection">
+                    <label for="phoneNumber">Phone Number: </label><br/>
+                    <input id="phoneNumber" type="text" name="phoneNumber" placeholder="Enter User Name" style="width:50%" readonly />
+                </div>
+
+                <button id="addAccessButton" name="userKey" onclick="onOpenAccessModal()">Add Access</button>
+
+           </div>
+       </div>
+       <div class="hidden showOnUserSelected">
+           <h3>The Access</h3>
+           <table id="userUsers" style="width:99%; text-align:left; border-spacing:0; ">
+               <coluser>
+                    <col style="width:2%;"/>
+                   <col style="width:3%;">
+                   <col style="width:3%;">
+               </coluser>
+               <thead>
+                   <tr class="showBottomBorder">
+                    <th>
+                        <p class="hidden showOnAccessLoading hideOnAccessLoaded">
+                            <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:150%;"></i>
+                        </p>
+                    </th>
+                       <th><p class="hidden1 showOnLoaded">Scope</p></th>
+                       <th><p class="hidden1 showOnLoaded">Group</p></th>
+                   </tr>
+               </thead>
+               <tbody id="listOfAccess"></tbody>
+           </table>
+       </div>
+   </div>
+</div>

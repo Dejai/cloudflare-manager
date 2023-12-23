@@ -1,0 +1,76 @@
+/* Menu items */
+.menuItem { position:absolute; height:100%; width:100%; display:flex; align-items:center;  }
+.menuItemLeft { left:0; text-align: left; justify-content: left; }
+.menuItemMiddle { left:0; text-align: center; justify-content: center; }
+.menuItemRight { right:0; text-align:right; justify-content: right; }
+
+/* Manage tabs */
+.cf-manage-tab { display:inline-block !important; width: 20%; }
+
+/* Search */
+#searchBarSection { display:inline-block; position:relative; text-align:left; border-radius:20px; border:none; padding:0.3%; margin-left:10%;  width:15%; background-color: #D4D1CD; }
+#searchBarSection #searchBarInput { border:none; opacity: 100; background-color:transparent; width:60%; margin-left:2%; outline: none; outline-offset: 0;  }
+#searchBarSection #searchBarInput:focus{ outline: none; outline-offset: 0;}
+#searchBarSection.active { width:60%; background-color: #D4D1CD  !important; transition: ease 0.5s; }
+#searchBarSection.active #searchBarInput { opacity: 100 !important; color:#0f0f0f; }
+#searchBarSection.active #searchToggleIcon { color:#0f0f0f !important; }
+.searchIcons { font-size:22px; margin-left: 2%; vertical-align: middle; color: #0f0f0f}
+#searchClearIcon { color: red !important; float:right; }
+
+/* Message sectino */
+#messageSection { opacity:0; }
+#messageSection.active { transition:opacity ease 1s; opacity:100; }
+
+/* Main sectinos */
+#listOfContentSection { width:68%; margin-left:25%; overflow-y:scroll ; overflow:scroll; height:1000px; border-right:5px solid white;}
+/* #fileModalForm { position: fixed; width: 50%; z-index:200; top: 10%; border: 2px solid white; height:400px; } */
+
+.modalContainer { position:fixed; top:0; right:0; bottom:0; left:0; z-index: 999; opacity:0; visibility: hidden; transition: all 0.3s; }
+.modalContainer.open { opacity:100; visibility: visible;}
+.modalContent { width: 25%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2em; }
+.modalCloser { text-align:left; }
+
+.fileFormRow { border-bottom:1px solid white; padding-bottom:1%; }
+.fileFormColumn { display:inline-block; margin-right:1%; }
+.fileFormColumn input,select { width: 90%; }
+.fileFormColumn.full { width:95%; }
+.fileFormColumn.half { width:45%; }
+.fileFormColumn.third { width: 32%; }
+.fileFormColumn.quarter { width: 25%; }
+
+
+/* Table Header */
+tr.showBottomBorder td,th { border-bottom: 2px solid white; }
+#bulkRow td { padding:0.5% 0%; }
+#numberOfFiles { color:orange; cursor:pointer; }
+#adventureFilterIcon.filtered { color:blue !important; }
+#adventureFilterIcon.active { color:orange !important; }
+#clearFilterIcon { color:red; font-size:70%; margin-left:2%; }
+#adventureFilterDropdown { overflow-y:hidden; width: 90%; margin: auto; position: absolute; height:0px; overflow-y:hidden; }
+#adventureFilterDropdown.active { background-color: white; height:200px; overflow-y:scroll; transition: height ease 0.5s; }
+#adventureFilterDropdown .adventureFilter { opacity: 0; cursor:pointer; color:black; margin:0; padding:3%;  }
+#adventureFilterDropdown .adventureFilter.selected { background-color:orange; color:black; }
+#adventureFilterDropdown.active .adventureFilter { opacity:100; transition: opacity ease 0.3s; }
+
+/* Table rows */
+.openLinkIcon { margin-left: 2%; cursor:pointer; }
+.openLinkIcon.true { color:blue; }
+.openLinkIcon.false { color:gray; }
+/* The save icons */
+tr.fileRow .saveIcon { color:green; }
+tr.fileRow .successIcon { color:green; }
+tr.fileRow .failIcon { color:red; }
+tr.fileRow .savingIcon { color:green; }
+tr.fileRow.selected { background-color:#D4D1CD !important; color:#0f0f0f !important; }
+tr.fileRow:hover td { border-top:2px dashed #D4D1CD !important; border-bottom:2px dashed #D4D1CD !important; cursor:pointer;  }
+/* Icons on the save row */
+.fieldIcon { margin-left:2%; cursor:pointer; }
+.fieldIcon.cancelIcon { color: red !important; }
+.fieldToSave2.large { width:60% !important; }
+.fieldToSave2.medium { width:50% !important; }
+.fieldToSave2.small { width:40% !important; }
+.fieldToSave2.xsmall { width:30% !important; }
+.fieldToSave2.tiny { width:20% !important; }
+.fieldToSave2.view { border:none; background-color:transparent; color:white !important;  }
+tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; color:#0f0f0f !important; }
+    
