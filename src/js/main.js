@@ -47,7 +47,9 @@ MyDom.ready( async () => {
 
         // Load modals
         var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
+        var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
         MyDom.setContent("#modalSection", {"innerHTML": adventureForm}, true);
+        MyDom.setContent("#modalSection", {"innerHTML": accessForm}, true);
 
     } catch (err){
         MyLogger.LogError(err);

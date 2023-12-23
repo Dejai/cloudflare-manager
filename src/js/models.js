@@ -73,13 +73,13 @@ class PageManager {
     }
 
     addContent(key, content){
-        if(! this.hasKey(key) ){
+        if(!this.hasKey(key) ){
             this.Content[key] = [];
         }
         if(Array.isArray(content)){
             this.Content[key] = this.Content[key].concat(content);
         } else {
-            this.Content[key].push(content);
+            this.Content[key] = content;
         }
     }
     
@@ -144,8 +144,9 @@ class UserAccess {
         var accessList = [];
         for(var key of Object.keys(this.Access)){
             var val = this.Access[key];
-            accessList.push( {"scope": key, "group": val});
+            accessList.push( {"Scope": key, "Group": val});
         }
+        return accessList;
     }
 }
 
