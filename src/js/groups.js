@@ -29,7 +29,6 @@ async function onSelectGroup(option){
         var key = option.getAttribute("data-group-key") ?? "";
         MyUrls.modifySearch({"tab" : "groups", "content":key});
         var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == key)?.[0];
-        console.log(group);
         MyDom.fillForm("#groupDetailsForm", group);
         MyDom.hideContent(".hideOnGroupSelected");
         MyDom.showContent(".showOnGroupSelected");

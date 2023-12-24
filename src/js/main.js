@@ -109,7 +109,6 @@ function loadTabFromUrl(){
 // Check search params & load specific content (called from other scripts)
 async function loadContentFromURL(){
     try{
-        console.log("Loading content from URL");
         var content = MyUrls.getSearchParam("content");
         if(content != undefined){
             var contentEle = document.querySelector(`.tab-section.active .content-selector[data-content-id="${content}"]`);

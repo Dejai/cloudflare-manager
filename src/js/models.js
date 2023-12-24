@@ -99,7 +99,6 @@ class Adventure {
                 this[pascalKey] = fields[key];
             }
         }
-        console.log(this);
     }
 }
 

@@ -101,7 +101,6 @@ function onOpenModal(cell){
     var contentID = row?.getAttribute("data-content-id") ?? "";
     if (contentID != "") {
         var file = MyPageManager.getContent("Files")?.filter(x => x.ContentID == contentID)?.[0];
-        console.log(file);
         MyDom.fillForm("#fileModalForm", file);
         MyDom.addClass("#fileFormModal.modalContainer", "open");
     }
@@ -124,8 +123,6 @@ async function onSaveFile() {
             MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
-        console.log(fields);
-
         // Submit this one to be saved in Cloudflare
         var results = { "status": 400 };
         var videoID = fields?.contentID;
