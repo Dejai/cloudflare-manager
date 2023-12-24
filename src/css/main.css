@@ -6,6 +6,8 @@
 
 button { cursor:pointer; }
 
+.searchableHidden { display: none; }
+
 /* Manage tabs */
 .cf-manage-tab { display:inline-block !important; width: 20%; }
 
@@ -75,4 +77,6 @@ tr.fileRow:hover td { border-top:2px dashed #D4D1CD !important; border-bottom:2p
 .fieldToSave2.tiny { width:20% !important; }
 .fieldToSave2.view { border:none; background-color:transparent; color:white !important;  }
 tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; color:#0f0f0f !important; }
+
+#userDetailsForm input { background-color: gray; color:white; }
     

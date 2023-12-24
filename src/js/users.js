@@ -1,13 +1,14 @@
 
 
 // Get the list of users
-async function getListOfUsers(){
+async function onGetListOfUsers(){
     var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
     users = users.map(result => new User(result));
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
 }
 
+// Show the list of users
 async function onShowUsers() {
     try {
         MyDom.hideContent(".hideOnTabSwitch");
@@ -15,6 +16,10 @@ async function onShowUsers() {
         MyDom.setContent("#listOfUsers", {"innerHTML": userList});
         onSetActiveTab("users");
         loadContentFromURL();
+
+        // Add user search bar
+        MySearcher.addSearchBar("Users", "#listOfUsers", "#searchUsers");
+        
         MyDom.hideContent(".hideOnUsersLoaded");
         MyDom.showContent(".showOnUsersLoaded");
     } catch (err) {
@@ -22,7 +27,7 @@ async function onShowUsers() {
     }
 }
 
-// Get the User & its files
+// Select a user from the list & show their details
 async function onSelectUser(option){
     try {
         var key = option.getAttribute("data-user-key") ?? "";
@@ -49,20 +54,6 @@ async function onGetAccessByUserKey(userKey){
     MyDom.setContent("#listOfAccess", {"innerHTML": usersTemplate} );
     MyDom.hideContent(".hideOnAccessLoaded");
 }
-
-// Sync the adventures
-async function onSyncUsersAndAccess(){
-    try {
-        MyPageManager.infoMessage("Syncing users ...");
-        var results = await MyFetch.call("GET", `${MyCloudFlare.Endpoint}/users/sync`);
-        MyPageManager.success(results?.Message ?? "Sync 1 done?");
-    } catch(errO){
-        MyLogger.LogError(err);
-        MyPageManager.errorMessage(err.Message, 10);
-    }
-
-}
-
 
 // Add a new access
 async function onSaveAccess(){

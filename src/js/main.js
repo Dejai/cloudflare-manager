@@ -35,7 +35,7 @@ MyDom.ready( async () => {
         MyDom.setContent("#contentSection", { "innerHTML": groupSection }, true);
 
         // Load the users
-        await getListOfUsers();
+        await onGetListOfUsers();
         var userSection = await MyTemplates.getTemplateAsync("templates/sections/user-section.html", {});
         MyDom.setContent("#contentSection", { "innerHTML": userSection }, true);
 
