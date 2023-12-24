@@ -13,8 +13,11 @@ async function onShowGroups() {
         MyDom.hideContent(".hideOnTabSwitch");
         var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", MyPageManager.getContent("Groups") );
         MyDom.setContent("#listOfGroups", {"innerHTML": groupList});
+        onSetActiveTab("groups");
+        loadContentFromURL();
         MyDom.hideContent(".hideOnGroupsLoaded");
         MyDom.showContent(".showOnGroupsLoaded");
+        loadContentFromURL();
     } catch (err) {
         MyLogger.LogError(err);
     }
@@ -23,9 +26,8 @@ async function onShowGroups() {
 // Get the Group & its files
 async function onSelectGroup(option){
     try {
-        console.log(option);
         var key = option.getAttribute("data-group-key") ?? "";
-        console.log(key);
+        MyUrls.modifySearch({"tab" : "groups", "content":key});
         var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == key)?.[0];
         console.log(group);
         MyDom.fillForm("#groupDetailsForm", group);

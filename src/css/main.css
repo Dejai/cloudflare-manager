@@ -4,6 +4,8 @@
 .menuItemMiddle { left:0; text-align: center; justify-content: center; }
 .menuItemRight { right:0; text-align:right; justify-content: right; }
 
+button { cursor:pointer; }
+
 /* Manage tabs */
 .cf-manage-tab { display:inline-block !important; width: 20%; }
 

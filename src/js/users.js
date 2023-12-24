@@ -3,9 +3,7 @@
 // Get the list of users
 async function getListOfUsers(){
     var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
-    console.log(users);
     users = users.map(result => new User(result));
-    console.log(users);
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
 }
@@ -15,6 +13,8 @@ async function onShowUsers() {
         MyDom.hideContent(".hideOnTabSwitch");
         var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContent("Users") );
         MyDom.setContent("#listOfUsers", {"innerHTML": userList});
+        onSetActiveTab("users");
+        loadContentFromURL();
         MyDom.hideContent(".hideOnUsersLoaded");
         MyDom.showContent(".showOnUsersLoaded");
     } catch (err) {
@@ -26,6 +26,7 @@ async function onShowUsers() {
 async function onSelectUser(option){
     try {
         var key = option.getAttribute("data-user-key") ?? "";
+        MyUrls.modifySearch({"tab" : "users", "content":key});
         var user = MyPageManager.getContent("Users")?.filter(x => x.UserKey == key)?.[0];
         MyDom.fillForm("#userDetailsForm", user);
         onGetAccessByUserKey(key);        

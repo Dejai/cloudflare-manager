@@ -77,7 +77,7 @@ async function showMainContent(){
         var groups = MyPageManager.getContent("Users")?.length ?? 0;
         var users = MyPageManager.getContent("Users")?.length ?? 0;
         if(advs > 0 && groups > 0 && users > 0){
-            templateName = "manageTabs"
+            templateName = "tabs"
         } else { 
             templateName = "unAuthorized"
         }
@@ -85,4 +85,49 @@ async function showMainContent(){
     
     var template = await MyTemplates.getTemplateAsync(`./templates/_shared/${templateName}.html`, {});
     MyDom.setContent("#mainContent", {"innerHTML": template});
+
+    // If loaded tabs, then check URL for existing tabs
+    if(templateName == "tabs"){
+        loadTabFromUrl();
+    }
+}
+
+// Check search params & load specific tab
+function loadTabFromUrl(){
+    try{
+        var tab = MyUrls.getSearchParam("tab");
+        if(tab != undefined){
+            var tabEle = document.querySelector(`.tab[data-tab-name="${tab}"]`);
+            tabEle.click();
+        }
+    } catch(err){
+        MyLogger.LogError(err);
+        MyPageManager.errorMessage(err.Message);
+    }
+}
+
+// Check search params & load specific content (called from other scripts)
+async function loadContentFromURL(){
+    try{
+        console.log("Loading content from URL");
+        var content = MyUrls.getSearchParam("content");
+        if(content != undefined){
+            var contentEle = document.querySelector(`.tab-section.active .content-selector[data-content-id="${content}"]`);
+            if(contentEle != undefined){
+                contentEle.click();
+            } else {
+                MyUrls.modifySearch({"content":""});
+            }
+        }
+    } catch(err) {
+        MyLogger.LogError(err);
+        MyPageManager.errorMessage(err.Message);
+    }
+}
+
+// Set the current active tab
+function onSetActiveTab(tabName){
+    MyDom.removeClass(".tab-section", "active");
+    MyDom.addClass(`.tab-section[data-tab-name="${tabName}"]`, 'active');
+    MyUrls.modifySearch({"tab": tabName});
 }

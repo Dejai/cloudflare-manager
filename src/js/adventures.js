@@ -8,16 +8,17 @@ async function getListOfAdventures(){
 }
 
 // Show the list of adventures
-async function onShowAdventures() {
+async function onShowAdventures(loadFromUrl=false) {
     try {
         MyDom.hideContent(".hideOnTabSwitch");
         var adventureList = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", MyPageManager.getContent("Adventures") );
         MyDom.setContent("#listOfAdventures", {"innerHTML": adventureList});
-
+        onSetActiveTab("adventures");
+        loadContentFromURL();
         // Set the group options in the adventure details form
         var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContent("Groups"));
         MyDom.setContent("#adventureDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
-
+        
         MyDom.hideContent(".hideOnAdventuresLoaded");
         MyDom.showContent(".showOnAdventuresLoaded");
         MyDom.showContent("#adventuresTabSection");
@@ -29,6 +30,7 @@ async function onShowAdventures() {
 // Get the Adventure & its files
 async function onSelectAdventure(option){
     var adventureID = option.getAttribute("data-adventure-id") ?? "";
+    MyUrls.modifySearch({"tab" : "adventures", "content":adventureID});
     loadAdventureByID(adventureID);     
     loadAdventureFilesByID(adventureID);
     MyDom.hideContent(".hideOnAdventureSelected");
@@ -59,7 +61,6 @@ async function loadAdventureFilesByID(adventureID) {
         MyDom.setContent("#listOfAdventureFiles", {"innerHTML": fileRowsTemplate});
         MyDom.showContent(".hideOnFilesLoaded");
         MyDom.hideContent(".hideOnFilesLoaded");
-        var _modifyUrl = (adventureID != "") ? MyUrls.modifySearch({"tab" : "adventure", "id":adventureID}) : MyUrls.modifySearch({});
     } catch (err) {
         MyLogger.LogError(err);
     }
