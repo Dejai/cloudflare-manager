@@ -119,7 +119,22 @@ class User {
         this.PhoneNumber = userDetails?.PhoneNumber ?? "";
         this.UserKey = userDetails?.Key ?? "";
         this.Updated = userDetails?.Updated ?? "";
-        this.UpdatedDateTime = (new Date(this.Updated))?.toLocaleString();
+        // Adding a recent message
+        this.UpdatedStatus = (this.isRecentlyAdded()) ? "new" : "";
+    }
+
+    isRecentlyAdded(){
+        var results = false; 
+        try { 
+            var updatedDate = new Date(this.Updated);
+            var yesterday = new Date();
+            yesterday.setDate( yesterday.getDate() - 1);
+            results = (updatedDate > yesterday);
+        } catch (err){
+            MyLogger.LogError(err);
+        } finally {
+            return results;
+        }
     }
 }
 
