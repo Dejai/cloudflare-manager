@@ -14,13 +14,13 @@
 			<div class="menuItem menuItemLeft" style="z-index:10">
                 <h2 style="border-right:3px solid #D4D1CD; padding-right:1%;"> Cloudflare Manager </h2>
 
-                <div id="loginSection" style="padding-left:1%;">
+                <div id="loginSection" style="padding-left:1%;min-width:10%;">
                     <span id="authLink" class="pointer loginAction" data-auth-action="logout" onclick="MyAuth.onAuthAction(this.getAttribute('data-auth-action'))">
                         <i class="fa-regular fa-circle-user"></i>
                         <span id="loginAction"></span>
                     </span>
                 </div>
-                <div style="padding-left:1%;">
+                <div style="padding-left:1%;max-width:30%;">
                     <button onclick="MyPageManager.onSync()">SYNC</button>
                 </div>
                 <div id="messageSection" style="padding-left:3%">

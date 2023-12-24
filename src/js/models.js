@@ -119,6 +119,8 @@ class User {
         this.EmailAddress = userDetails?.EmailAddress ?? "";
         this.PhoneNumber = userDetails?.PhoneNumber ?? "";
         this.UserKey = userDetails?.Key ?? "";
+        this.Updated = userDetails?.Updated ?? "";
+        this.UpdatedDateTime = (new Date(this.Updated))?.toLocaleString();
     }
 }
 

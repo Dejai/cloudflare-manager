@@ -5,6 +5,7 @@ async function getListOfUsers(){
     var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
     console.log(users);
     users = users.map(result => new User(result));
+    console.log(users);
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
 }
@@ -89,7 +90,7 @@ async function onSaveAccess(){
             MyPageManager.addToBySynced("access");
             
             onCloseAccessModal();
-            
+            onGetAccessByUserKey(userKey);
         }
     } catch(err){
         MyLogger.LogError(err);
