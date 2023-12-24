@@ -3,6 +3,7 @@
 // Get the list of users
 async function getListOfUsers(){
     var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
+    console.log(users);
     users = users.map(result => new User(result));
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
@@ -47,32 +48,28 @@ async function onGetAccessByUserKey(userKey){
     MyDom.hideContent(".hideOnAccessLoaded");
 }
 
-// Save Adventure details
-async function  onSaveUserDetails(){
-    try {
-        console.log("Coming soon");
-    } catch(err){
-        MyLogger.LogError(err);
-        setNotifyMessage(err.Message, 10);
-    }
-}
-
 // Sync the adventures
 async function onSyncUsersAndAccess(){
-    var results = await MyFetch.call("GET", `${MyCloudFlare.Endpoint}/users/sync`);
-    console.log(results);
-    setNotifyMessage(results?.Message ?? "Sync 1 done?");
+    try {
+        MyPageManager.infoMessage("Syncing users ...");
+        var results = await MyFetch.call("GET", `${MyCloudFlare.Endpoint}/users/sync`);
+        MyPageManager.success(results?.Message ?? "Sync 1 done?");
+    } catch(errO){
+        MyLogger.LogError(err);
+        MyPageManager.errorMessage(err.Message, 10);
+    }
+
 }
 
 
 // Add a new access
-async function onAddAccess(){
+async function onSaveAccess(){
     try {
         var details = MyDom.getFormDetails("#accessForm");
         var errors = details?.errors;
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            setNotifyMessage(errorMessage, 10);
+            MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
         var userKey = MyDom.getContent("#addAccessButton")?.value;

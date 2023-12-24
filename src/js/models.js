@@ -1,71 +1,9 @@
-// Used to keep track of things on the page
-class FileManagerPage {
-    constructor() {
-        this.TrelloCards = [];
-        this.TrelloMap = {};
-        this.Adventures = [];
-        this.StreamVideos = [];
-        // Keeping track of what we are filtered by
-        this.FilteredByAdventure = "";
-        this.IsFiltered = false;
-    }
-
-    // Return if page is filtered by an adventure
-    isFiltered(){
-        return this.FilteredByAdventure != "";
-    }
-
-    // Set the list of adventures available to this page
-    setAdventures(cards){
-        this.TrelloCards = cards;
-        for(var card of this.TrelloCards) {
-            this.TrelloMap[card.AdventureID] = card.Name;
-            this.TrelloMap[card.Name] = card.AdventureID;
-        }
-        this.TrelloCards.sort( (a,b) => {
-            return (a.Name < b.Name) ? -1 : (a.Name > b.Name) ? 1 : 0;
-        });
-        this.setAdventureLists();
-    }
-
-    // Set the list of stream videos
-    setStreamVideos(videos){
-        for(var video of videos){ 
-            video.setAdventureName(this.TrelloMap);
-            this.StreamVideos.push(video);
-        }
-    }
-
-    // Set the list of adventures in key parts of the page
-    setAdventureLists(){
-        var options = this.TrelloCards.map(card => card.toOptionHtml(this.AdventureID))?.join("");
-        MyDom.setContent("#listOfAdventures", {"innerHTML": options});
-        MyDom.setContent("select#bulkAdventure", {"innerHTML": options});
-        var dropdowns = this.TrelloCards.map(card => card.toDropdownRow())?.join("");
-        MyDom.setContent("#adventureFilterDropdown", {"innerHTML": dropdowns}, true);
-    }
-
-    // Search content based on name & description
-    searchContent(filter) {
-        var filterUpper = filter.toUpperCase();
-        var content = (this.isFiltered()) ? this.StreamVideos.filter(x => x.AdventureID == this.FilteredByAdventure) : this.StreamVideos;
-        var matchingContentIds = content.filter(
-                                        x => x.Name.toUpperCase().includes(filterUpper) 
-                                        || x.AdventureName.toUpperCase().includes(filterUpper) 
-                                        || x.Creator.toUpperCase().includes(filterUpper) 
-                                        || x.Date.toUpperCase().includes(filterUpper) 
-                                    ).map(y => y.ContentID);
-        return matchingContentIds;
-    }
-
-}
-
 // A way to manage list of things on the page
 class PageManager { 
 
     constructor(){
         this.Content = {};
-        this.ToBeSynced = new Set();
+        this.ToBeSynced = new Set(["users"]); // always start with users
     }
 
     // CHeck if content mapped
@@ -89,14 +27,15 @@ class PageManager {
     async onSync() {
         try {
             for(var val of this.ToBeSynced){
-                MyPageManager.setNotifyMessage(`Syncing ${val}`, 2);
-                var results = await MyFetch.call("GET", `https://syncer.the-dancinglion.workers.dev//${val}`);
+                MyPageManager.infoMessage(`Syncing ${val}`, 2);
+                var results = await MyFetch.call("GET", `https://syncer.dejaithekid.com/${val}`);
                 this.setResultsMessage(results);
             }
-    
+            // After sync, reload the page
+            MyUrls.refreshPage();
         } catch(err) {
             MyLogger.LogError(err);
-            MyPageManager.setNotifyMessage("Error: " + err.message, 10);
+            MyPageManager.errorMessage("Error: " + err.message, 10);
         }
     }
 
@@ -109,17 +48,30 @@ class PageManager {
             MyDom.removeClass("#messageSection", "active");
         }, clearAfterMs);
     }
+
+    successMessage(message, clearAfter=3){
+        var styledMessage = `<span style="color:limegreen;">${message}</span>`;
+        MyPageManager.setNotifyMessage(styledMessage,5);
+    }
+
+    errorMessage(message, clearAfter=5){
+        var styledMessage = `<span style="color:red;">${message}</span>`;
+        MyPageManager.setNotifyMessage(styledMessage,5);
+    }
+
+    infoMessage(message, clearAfter=3){
+        MyPageManager.setNotifyMessage(message,5);
+    }
+
     // Set a notify message based on resuts
     setResultsMessage(results){
-        console.log(results);
         var message = results?.message ?? "";
         var type = results?.type ?? "Content";
-
         if( message == "OK" ) {
-            this.setNotifyMessage(`${type} saved!`);
+            this.successMessage(`${type} saved!`);
         } else {
             var errMessage = `Could not save ${type}; ${message}`;
-            this.setNotifyMessage(errMessage, 10);
+            this.errorMessage(errMessage, 10);
         }
     }
     
@@ -185,29 +137,8 @@ class UserAccess {
     }
 }
 
-
-
-
-
-// A trello card
-class TrelloCard {
-    constructor(trelloJson){
-        this.AdventureID = trelloJson?.id ?? "";
-        this.Name = trelloJson?.name ?? "";
-    }
-
-    toOptionHtml(adventureID=undefined){
-        return `<option value="${this.Name}" data-adventure-id="${this.AdventureID}">${this.Name}</option>`;
-    }
-
-    toDropdownRow(){
-        return `<p class="adventureFilter" data-adventure-id="${this.AdventureID}" onclick="onFilterByAdventureID(this.getAttribute('data-adventure-id'))">${this.Name}</p>`;
-    }
-}
-
 // Class to store the video details
-class StreamVideo
-{
+class StreamVideo {
     constructor(videoObj) {
         this.AdventureID = videoObj?.adventureID ?? "";
         this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
@@ -236,47 +167,5 @@ class StreamVideo
 
     setEditIcons(iconsHtml){
         this.EditIcons = iconsHtml;
-    }
-}
-
-// Used to edit a single file row
-class FileRow {
-    constructor(fileRow){
-        this.Row = fileRow;
-        this.AdventureID = fileRow?.getAttribute("data-adventure-id");
-        this.ContentID = fileRow?.getAttribute("data-content-id");
-        this.Name = fileRow?.querySelector(".fieldToSave2[name='name']")?.value ?? "";
-        this.AdventureName = fileRow?.querySelector(".fieldToSave2[name='adventure']")?.value ?? "";
-        this.Creator = fileRow?.querySelector(".fieldToSave2[name='creator']")?.value ?? "";
-        this.ShowCreator = fileRow?.querySelector(".fieldToSave2[name='showCreator']")?.value ?? "No";
-        this.Date = fileRow?.querySelector(".fieldToSave2[name='date']")?.value ?? "";
-        this.Description = fileRow?.querySelector(".fieldToSave2[name='description']")?.innerText ?? "";
-
-    }
-
-    // Validate that this adventure has the two key things needed
-    validate(){
-        if(this.Name == "") {
-            return "A Name is required for the file"
-        } 
-        if (this.Creator == ""){
-            return "A Creator is required for the file"
-        }
-        if (this.AdventureID == ""){
-            return "An adventure must be selected"
-        }
-        return ""
-    }
-
-    // Convert this object to a JSON object
-    toJson(){
-        return {
-            "adventure": this.AdventureID,
-            "name": this.Name,
-            "creator": this.Creator,
-            "showCreator": this.ShowCreator,
-            "date": this.Date,
-            "description": this.Description
-        }
     }
 }

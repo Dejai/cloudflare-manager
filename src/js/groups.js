@@ -42,10 +42,9 @@ async function  onSaveGroupDetails(){
         var formDetails = MyDom.getFormDetails("#groupDetailsForm");
         var fields = formDetails?.fields;
         var errors = formDetails?.errors;
-        console.log(formDetails);
         if(errors.length > 0){
             var errorMessage = errors.join(" ; ");
-            setNotifyMessage(errorMessage, 10);
+            MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
 
@@ -55,7 +54,7 @@ async function  onSaveGroupDetails(){
 
     } catch(err){
         MyLogger.LogError(err);
-        setNotifyMessage(err.Message, 10);
+        MyPageManager.errorMessage(err.Message, 10);
     }
 }
 

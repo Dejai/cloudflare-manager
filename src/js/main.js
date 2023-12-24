@@ -1,9 +1,7 @@
 
 /************************ GLOBAL VARIABLES ****************************************/
 const MyTrello = new TrelloWrapper("adventures");
-const MyFileManagerPage = new FileManagerPage();
 const MyCloudFlare = new CloudflareWrapper();
-
 const MyPageManager = new PageManager();
 
 const savingMessages = {
@@ -87,16 +85,4 @@ async function showMainContent(){
     
     var template = await MyTemplates.getTemplateAsync(`./templates/_shared/${templateName}.html`, {});
     MyDom.setContent("#mainContent", {"innerHTML": template});
-}
-
-/******** GETTING STARTED: Loading the Adventures & Labels; Check if logged in user***************************/
-
-// Set notify message
-function setNotifyMessage(content="", clearAfter=5){
-    MyDom.setContent("#messageSection", {"innerHTML": content});
-    MyDom.addClass("#messageSection", "active");
-    var clearAfterMs = clearAfter*1000;
-    setTimeout( ()=>{
-        MyDom.removeClass("#messageSection", "active");
-    }, clearAfterMs);
 }

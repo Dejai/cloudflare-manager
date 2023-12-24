@@ -73,7 +73,7 @@ async function  onSaveAdventureDetails(){
         var errors = formDetails["errors"] ?? [];
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            MyPageManager.setNotifyMessage(errorMessage, 10);
+            MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
         var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == fields?.adventureID)?.[0];
@@ -90,7 +90,7 @@ async function  onSaveAdventureDetails(){
 
     } catch(err){
         MyLogger.LogError(err);
-        MyPageManager.setNotifyMessage(err.Message, 10);
+        MyPageManager.errorMessage(err.Message, 10);
     }
 }
 
@@ -120,7 +120,7 @@ async function onSaveFile() {
         
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            MyPageManager.setNotifyMessage(errorMessage, 10);
+            MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
         console.log(fields);
@@ -130,13 +130,13 @@ async function onSaveFile() {
         var videoID = fields?.contentID;
         var results = await MyFetch.call("POST", `${MyCloudFlare.Endpoint}/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
         if( (results?.status ?? 400) == 200 ) {
-            MyPageManager.setNotifyMessage("File details saved!");
+            MyPageManager.successMessage("File details saved!");
         } else {
-            MyPageManager.setNotifyMessage(results?.message + " " + results?.data, 10);
+            MyPageManager.errorMessage(results?.message + " " + results?.data, 10);
         }
         onCloseModal();
     } catch(err){
         MyLogger.LogError(err);
-        MyPageManager.setNotifyMessage(err.Message, 10);
+        MyPageManager.errorMessage(err.Message, 10);
     }
 }
