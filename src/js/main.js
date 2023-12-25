@@ -126,7 +126,14 @@ async function loadContentFromURL(){
 
 // Set the current active tab
 function onSetActiveTab(tabName){
+    // Remove classes first
     MyDom.removeClass(".tab-section", "active");
+    MyDom.removeClass(".cf-manage-tab", "active");
+
+    // Add classes
     MyDom.addClass(`.tab-section[data-tab-name="${tabName}"]`, 'active');
+    MyDom.addClass(`.cf-manage-tab[data-tab-name="${tabName}"]`, 'active');
+
+    // Adjust the URL
     MyUrls.modifySearch({"tab": tabName});
 }
