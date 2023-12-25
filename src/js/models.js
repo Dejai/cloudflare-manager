@@ -27,26 +27,31 @@ class PageManager {
     async onSync() {
         try {
             for(var val of this.ToBeSynced){
-                MyPageManager.infoMessage(`Syncing ${val}`, 2);
+                this.infoMessage(`Syncing ${val}`, -1);
                 var results = await MyFetch.call("GET", `https://syncer.dejaithekid.com/${val}`);
                 this.setResultsMessage(results);
             }
             // After sync, reload the page
-            MyUrls.refreshPage();
+            setTimeout(()=> {
+                MyUrls.refreshPage();
+            }, 3000);
+            
         } catch(err) {
             MyLogger.LogError(err);
-            MyPageManager.errorMessage("Error: " + err.message, 10);
+            this.errorMessage("Error: " + err.message, 10);
         }
     }
 
     // Notifications
-    setNotifyMessage(content="", clearAfter=3){
+    setNotifyMessage(content="", clearAfter=3) {
         MyDom.setContent("#messageSection", {"innerHTML": content});
         MyDom.addClass("#messageSection", "active");
-        var clearAfterMs = clearAfter*1000;
-        setTimeout( ()=>{
-            MyDom.removeClass("#messageSection", "active");
-        }, clearAfterMs);
+        if(clearAfter > 0){
+            var clearAfterMs = clearAfter*1000;
+            setTimeout( ()=>{
+                MyDom.removeClass("#messageSection", "active");
+            }, clearAfterMs);
+        }
     }
 
     successMessage(message, clearAfter=3){

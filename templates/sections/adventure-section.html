@@ -1,90 +1,93 @@
-<div id="adventuresTabSection" class="hideOnTabSwitch showOnAdventuresLoaded tab-section" data-tab-name="adventures"  style="position:relative;">
+<div id="adventuresTabSection" class="hidden hideOnTabSwitch showOnAdventuresLoaded tab-section" data-tab-name="adventures"  style="position:relative;">
     
-    <!-- Shows the list of adventures to pick from -->
-    <div id="listOfAdventures" style="position:absolute; width:20%;padding-top:3%"></div>
+    <div class="tab-sections">
+        <div class="content-select-section listofContentSection">
+            <h3>List of Adventures</h3>
+            <!-- Shows the list of adventures to pick from -->
+            <div id="listOfAdventures" class="listOfContent" ></div>
+        </div>
     
-    <div id="adventureDetailsSection"  style="position:absolute; width:70%; margin-left:20%;">
-
-        <div class="hidden showOnAdventureSelected">
-            <h3 id="adventureName">The Details</h3>
+        <div  id="adventureDetailsSection" class="hidden showOnAdventureSelected contentDetailsSection">
+            <h3 id="adventureName">The Details &mdash; <button onclick="onSaveAdventureDetails()">SAVE</button> </h3>
             
-            <div id="adventureDetailsForm">
-                <input id="adventureID" type="text" name="adventureID" style="width:50%" required hidden />
-                <div class="adventureDetailsFormSubsection">
-                    <button onclick="onSaveAdventureDetails()">SAVE</button>
-                </div>
+            <div id="adventureDetailsForm" class="form-section">
+                <input id="adventureID" type="text" name="adventureID" required hidden />
                 
-                <div class="adventureDetailsFormSubsection">
-                    <label for="name">Name: </label><br/>
-                    <input id="name" type="text" name="name" placeholder="Enter Adventure Name" style="width:50%" required />
-                </div>
-            
-                <div class="adventureDetailsFormSubsection">
-                    <label for="name">Date: </label><br/>
-                    <input id="date" type="text" name="date" placeholder="Enter Adventure Date" style="width:50%" required />
-                </div>
-                
-                <div class="adventureDetailsFormSubsection">
+                <div class="adventureDetailsFormSubsection form-field-section-small">
                     <label for="status">Status: </label><br/>
-                    <select name="status" id="status" style="width:10%;">
+                    <select name="status" id="status">
                         <option value="Active">Active</option>
                         <option value="Draft">Draft</option>
                         <option value="Inactive">Inactive</option>
                     </select>
                 </div>
 
-                <div class="adventureDetailsFormSubsection">
+                <div class="adventureDetailsFormSubsection form-field-section-medium">
+                    <label for="name">Name: </label><br/>
+                    <input id="name" type="text" name="name" placeholder="Enter Adventure Name" required />
+                </div>
+            
+                <div class="adventureDetailsFormSubsection form-field-section-small">
+                    <label for="name">Date: </label><br/>
+                    <input id="date" type="text" name="date" placeholder="Enter Adventure Date" required />
+                </div>
+                
+                <div class="flex-break"></div>
+
+                <div class="adventureDetailsFormSubsection form-field-section-small">
                     <label for="status">Access Type: </label><br/>
-                    <select name="accessType" id="accessType" style="width:10%;" required>
+                    <select name="accessType" id="accessType" required>
                         <option value="Public">Public</option>
                         <option value="Group">Group</option>
                     </select>
                 </div>
 
-                <div class="adventureDetailsFormSubsection">
+                <div class="adventureDetailsFormSubsection form-field-section-small">
                     <label for="accessGroup">Access Group: </label><br/>
                     <select name="accessGroup" id="accessGroup"></select>
                 </div>
                 
-                <div class="adventureDetailsFormSubsection">
+                <div class="adventureDetailsFormSubsection form-field-section-large">
                     <label for="thumbnail">Thumbnail: </label><br/>
-                    <input id="thumbnail" type="text" name="thumbnail" placeholder="Enter URL to image" style="width:50%" />
+                    <input id="thumbnail" type="text" name="thumbnail" placeholder="Enter URL to image" />
                 </div>
             
-                <div class="adventureDetailsFormSubsection">
+                <div class="adventureDetailsFormSubsection form-field-section-large">
                     <label for="description">Description:</label><br/>
-                    <textarea name="description" id="description" cols="30" rows="10"></textarea>
+                    <textarea name="description" id="description" rows="5"></textarea>
                 </div>
             </div>
+
+            <div id="adventureFilesSection" class="hidden showOnAdventureSelected">
+                <h3>The Files</h3>
+                <table id="adventureFiles" style="width:99%; text-align:left; border-spacing:0; ">
+                    <colgroup>
+                        <col style="width:3%;">
+                        <col style="width:3%;">
+                    </colgroup>
+                    <thead>
+                        <tr class="showBottomBorder">
+                            <th>
+                                <p class="hidden showOnFilesLoading hideOnFilesLoaded">
+                                    <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:150%;"></i>
+                                </p>
+                            </th>
+                            <th>
+                                <!-- <input class="rowSelectorCheckbox" type="checkbox" name="rowSelector" id="row-{{ContentID}}" class="pointer" onclick="onSelectRow(this)"> -->
+                            </th>
+                            <!-- <th><p class="hidden1 showOnLoaded">Adventure</p></th> -->
+                            <th><p class="hidden1 showOnLoaded">Name</p></th>
+                            <th><p class="hidden1 showOnLoaded">Creator</p></th>
+                            <th><p class="hidden1 showOnLoaded">Show Creator?</p></th>
+                            <th><p class="hidden1 showOnLoaded">Date</p></th>
+                        </tr>
+                    </thead>
+                    <tbody id="listOfAdventureFiles"></tbody>
+                </table>
+            </div>
         </div>
-        <div class="hidden showOnAdventureSelected">
-            <h3>The Files</h3>
-            <table id="adventureFiles" style="width:99%; text-align:left; border-spacing:0; ">
-                <colgroup>
-                    <col style="width:3%;">
-                    <col style="width:3%;">
-                </colgroup>
-                <thead>
-                    <tr class="showBottomBorder">
-                        <th>
-                            <p class="hidden showOnFilesLoading hideOnFilesLoaded">
-                                <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:150%;"></i>
-                            </p>
-                        </th>
-                        <th>
-                            <!-- <input class="rowSelectorCheckbox" type="checkbox" name="rowSelector" id="row-{{ContentID}}" class="pointer" onclick="onSelectRow(this)"> -->
-                        </th>
-                        <!-- <th><p class="hidden1 showOnLoaded">Adventure</p></th> -->
-                        <th><p class="hidden1 showOnLoaded">Name</p></th>
-                        <th><p class="hidden1 showOnLoaded">Creator</p></th>
-                        <th><p class="hidden1 showOnLoaded">Show Creator?</p></th>
-                        <th><p class="hidden1 showOnLoaded">Date</p></th>
-                        <th><p class="hidden1 showOnLoaded">Description</p></th>
-                    </tr>
-                </thead>
-                <tbody id="listOfAdventureFiles"></tbody>
-            </table>
-        </div>
+            
+
     </div>
     <div id="fileEditModal"></div>
 </div>

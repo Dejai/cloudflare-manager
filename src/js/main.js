@@ -27,17 +27,17 @@ MyDom.ready( async () => {
         // Load the adventures
         await getListOfAdventures();
         var adventureSection = await MyTemplates.getTemplateAsync("templates/sections/adventure-section.html", {});
-        MyDom.setContent("#contentSection", {"innerHTML": adventureSection }, true);
+        MyDom.setContent("#mainContentSection", {"innerHTML": adventureSection }, true);
         
         // Load the Groups
         await getListOfGroups();
         var groupSection = await MyTemplates.getTemplateAsync("templates/sections/group-section.html", {});
-        MyDom.setContent("#contentSection", { "innerHTML": groupSection }, true);
+        MyDom.setContent("#mainContentSection", { "innerHTML": groupSection }, true);
 
         // Load the users
         await onGetListOfUsers();
         var userSection = await MyTemplates.getTemplateAsync("templates/sections/user-section.html", {});
-        MyDom.setContent("#contentSection", { "innerHTML": userSection }, true);
+        MyDom.setContent("#mainContentSection", { "innerHTML": userSection }, true);
 
         // Show something
         await showMainContent();
@@ -84,7 +84,7 @@ async function showMainContent(){
     }
     
     var template = await MyTemplates.getTemplateAsync(`./templates/_shared/${templateName}.html`, {});
-    MyDom.setContent("#mainContent", {"innerHTML": template});
+    MyDom.setContent("#headerContent", {"innerHTML": template});
 
     // If loaded tabs, then check URL for existing tabs
     if(templateName == "tabs"){

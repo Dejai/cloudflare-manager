@@ -1,30 +1,36 @@
 <div id="groupsTabSection" style="position:relative" data-tab-name="groups" class="hidden showOnGroupsLoaded hideOnTabSwitch tab-section">
 
-    <!-- Shows the list of adventures to pick from -->
-    <button onclick="onAddGroup()">Add Group</button>
-    <div id="listOfGroups" style="position:absolute; width:20%;padding-top:3%"></div>
+    <div class="tab-sections">
 
-    <!-- The Group details & list of users -->
-    <div id="groupDetailsSection"  style="position:absolute; width:70%; margin-left:20%;">
+        <div class="content-select-section">
+            <button onclick="onAddGroup()">Add Group</button> <br/>
+            <!-- Shows the list of adventures to pick from -->
+            <div id="listOfGroups" style="max-height:400px; padding-left:1%; "></div>
+        </div>
 
-       <div class="hidden showOnGroupSelected">
-           <h3 id="groupName">The Details</h3>
+        <!-- The Group details & list of users -->
+        <div id="groupDetailsSection" class="hidden showOnGroupSelected contentDetailsSection">
 
-           <div id="groupDetailsForm">
-               <div class="groupDetailsFormSubsection">
-                   <button onclick="onSaveGroupDetails()">SAVE</button>
-               </div>
-               
-               <div class="groupDetailsFormSubsection">
-                   <label for="name">Name: </label><br/>
-                   <input id="name" type="text" name="name" placeholder="Enter Group Name" style="width:50%" required />
-               </div>
-   
-               <div class="groupDetailsFormSubsection">
-                   <label for="name">Key: </label><br/>
-                   <input id="key" type="text" name="key" placeholder="Enter Group Name" style="width:50%" required />
-               </div>
-           </div>
-       </div>
-   </div>
+            <div>
+                <h3 id="groupName"> The Details &mdash; <button onclick="onSaveGroupDetails()">SAVE</button></h3>
+    
+                <div id="groupDetailsForm">
+                    <div class="groupDetailsFormSubsection">
+                    </div>
+                    
+                    <div class="groupDetailsFormSubsection">
+                        <label for="name">Name: </label><br/>
+                        <input id="name" type="text" name="name" placeholder="Enter Group Name" style="width:50%" required />
+                    </div>
+        
+                    <div class="groupDetailsFormSubsection">
+                        <label for="name">Key: </label><br/>
+                        <input id="key" type="text" name="key" placeholder="Enter Group Name" style="width:50%" required />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
 </div>

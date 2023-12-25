@@ -1,39 +1,47 @@
+/* General */
+button { cursor:pointer; }
+.searchableHidden { display: none; }
+#mainContainer { padding:0.5%; }
+
+.flex-break { flex-basis: 100%; height: 0; }
+
 /* Menu items */
 .menuItem { position:absolute; height:100%; width:100%; display:flex; align-items:center;  }
 .menuItemLeft { left:0; text-align: left; justify-content: left; }
 .menuItemMiddle { left:0; text-align: center; justify-content: center; }
 .menuItemRight { right:0; text-align:right; justify-content: right; }
 
-button { cursor:pointer; }
-
-.searchableHidden { display: none; }
-
-/* Manage tabs */
-.cf-manage-tab { display:inline-block !important; width: 20%; }
-
-/* Search */
-#searchBarSection { display:inline-block; position:relative; text-align:left; border-radius:20px; border:none; padding:0.3%; margin-left:10%;  width:15%; background-color: #D4D1CD; }
-#searchBarSection #searchBarInput { border:none; opacity: 100; background-color:transparent; width:60%; margin-left:2%; outline: none; outline-offset: 0;  }
-#searchBarSection #searchBarInput:focus{ outline: none; outline-offset: 0;}
-#searchBarSection.active { width:60%; background-color: #D4D1CD  !important; transition: ease 0.5s; }
-#searchBarSection.active #searchBarInput { opacity: 100 !important; color:#0f0f0f; }
-#searchBarSection.active #searchToggleIcon { color:#0f0f0f !important; }
-.searchIcons { font-size:22px; margin-left: 2%; vertical-align: middle; color: #0f0f0f}
-#searchClearIcon { color: red !important; float:right; }
-
-/* Message sectino */
+/* Message section */
 #messageSection { opacity:0; }
 #messageSection.active { transition:opacity ease 1s; opacity:100; }
 
-/* Main sectinos */
-#listOfContentSection { width:68%; margin-left:25%; overflow-y:scroll ; overflow:scroll; height:1000px; border-right:5px solid white;}
-/* #fileModalForm { position: fixed; width: 50%; z-index:200; top: 10%; border: 2px solid white; height:400px; } */
+/* Manage tabs */
+#manageTabs { display:flex; flex-wrap: wrap; flex-direction: row; justify-content: left; gap:10px; align-items:center; align-content:center;  }
+.cf-manage-tab { border:1px solid white; padding:0.5%; margin-right:0.5%; border-radius:20px;}
+.cf-manage-tab:hover { background-color: white; color:black; }
+.cf-manag-tab.active { background-color: white; color:black; }
 
+/* The Tab Sections */
+.tab-sections { display:flex; flex-wrap:wrap; flex-direction:row; justify-content: left; gap:10px; }
+.content-select-section { padding:1%; min-width: 10%; }
+.listofContentSection { min-width:100%; }
+.listOfContent { max-height: 100px; border-bottom:2px dotted white; overflow:scroll; }
+.contentDetailsSection { min-width:100%; }
+
+/* Forms */
+.form-section { display:flex; flex-wrap:wrap; flex-direction:row; justify-content: left; gap:10px; }
+.form-section .form-field-section-small { min-width:30%; max-width:40%; }
+.form-section .form-field-section-medium { min-width:45%; max-width:60%; }
+.form-section .form-field-section-large { min-width:100%; }
+.form-section input,select,textarea { width:90%; }
+
+/* Modals  */
 .modalContainer { position:fixed; top:0; right:0; bottom:0; left:0; z-index: 999; opacity:0; visibility: hidden; transition: all 0.3s; }
 .modalContainer.open { opacity:100; visibility: visible;}
 .modalContent { width: 25%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2em; }
 .modalCloser { text-align:left; }
 
+/* File Rows in the table */
 .fileFormRow { border-bottom:1px solid white; padding-bottom:1%; }
 .fileFormColumn { display:inline-block; margin-right:1%; }
 .fileFormColumn input,select { width: 90%; }
@@ -42,6 +50,7 @@ button { cursor:pointer; }
 .fileFormColumn.third { width: 32%; }
 .fileFormColumn.quarter { width: 25%; }
 
+.tableCellOnMobile {  display:none; width:0; height:0; opacity:0; visibility: collapse; }
 
 /* Table Header */
 tr.showBottomBorder td,th { border-bottom: 2px solid white; }
@@ -80,3 +89,15 @@ tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; co
 
 #userDetailsForm input { background-color: gray; color:white; }
     
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    .listofContentSection { min-width:10%; }
+    .listOfContent { max-height: 500px; }
+    .contentDetailsSection { min-width:40%; max-width:85%; }
+
+    /* Form fields */    
+    .form-section .form-field-section-small { min-width:10%; max-width:40%; }
+    .form-section .form-field-section-medium { min-width:30%; max-width:50%; }
+    .form-section .form-field-section-large { min-width:80%; }
+
+}
