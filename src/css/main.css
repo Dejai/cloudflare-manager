@@ -19,7 +19,7 @@ button { cursor:pointer; }
 #manageTabs { display:flex; flex-wrap: wrap; flex-direction: row; justify-content: left; gap:10px; align-items:center; align-content:center;  }
 .cf-manage-tab { border:1px solid white; padding:0.5%; margin-right:0.5%; border-radius:20px;}
 .cf-manage-tab:hover { background-color: white; color:black; }
-.cf-managef-tab.active { background-color: white; color:black; }
+.cf-manage-tab.active { background-color: white; color:black; }
 
 /* The Tab Sections */
 .tab-sections { display:flex; flex-wrap:wrap; flex-direction:row; justify-content: left; gap:10px; }
