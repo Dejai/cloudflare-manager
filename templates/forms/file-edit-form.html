@@ -1,53 +1,51 @@
 <div id="fileFormModal" class="modalContainer">
-    <div id="fileModalForm" class="dtk-theme-cauldron-inverse modalContent">
 
-        <input id="contentID" type="text" name="contentID" value="" required hidden/>
-        <br/>
-        <input type="text" name="adventure" value="" style="width:90%;" required hidden />
+    <div class="dtk-theme-cauldron-inverse modalContent">
 
-        <div class="fileFormRow">
-            <div class="fileFormColumn third">
-                <p>Date:</p>
+        <div id="fileModalForm" class="form-section">
+
+            <div class="form-field-section-large">
+                <input id="contentID" type="text" name="contentID" value="" required hidden/>
+                <input type="text" name="adventure" value="" style="width:90%;" required hidden />    
+            </div>
+            <div class="form-field-section-small">
+                <label>Order:</label><br/>
+                <input type="number" min="1" max="200" name="order" id="order" value="" />
+            </div>
+            <div class="form-field-section-small">
+                <label>Date:</label><br/>
                 <input type="text" name="date" id="date" value="" />
             </div>
-            <div class="fileFormColumn third">
-                <p>Order:</p>
-                <input type="number" min="1" max="20" name="order" id="order" value="" />
-            </div>
-        </div>
-        <div class="fileFormRow">
-            <div class="fileFormColumn third">
-                <p>File Name:</p>
+            <div class="form-field-section-medium">
+                <label>File Name:</label><br/>
                 <input type="text" name="name" id="name" value="" required />
             </div>
-            <div class="fileFormColumn third">
-                <p>Creator:</p>
+            <div class="form-field-section-small">
+                <label>Creator:</label><br/>
                 <input type="text" name="creator" id="creator" value="" required />
             </div>
-            <div class="fileFormColumn quarter">
-                <p>Show Creator?:</p>
+            <div class="form-field-section-small">
+                <label>Show Creator?:</label><br/>
                 <select name="showCreator" id="showCreator">
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                 </select>
             </div>
-        </div>
-        <div class="fileFormRow">
-            <div class="fileFormColumn third">
-                <p>File Preview Time:</p>
+            <div class="form-field-section-medium">
+                <label>File Preview Time:</label><br/>
                 <input type="text" name="preview" id="preview" value="" placeholder="Format: 0m0s" required />
             </div>
-        </div>
-        <div class="fileFormRow">
-            <div class="fileFormColumn">
-                <p>Description:</p>
+            <div class="form-field-section-large">
+                <label>Description:</label><br/>
                 <textarea id="description" name="description" style="margin-left:2%;">
                 </textarea>
             </div>
-        </div>
-        <div class="fileFormRow">
-            <button class="modalCloser2" onclick="onCloseModal()">CLOSE</button> &nbsp;
-            <button class="modelCloser2" onclick="onSaveFile()">SAVE</button>
+            <div class="flex-break"></div>
+            <div>
+                <button class="modalCloser2" onclick="onCloseModal()">CLOSE</button> &nbsp;
+                <button class="modelCloser2" onclick="onSaveFile()">SAVE</button>
+            </div>
+
         </div>
     </div>
 </div>

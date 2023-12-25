@@ -38,7 +38,7 @@ button { cursor:pointer; }
 /* Modals  */
 .modalContainer { position:fixed; top:0; right:0; bottom:0; left:0; z-index: 999; opacity:0; visibility: hidden; transition: all 0.3s; }
 .modalContainer.open { opacity:100; visibility: visible;}
-.modalContent { width: 25%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2em; }
+.modalContent { width: 75%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 2em; }
 .modalCloser { text-align:left; }
 
 /* File Rows in the table */
@@ -99,5 +99,8 @@ tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; co
     .form-section .form-field-section-small { min-width:10%; max-width:40%; }
     .form-section .form-field-section-medium { min-width:30%; max-width:50%; }
     .form-section .form-field-section-large { min-width:80%; }
+
+    /* Modals */
+    .modalContent { width: 25%; } 
 
 }

@@ -1,8 +1,8 @@
 <div id="accessFormModal" class="modalContainer">
 
-    <div id="accessForm" class="dtk-theme-cauldron-inverse modalContent">
-        <div class="fileFormRow">
-            <div class="fileFormColumn third">
+    <div class="dtk-theme-cauldron-inverse modalContent">
+        <div id="accessForm" class="form-section">
+            <div class="form-field-section-medium">
                 <p>Scope:</p>
                 <select name="scope" id="scope" required>
                     <option value="Adventures">Adventures</option>
@@ -11,14 +11,15 @@
                     <option value="Events">Events</option>
                 </select>
             </div>
-            <div class="fileFormColumn third">
+            <div class="form-field-section-medium">
                 <p>Group:</p>
                 <select name="group" id="group" required></select>
             </div>
-        </div>
-        <div class="fileFormRow">
-            <button class="modalCloser2" onclick="onCloseAccessModal()">CLOSE</button> &nbsp;
-            <button class="modelCloser2" onclick="onSaveAccess()">SAVE</button>
+            <div class="flex-break"></div>
+            <div>
+                <button class="modalCloser2" onclick="onCloseAccessModal()">CLOSE</button> &nbsp;
+                <button class="modelCloser2" onclick="onSaveAccess()">SAVE</button>
+            </div>
         </div>
     </div>
 </div>
