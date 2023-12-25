@@ -34,6 +34,7 @@ async function onSelectUser(option){
         MyUrls.modifySearch({"tab" : "users", "content":key});
         var user = MyPageManager.getContent("Users")?.filter(x => x.UserKey == key)?.[0];
         MyDom.fillForm("#userDetailsForm", user);
+        MyDom.setContent("#addAccessButton", {"value": key} );
         onGetAccessByUserKey(key);        
     } catch (err) {
         MyLogger.LogError(err);
