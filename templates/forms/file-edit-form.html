@@ -3,10 +3,10 @@
     <div class="dtk-theme-cauldron-inverse modalContent">
 
         <div id="fileModalForm" class="form-section">
-
-            <div class="form-field-section-large">
-                <input id="contentID" type="text" name="contentID" value="" required hidden/>
-                <input type="text" name="adventure" value="" style="width:90%;" required hidden />    
+            
+            <div class="form-field-section-medium">
+                <label>File Name:</label><br/>
+                <input type="text" name="name" id="name" value="" required />
             </div>
             <div class="form-field-section-small">
                 <label>Order:</label><br/>
@@ -16,10 +16,7 @@
                 <label>Date:</label><br/>
                 <input type="text" name="date" id="date" value="" />
             </div>
-            <div class="form-field-section-medium">
-                <label>File Name:</label><br/>
-                <input type="text" name="name" id="name" value="" required />
-            </div>
+            <div class="flex-break"></div>
             <div class="form-field-section-small">
                 <label>Creator:</label><br/>
                 <input type="text" name="creator" id="creator" value="" required />
@@ -37,10 +34,13 @@
             </div>
             <div class="form-field-section-large">
                 <label>Description:</label><br/>
-                <textarea id="description" name="description" style="margin-left:2%;">
-                </textarea>
+                <textarea id="description" name="description"></textarea>
             </div>
             <div class="flex-break"></div>
+            <div>
+                <input id="contentID" type="text" name="contentID" value="" required hidden/>
+                <input type="text" name="adventure" value="" style="width:90%;" required hidden />    
+            </div>
             <div>
                 <button class="modalCloser2" onclick="onCloseModal()">CLOSE</button> &nbsp;
                 <button class="modelCloser2" onclick="onSaveFile()">SAVE</button>
