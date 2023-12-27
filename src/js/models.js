@@ -28,7 +28,7 @@ class PageManager {
         try {
             for(var val of this.ToBeSynced){
                 this.infoMessage(`Syncing ${val}`, -1);
-                var results = await MyFetch.call("GET", `https://syncer.dejaithekid.com/${val}`);
+                var results = await MyFetch.call("GET", `https://files.dejaithekid.com/sync/${val}`);
                 this.setResultsMessage(results);
             }
             // After sync, reload the page
@@ -133,7 +133,7 @@ class User {
         try { 
             var updatedDate = new Date(this.Updated);
             var yesterday = new Date();
-            yesterday.setDate( yesterday.getDate() - 1);
+            yesterday.setDate( yesterday.getDate() - 2);
             results = (updatedDate > yesterday);
         } catch (err){
             MyLogger.LogError(err);
