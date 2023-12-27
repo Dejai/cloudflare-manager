@@ -100,6 +100,9 @@ function onOpenModal(cell){
     row = cell.closest("tr");
     var contentID = row?.getAttribute("data-content-id") ?? "";
     if (contentID != "") {
+        onSetSelectedRow(row);
+        // MyDom.removeClass("tr.selectedRow", "selectedRow");
+        // row.classList.add("selectedRow");
         var file = MyPageManager.getContent("Files")?.filter(x => x.ContentID == contentID)?.[0];
         MyDom.fillForm("#fileModalForm", file);
         MyDom.addClass("#fileFormModal.modalContainer", "open");
@@ -112,7 +115,7 @@ function onCloseModal(){
 }
 
 // Save the edits to a fieldl (and entire row)
-async function onSaveFile() {
+async function onSaveFile(closeModal=false) {
     try {
         var formDetails = MyDom.getFormDetails("#fileModalForm");
         var fields = formDetails["fields"] ?? {};
@@ -123,6 +126,7 @@ async function onSaveFile() {
             MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
+
         // Submit this one to be saved in Cloudflare
         var results = { "status": 400 };
         var videoID = fields?.contentID;
@@ -132,9 +136,58 @@ async function onSaveFile() {
         } else {
             MyPageManager.errorMessage(results?.message + " " + results?.data, 10);
         }
-        onCloseModal();
+
+        // Determine if to close modal or go next
+        var saveAndNext = document.querySelector("#nextFile")?.checked ?? false;
+        console.log(saveAndNext);
+        if(saveAndNext){ 
+            onNavigateFile("next");
+        } else { 
+            onCloseModal();
+        }
+        // if(closeModal){
+        //     onCloseModal();
+        // }
     } catch(err){
         MyLogger.LogError(err);
         MyPageManager.errorMessage(err.Message, 10);
+    }
+}
+
+// Set the currently selected file row
+function onSetSelectedRow(row){
+    MyDom.removeClass("tr.selectedRow", "selectedRow");
+    row.classList.add("selectedRow");
+}
+
+
+// Go to the prev file
+async function onNavigateFile(direction="next"){
+    var rows = Array.from(document.querySelectorAll("#adventureFiles .fileRow"));
+    var contentIDs = rows.map(x => x.getAttribute("data-content-id"));
+    var currRow = rows.filter(x => x.classList.contains("selectedRow"))?.[0]?.getAttribute("data-content-id") ?? "";
+    var rowIdx = contentIDs.indexOf(currRow);
+    var nextRow = (direction == "next") ? rows[rowIdx+1] : (direction == "prev") ? rows[rowIdx-1] : undefined;
+    if(nextRow != undefined){
+        nextRow.querySelector(".fieldCell").click();
+    } else { 
+        MyDom.setContent("#navMessage", {"innerText": "Reached end of the list."});
+        setTimeout( ()=> {
+            MyDom.setContent("#navMessage", {"innerText": ""});
+        }, 2000);
+    }
+}
+
+// Save the open file and move to the next
+async function onSaveAndNext(){
+    var rows = Array.from(document.querySelectorAll("#adventureFiles .fileRow"));
+    var contentIDs = rows.map(x => x.getAttribute("data-content-id"));
+    var numRows = rows.length;
+    var currRow = rows.filter(x => x.classList.contains("selectedRow"))?.[0]?.getAttribute("data-content-id") ?? "";
+    var rowIdx = contentIDs.indexOf(currRow);
+    var closeAfter = (rowIdx == numRows-1);
+    await onSaveFile(closeAfter);
+    if(!closeAfter){
+        rows[rowIdx+1]?.querySelector(".fieldCell").click();
     }
 }

@@ -56,16 +56,16 @@ class PageManager {
 
     successMessage(message, clearAfter=3){
         var styledMessage = `<span style="color:limegreen;">${message}</span>`;
-        MyPageManager.setNotifyMessage(styledMessage,5);
+        MyPageManager.setNotifyMessage(styledMessage,clearAfter);
     }
 
     errorMessage(message, clearAfter=5){
         var styledMessage = `<span style="color:red;">${message}</span>`;
-        MyPageManager.setNotifyMessage(styledMessage,5);
+        MyPageManager.setNotifyMessage(styledMessage,clearAfter);
     }
 
     infoMessage(message, clearAfter=3){
-        MyPageManager.setNotifyMessage(message,5);
+        MyPageManager.setNotifyMessage(message,clearAfter);
     }
 
     // Set a notify message based on resuts
