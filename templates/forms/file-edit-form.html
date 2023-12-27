@@ -35,7 +35,14 @@
             </div>
             <div class="form-field-section-medium">
                 <label>File Preview Time:</label><br/>
-                <input class="form-field" type="text" name="preview" id="preview" value="" placeholder="Format: 0m0s" required />
+                <input class="form-field" type="text" name="preview" id="preview" value="" placeholder="Format: 0m0s" required /><br/>
+                <select id="previewTimePercent" placeholder="Enter percentage of duration to use for preview" onchange="onGeneratePreview()">
+                    <option value="0">Select Percentage ... </option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="75">75</option>
+                </select>
+                <span id="previewTimeGeneration"></span>
             </div>
             <div class="form-field-section-large">
                 <label>Description:</label><br/>
@@ -43,8 +50,9 @@
             </div>
             <div class="flex-break"></div>
             <div>
+                <input id="fileDuration" type="text" name="duration" value="" hidden disabled/>
                 <input id="contentID" type="text" name="contentID" value="" required hidden/>
-                <input class="form-field" type="text" name="adventure" value="" style="width:90%;" required hidden />    
+                <input type="text" name="adventure" value="" style="width:90%;" required hidden />    
             </div>
             <div class="fileEditButtons">
                 <button class="modalCloser2" onclick="onCloseModal()">CLOSE</button> &nbsp;

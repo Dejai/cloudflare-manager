@@ -101,8 +101,7 @@ function onOpenModal(cell){
     var contentID = row?.getAttribute("data-content-id") ?? "";
     if (contentID != "") {
         onSetSelectedRow(row);
-        // MyDom.removeClass("tr.selectedRow", "selectedRow");
-        // row.classList.add("selectedRow");
+        MyDom.setContent("#previewTimePercent", {"value": "0"});
         var file = MyPageManager.getContent("Files")?.filter(x => x.ContentID == contentID)?.[0];
         MyDom.fillForm("#fileModalForm", file);
         MyDom.addClass("#fileFormModal.modalContainer", "open");
@@ -139,15 +138,11 @@ async function onSaveFile(closeModal=false) {
 
         // Determine if to close modal or go next
         var saveAndNext = document.querySelector("#nextFile")?.checked ?? false;
-        console.log(saveAndNext);
         if(saveAndNext){ 
             onNavigateFile("next");
         } else { 
             onCloseModal();
         }
-        // if(closeModal){
-        //     onCloseModal();
-        // }
     } catch(err){
         MyLogger.LogError(err);
         MyPageManager.errorMessage(err.Message, 10);
@@ -189,5 +184,31 @@ async function onSaveAndNext(){
     await onSaveFile(closeAfter);
     if(!closeAfter){
         rows[rowIdx+1]?.querySelector(".fieldCell").click();
+    }
+}
+
+
+// Generate a preview time based on duration
+function onGeneratePreview(){
+    var time = "0m0s"
+    try { 
+        var duration = MyDom.getContent("#fileDuration")?.value ?? "";
+        var percent = MyDom.getContent("#previewTimePercent")?.value ?? "";
+        if(duration == "" || percent == ""){
+            throw new Error("Missing duration or percent");
+        }
+        percent = Number(percent);
+        duration = Number(duration);
+        // Get percentage of duration
+        var percentage = percent / 100;
+        var videoTime = Math.floor( (duration * percentage) );
+        // var quarterWay = Math.floor( (duration * 0.25) );
+        var minute = Math.floor( (videoTime / 60) );
+        var seconds = Math.ceil( (videoTime % 60) );
+        time = `${minute}m${seconds}s`;
+    } catch(err){
+        console.error(err);
+    } finally {
+        MyDom.setContent("#preview", {"value": time});
     }
 }
