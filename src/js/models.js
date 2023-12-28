@@ -115,6 +115,49 @@ class Group {
     }
 }
 
+// Class to store the video details
+class StreamVideo {
+    constructor(videoObj) {
+        this.AdventureID = videoObj?.adventureID ?? "";
+        this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
+        this.Adventure = this.AdventureID;
+        this.AdventureName = "";
+        this.ContentID = videoObj?.uid ?? "";
+        this.ContentType = "stream";
+        this.Creator = videoObj?.creator ?? "";
+        this.ShowCreator = videoObj?.showCreator ?? "No";
+        this.Date = videoObj?.date ?? "";
+        this.Name = videoObj?.name ?? "";
+        this.Description = videoObj?.description ?? "";
+        this.Duration = videoObj?.duration ?? 0;
+        this.Order = videoObj?.order ?? 0;
+        this.Ready = videoObj?.readyToStream ?? false;
+        this.Signed = videoObj?.requireSignedURLs ?? false;
+        this.Preview = videoObj?.preview ?? "0m0s";
+        this.Urls = videoObj?.urls ?? {};
+
+        this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
+    }
+
+    setAdventureName(adventureMap){
+        this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
+    }
+
+    setEditIcons(iconsHtml){
+        this.EditIcons = iconsHtml;
+    }
+}
+
+// The "Translation" object
+class Translation {
+    constructor(jsonObj={}){
+        this.Code = jsonObj?.Code ?? "";
+        this.Path = jsonObj?.Path ?? "";
+        this.PathDecoded = decodeURIComponent(this.Path);
+        this.Date = new Date(jsonObj?.Date);
+    }
+}
+
 // The "User" object
 class User { 
     constructor(userDetails) {
@@ -155,38 +198,5 @@ class UserAccess {
             accessList.push( {"Scope": key, "Group": val});
         }
         return accessList;
-    }
-}
-
-// Class to store the video details
-class StreamVideo {
-    constructor(videoObj) {
-        this.AdventureID = videoObj?.adventureID ?? "";
-        this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
-        this.Adventure = this.AdventureID;
-        this.AdventureName = "";
-        this.ContentID = videoObj?.uid ?? "";
-        this.ContentType = "stream";
-        this.Creator = videoObj?.creator ?? "";
-        this.ShowCreator = videoObj?.showCreator ?? "No";
-        this.Date = videoObj?.date ?? "";
-        this.Name = videoObj?.name ?? "";
-        this.Description = videoObj?.description ?? "";
-        this.Duration = videoObj?.duration ?? 0;
-        this.Order = videoObj?.order ?? 0;
-        this.Ready = videoObj?.readyToStream ?? false;
-        this.Signed = videoObj?.requireSignedURLs ?? false;
-        this.Preview = videoObj?.preview ?? "0m0s";
-        this.Urls = videoObj?.urls ?? {};
-
-        this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
-    }
-
-    setAdventureName(adventureMap){
-        this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
-    }
-
-    setEditIcons(iconsHtml){
-        this.EditIcons = iconsHtml;
     }
 }

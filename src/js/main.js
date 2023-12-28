@@ -24,73 +24,60 @@ MyDom.ready( async () => {
 
     try {
 
+        // Check if logged in
+        if(!loginDetails.IsLoggedIn){
+            MyDom.showContent("#headerContent #loginRequired");
+            throw new Error("Login required");
+        }
+
+        // Check if manager
+        var manager = await MyFetch.call("GET", "https://files.dejaithekid.com/manager");
+        if(!(manager?.results ?? false)){
+            MyDom.showContent("#unauthorized");
+            throw new Error("Unauthorized");
+        }
+
         // Load the adventures
         await getListOfAdventures();
         var adventureSection = await MyTemplates.getTemplateAsync("templates/sections/adventure-section.html", {});
         MyDom.setContent("#mainContentSection", {"innerHTML": adventureSection }, true);
+        MyDom.showContent('#headerContent .tab[data-tab-name="adventures"]');
         
         // Load the Groups
         await getListOfGroups();
         var groupSection = await MyTemplates.getTemplateAsync("templates/sections/group-section.html", {});
         MyDom.setContent("#mainContentSection", { "innerHTML": groupSection }, true);
+        MyDom.showContent('#headerContent .tab[data-tab-name="groups"]');
 
         // Load the users
         await onGetListOfUsers();
         var userSection = await MyTemplates.getTemplateAsync("templates/sections/user-section.html", {});
         MyDom.setContent("#mainContentSection", { "innerHTML": userSection }, true);
+        MyDom.showContent('#headerContent .tab[data-tab-name="users"]');
 
-        // Show something
-        await showMainContent();
-        
+        // Load the users
+        await getListOfTranslations();
+        var translationsSecction = await MyTemplates.getTemplateAsync("templates/sections/translation-section.html", {});
+        MyDom.setContent("#mainContentSection", { "innerHTML": translationsSecction }, true);
+        MyDom.showContent('#headerContent .tab[data-tab-name="translations"]');
+
+        // Load the tab from the URL
+        loadTabFromUrl();
+        MyDom.showContent("#syncButton");
+
         // Load modals
         var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
         var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
         MyDom.setContent("#modalSection", {"innerHTML": adventureForm}, true);
         MyDom.setContent("#modalSection", {"innerHTML": accessForm}, true);
 
+        
     } catch (err){
         MyLogger.LogError(err);
+    } finally {
+        MyDom.hideContent("#mainLoadingIcon");
     }
-
-
-    // First, get the set of adventures & store in select list
-    // await GetListOfAdventures();
-
-    // // Load up the modal for editing files
-    // var fileEditModal = await MyTemplates.getTemplateAsync("templates/adventures/file-edit-modal.html", {});
-    // MyDom.setContent("#fileEditModal", {"innerHTML": fileEditModal});
-
-    // var existingAdventureID = MyUrls.getSearchParam("adventure");
-    // if(existingAdventureID != undefined){
-    //     loadAdventureByID(existingAdventureID);
-    // }
 });
-
-// Show content based on results of loads
-async function showMainContent(){
-    var templateName = "";
-    var isLoggedIn = await MyAuth.isLoggedIn();
-    if(!isLoggedIn) {
-        templateName = "loginRequired"
-    } else {
-        var advs = MyPageManager.getContent("Users")?.length ?? 0;
-        var groups = MyPageManager.getContent("Users")?.length ?? 0;
-        var users = MyPageManager.getContent("Users")?.length ?? 0;
-        if(advs > 0 && groups > 0 && users > 0){
-            templateName = "tabs"
-        } else { 
-            templateName = "unAuthorized"
-        }
-    }
-    
-    var template = await MyTemplates.getTemplateAsync(`./templates/_shared/${templateName}.html`, {});
-    MyDom.setContent("#headerContent", {"innerHTML": template});
-
-    // If loaded tabs, then check URL for existing tabs
-    if(templateName == "tabs"){
-        loadTabFromUrl();
-    }
-}
 
 // Check search params & load specific tab
 function loadTabFromUrl(){

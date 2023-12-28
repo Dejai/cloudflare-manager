@@ -1,0 +1,38 @@
+<div id="translationsTabSection" style="position:relative" data-tab-name="translations" class="hidden showOnTranslationsLoaded hideOnTabSwitch tab-section">
+
+    <div class="tab-sections">
+
+        <div class="content-select-section">
+            <h3>List of Translations</h3>
+            <button onclick="onAddTranslation()">Add Translation</button> <br/> <br/>
+            <div id="searchTranslations"></div>
+            <!-- Shows the list of adventures to pick from -->
+            <div id="listOfTranslations" class="listOfContent" style="max-height:400px; padding-left:1%; "></div>
+        </div>
+
+        <!-- The Translation details & list of users -->
+        <div id="translationDetailsSection" class="hidden showOnTranslationSelected contentDetailsSection">
+
+            <div>
+                <h3 id="translationName"> The Details &mdash; <button onclick="onSaveTranslationDetails()">SAVE</button></h3>
+    
+                <div id="translationDetailsForm">
+                    <div class="translationDetailsFormSubsection">
+                    </div>
+                    
+                    <div class="translationDetailsFormSubsection">
+                        <label for="name">Code: </label><br/>
+                        <input id="name" type="text" name="code" placeholder="Enter Translation Code" style="width:50%" required />
+                    </div>
+        
+                    <div class="translationDetailsFormSubsection">
+                        <label for="name">Translation: </label><br/>
+                        <input id="pathDecoded" type="text" name="pathDecoded" placeholder="Enter Translation Value" style="width:50%" required />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</div>
