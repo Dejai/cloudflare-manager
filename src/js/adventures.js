@@ -143,8 +143,12 @@ function onSelectFile(cell){
 }
 
 // Close the modal
-function onCloseModal(){
+function onCloseModal(refesh=false){
     MyDom.removeClass(".modalContainer", "open");
+    if(refesh){
+        var advID = MyUrls.getSearchParam("content") ?? "";
+        loadAdventureFilesByID(advID);
+    }
 }
 
 // Save the edits to a fieldl (and entire row)
@@ -175,7 +179,7 @@ async function onSaveFile(closeModal=false) {
         if(saveAndNext){ 
             onNavigateFile("next");
         } else { 
-            onCloseModal();
+            onCloseModal(true);
         }
     } catch(err){
         MyLogger.LogError(err);
