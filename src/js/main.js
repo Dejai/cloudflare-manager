@@ -42,6 +42,10 @@ MyDom.ready( async () => {
         var adventureSection = await MyTemplates.getTemplateAsync("templates/sections/adventure-section.html", {});
         MyDom.setContent("#mainContentSection", {"innerHTML": adventureSection }, true);
         MyDom.showContent('#headerContent .tab[data-tab-name="adventures"]');
+
+        // Add form for adventure
+        var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
+        MyDom.setContent("#modalSection", {"innerHTML": adventureForm}, true);
         
         // Load the Groups
         await getListOfGroups();
@@ -65,10 +69,8 @@ MyDom.ready( async () => {
         loadTabFromUrl();
         MyDom.showContent("#syncButton");
 
-        // Load modals
-        var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
+        // Load Access form
         var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
-        MyDom.setContent("#modalSection", {"innerHTML": adventureForm}, true);
         MyDom.setContent("#modalSection", {"innerHTML": accessForm}, true);
 
         

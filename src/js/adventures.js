@@ -2,6 +2,7 @@
 async function getListOfAdventures(){
     var adventures = await MyFetch.call("GET", `https://files.dejaithekid.com/adventures/`);
     adventures = adventures.map(result => new Adventure(result));
+    adventures.push(new Adventure({"name": "_Default", "adventureID": 0}));
     adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
     MyPageManager.addContent("Adventures", adventures);
     return adventures;
@@ -29,22 +30,50 @@ async function onShowAdventures(loadFromUrl=false) {
 
 // Get the Adventure & its files
 async function onSelectAdventure(option){
-    var adventureID = option.getAttribute("data-adventure-id") ?? "";
-    MyUrls.modifySearch({"tab" : "adventures", "content":adventureID});
-    loadAdventureByID(adventureID);     
-    loadAdventureFilesByID(adventureID);
-    MyDom.hideContent(".hideOnAdventureSelected");
-    MyDom.showContent(".showOnAdventureSelected");
+    try{
+        var adventureID = option.getAttribute("data-adventure-id") ?? "";
+        MyUrls.modifySearch({"tab" : "adventures", "content":adventureID});
+        var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == adventureID)?.[0];
+        MyDom.fillForm("#adventureDetailsForm", adventure);   
+        
+        loadAdventureFilesByID(adventureID);
+
+        MyDom.hideContent(".hideOnAdventureSelected");
+        MyDom.showContent(".showOnAdventureSelected");
+
+        // Set adventure options in the 
+        var advOpts = await MyTemplates.getTemplateAsync("templates/options/adventure-option.html", MyPageManager.getContent("Adventures"));
+        MyDom.setContent("#fileModalForm #adventure", {"innerHTML": advOpts});
+
+    } catch(err){
+        console.error(err);
+    }
+
 }
 
-// Load the adventure based on its adventure ID
-async function loadAdventureByID(adventureID){
-    try {
-        var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == adventureID)?.[0];
-        MyDom.fillForm("#adventureDetailsForm", adventure);
-    } catch (err) {
-        MyLogger.LogError(err);
+// Adding a new template
+async function onNewAdventure(){
+    MyDom.hideContent("#newAdventureButton");
+    MyDom.showContent("#newAdventureNameInputSection");
+}
+
+// Adding a new adventure
+async function onAddAdventure(){
+    var adventureID = MyHelper.getCode(22, "mix")?.toLowerCase();
+    var adventureName = MyDom.getContent("#newAdventureName")?.value ?? "";
+    if(adventureName == ""){
+        MyPageManager.errorMessage("Adventure name is required");
+        return;
     }
+    var adventure = new Adventure({ 
+        "adventureID": adventureID, 
+        "name": adventureName, 
+        "status": "Draft" });
+    MyPageManager.addContent("Adventures", [adventure]);
+    var adventureListItem = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", adventure);
+    MyDom.setContent("#listOfAdventures", {"innerHTML": adventureListItem}, true);
+    MyDom.showContent("#newAdventureButton");
+    MyDom.hideContent("#newAdventureNameInputSection");
 }
 
 // Load the adventure files based on an advenure ID
@@ -52,14 +81,19 @@ async function loadAdventureFilesByID(adventureID) {
     try {
         MyDom.showContent(".showOnFilesLoading");
         MyDom.setContent("#listOfAdventureFiles", {"innerHTML": ""});
-        var adventureVideos = adventureID == "" ? [] : await MyCloudFlare.GetVideos(adventureID);
+        var adventureVideos = [];
+        if(adventureID != ""){
+            adventureVideos = (adventureID == "0") 
+                                ? await MyFetch.call("GET", "https://files.dejaithekid.com/stream/unassigned") 
+                                : await MyCloudFlare.GetVideos(adventureID);
+        }
         var streamVideos = adventureVideos.map( vid => new StreamVideo(vid));
         streamVideos.sort( (a,b) => { return a.Order - b.Order });
         MyPageManager.addContent("Files", streamVideos);
         var templateName = streamVideos.length > 0 ? "file-row" : "file-row-empty";
         var fileRowsTemplate = await MyTemplates.getTemplateAsync(`templates/rows/${templateName}.html`, streamVideos);
         MyDom.setContent("#listOfAdventureFiles", {"innerHTML": fileRowsTemplate});
-        MyDom.showContent(".hideOnFilesLoaded");
+        MyDom.showContent(".showOnFilesLoaded");
         MyDom.hideContent(".hideOnFilesLoaded");
     } catch (err) {
         MyLogger.LogError(err);
@@ -96,7 +130,7 @@ async function  onSaveAdventureDetails(){
 }
 
 // Open the modal
-function onOpenModal(cell){
+function onSelectFile(cell){
     row = cell.closest("tr");
     var contentID = row?.getAttribute("data-content-id") ?? "";
     if (contentID != "") {
@@ -155,7 +189,6 @@ function onSetSelectedRow(row){
     row.classList.add("selectedRow");
 }
 
-
 // Go to the prev file
 async function onNavigateFile(direction="next"){
     var rows = Array.from(document.querySelectorAll("#adventureFiles .fileRow"));
@@ -186,7 +219,6 @@ async function onSaveAndNext(){
         rows[rowIdx+1]?.querySelector(".fieldCell").click();
     }
 }
-
 
 // Generate a preview time based on duration
 function onGeneratePreview(){

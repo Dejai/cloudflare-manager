@@ -3,6 +3,11 @@
     <div class="tab-sections">
         <div class="content-select-section listofContentSection">
             <h3>List of Adventures</h3>
+            <button id="newAdventureButton" onclick="onNewAdventure()">New Adventure</button><br/>
+            <div id="newAdventureNameInputSection" class="hidden">
+                <input type="text" id="newAdventureName" placeholder="Enter adventure name ">
+                <button onclick="onAddAdventure()">Add</button>    
+            </div>
             <!-- Shows the list of adventures to pick from -->
             <div id="listOfAdventures" class="listOfContent" ></div>
         </div>

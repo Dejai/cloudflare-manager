@@ -8,6 +8,12 @@
                 <button onclick="onNavigateFile('prev')">PREV</button>
                 <button onclick="onNavigateFile('next')">NEXT</button>
             </div>
+
+            <div class="form-field-section-large">
+                <label>Adventure:</label><br/>
+                <select name="adventure" id="adventure" required></select>
+                <!-- <input type="text" name="adventure" value="" style="width:90%;" required hidden />     -->
+            </div>
             
             <div class="form-field-section-medium">
                 <label>File Name:</label><br/>
@@ -37,10 +43,10 @@
                 <label>File Preview Time:</label><br/>
                 <input class="form-field" type="text" name="preview" id="preview" value="" placeholder="Format: 0m0s" required /><br/>
                 <select id="previewTimePercent" placeholder="Enter percentage of duration to use for preview" onchange="onGeneratePreview()">
-                    <option value="0">Select Percentage ... </option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="75">75</option>
+                    <option value="0">Select % ... </option>
+                    <option value="25">25%</option>
+                    <option value="50">50%</option>
+                    <option value="75">75%</option>
                 </select>
                 <span id="previewTimeGeneration"></span>
             </div>
@@ -52,7 +58,7 @@
             <div>
                 <input id="fileDuration" type="text" name="duration" value="" hidden disabled/>
                 <input id="contentID" type="text" name="contentID" value="" required hidden/>
-                <input type="text" name="adventure" value="" style="width:90%;" required hidden />    
+                <!-- <input type="text" name="adventure" value="" style="width:90%;" required hidden />     -->
             </div>
             <div class="fileEditButtons">
                 <button class="modalCloser2" onclick="onCloseModal()">CLOSE</button> &nbsp;
