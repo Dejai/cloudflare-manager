@@ -81,12 +81,7 @@ async function loadAdventureFilesByID(adventureID) {
     try {
         MyDom.showContent(".showOnFilesLoading");
         MyDom.setContent("#listOfAdventureFiles", {"innerHTML": ""});
-        var adventureVideos = [];
-        if(adventureID != ""){
-            adventureVideos = (adventureID == "0") 
-                                ? await MyFetch.call("GET", "https://files.dejaithekid.com/stream/unassigned") 
-                                : await MyCloudFlare.GetVideos(adventureID);
-        }
+        var adventureVideos = (adventureID != "") ? await MyCloudFlare.GetVideos(adventureID) : [];
         var streamVideos = adventureVideos.map( vid => new StreamVideo(vid));
         streamVideos.sort( (a,b) => { return a.Order - b.Order });
         MyPageManager.addContent("Files", streamVideos);
