@@ -3,8 +3,6 @@
 // Get the list of groups
 async function getListOfGroups(){
     var groups = await MyCloudFlare.KeyValues("GET", "/groups");
-    console.log("Groups again");
-    console.log(groups);
     groups = groups.map(result => new Group(result));
     groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
     MyPageManager.addContent("Groups", groups);
@@ -52,14 +50,8 @@ async function  onSaveGroupDetails(){
         }
 
         // Save changes in cloudflare
-        console.log(fields);
-        console.log( JSON.stringify(fields) );
-
         var results = await MyCloudFlare.KeyValues("POST", "/group", { body: JSON.stringify(fields) });
-        console.log(results);
-        var message = (results?.status ?? "") != 400 ? "OK": (results?.message ?? "Something went wrong");
-        // var results = await MyFetch.call("POST", "https://files.dejaithekid.com/group", { body: JSON.stringify(fields) });
-        MyPageManager.setResultsMessage( { "type": "Group", "message": message });
+        MyPageManager.setResultsMessage(results);
 
     } catch(err){
         MyLogger.LogError(err);

@@ -31,7 +31,8 @@ MyDom.ready( async () => {
         }
 
         // Check if manager
-        var manager = await MyFetch.call("GET", "https://files.dejaithekid.com/manager");
+        // var manager = await MyFetch.call("GET", "https://files.dejaithekid.com/manager");
+        var manager = await MyCloudFlare.Files("GET", "/manager");
         if(!(manager?.results ?? false)){
             MyDom.showContent("#unauthorized");
             throw new Error("Unauthorized");
@@ -60,10 +61,10 @@ MyDom.ready( async () => {
         MyDom.showContent('#headerContent .tab[data-tab-name="users"]');
 
         // Load the users
-        await getListOfTranslations();
-        var translationsSecction = await MyTemplates.getTemplateAsync("templates/sections/translation-section.html", {});
-        MyDom.setContent("#mainContentSection", { "innerHTML": translationsSecction }, true);
-        MyDom.showContent('#headerContent .tab[data-tab-name="translations"]');
+        await getListOfPaths();
+        var pathsSecction = await MyTemplates.getTemplateAsync("templates/sections/path-section.html", {});
+        MyDom.setContent("#mainContentSection", { "innerHTML": pathsSecction }, true);
+        MyDom.showContent('#headerContent .tab[data-tab-name="paths"]');
 
         // Load the tab from the URL
         loadTabFromUrl();

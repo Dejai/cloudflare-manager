@@ -2,7 +2,7 @@
 
 // Get the list of users
 async function onGetListOfUsers(){
-    var users = await MyFetch.call("GET", `https://files.dejaithekid.com/users/`);
+    var users = await MyCloudFlare.Files("GET", "/users");
     users = users.map(result => new User(result));
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
@@ -47,7 +47,7 @@ async function onSelectUser(option){
 async function onGetAccessByUserKey(userKey){
     MyDom.showContent(".showOnAccessLoading");
     MyDom.setContent("#listOfAccess", {"innerHTML": ""} );
-    var accessDetails = await MyFetch.call("GET", `https://files.dejaithekid.com/access/?key=${userKey}`);
+    var accessDetails = await MyCloudFlare.Files("GET", `/access/?key=${userKey}`);
     var userAccess = new UserAccess(accessDetails);
     MyPageManager.addContent("Access-"+userKey, userAccess);
     var accessList = userAccess.getAccessList();
@@ -76,7 +76,7 @@ async function onSaveAccess(){
             userAccess[scope] = group;
 
             // Save this access
-            var results = await MyFetch.call("POST", `https://files.dejaithekid.com/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
+            var results = await MyCloudFlare.Files("POST", `/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
             MyPageManager.setResultsMessage(results);
 
             // Add access to be synced

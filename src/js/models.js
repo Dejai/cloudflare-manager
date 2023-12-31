@@ -28,7 +28,7 @@ class PageManager {
         try {
             for(var val of this.ToBeSynced){
                 this.infoMessage(`Syncing ${val}`, -1);
-                var results = await MyFetch.call("GET", `https://files.dejaithekid.com/sync/${val}`);
+                var results = await MyCloudFlare.Files("GET", `/sync/${val}`);
                 this.setResultsMessage(results);
             }
             // After sync, reload the page
@@ -70,7 +70,7 @@ class PageManager {
 
     // Set a notify message based on resuts
     setResultsMessage(results){
-        var message = results?.message ?? "";
+        var message = results?.message ?? "OK";
         var type = results?.type ?? "Content";
         if( message == "OK" ) {
             this.successMessage(`${type} saved!`);
@@ -148,13 +148,13 @@ class StreamVideo {
     }
 }
 
-// The "Translation" object
-class Translation {
+// The "Path" object
+class Path {
     constructor(jsonObj={}){
-        this.Code = jsonObj?.Code ?? "";
-        this.Path = jsonObj?.Path ?? "";
-        this.PathDecoded = decodeURIComponent(this.Path);
-        this.Date = new Date(jsonObj?.Date);
+        this.Key = jsonObj?.key ?? "";
+        this.Value = jsonObj?.value ?? "";
+        this.Path = jsonObj?.path ?? "";
+        this.Date = new Date(jsonObj?.date);
     }
 }
 

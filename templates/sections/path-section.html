@@ -1,0 +1,38 @@
+<div id="pathsTabSection" style="position:relative" data-tab-name="paths" class="hidden showOnPathsLoaded hideOnTabSwitch tab-section">
+
+    <div class="tab-sections">
+
+        <div class="content-select-section">
+            <h3>List of Paths</h3>
+            <button onclick="onAddPath()">Add Path</button> <br/> <br/>
+            <div id="searchPaths"></div>
+            <!-- Shows the list of adventures to pick from -->
+            <div id="listOfPaths" class="listOfContent" style="max-height:400px; padding-left:1%; "></div>
+        </div>
+
+        <!-- The Path details & list of users -->
+        <div id="pathDetailsSection" class="hidden showOnPathSelected contentDetailsSection">
+
+            <div>
+                <h3 id="pathName"> The Details &mdash; <button onclick="onSavePathDetails()">SAVE</button></h3>
+    
+                <div id="pathDetailsForm">
+                    <div class="pathDetailsFormSubsection">
+                    </div>
+                    
+                    <div class="pathDetailsFormSubsection">
+                        <label for="key">Code: </label><br/>
+                        <input id="key" type="text" name="key" placeholder="Enter Path Key" style="width:50%" required />
+                    </div>
+        
+                    <div class="pathDetailsFormSubsection">
+                        <label for="path">Path: </label><br/>
+                        <input id="path" type="text" name="path" placeholder="Enter Path Value" style="width:50%" required />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</div>

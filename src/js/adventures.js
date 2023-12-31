@@ -1,6 +1,6 @@
 // Get the list of adventures
 async function getListOfAdventures(){
-    var adventures = await MyFetch.call("GET", `https://files.dejaithekid.com/adventures/`);
+    var adventures = await MyCloudFlare.Files("GET", "/adventures");
     adventures = adventures.map(result => new Adventure(result));
     adventures.push(new Adventure({"name": "_Default", "adventureID": 0}));
     adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
