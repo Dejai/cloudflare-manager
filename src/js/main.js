@@ -31,7 +31,6 @@ MyDom.ready( async () => {
         }
 
         // Check if manager
-        // var manager = await MyFetch.call("GET", "https://files.dejaithekid.com/manager");
         var manager = await MyCloudFlare.Files("GET", "/manager");
         if(!(manager?.results ?? false)){
             MyDom.showContent("#unauthorized");
