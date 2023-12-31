@@ -81,7 +81,7 @@ async function loadAdventureFilesByID(adventureID) {
     try {
         MyDom.showContent(".showOnFilesLoading");
         MyDom.setContent("#listOfAdventureFiles", {"innerHTML": ""});
-        var adventureVideos = (adventureID != "") ? await MyCloudFlare.GetVideos(adventureID) : [];
+        var adventureVideos = (adventureID != "") ? await MyCloudFlare.Files("GET",`/stream/?search=${adventureID}`) : [];
         var streamVideos = adventureVideos.map( vid => new StreamVideo(vid));
         streamVideos.sort( (a,b) => { return a.Order - b.Order });
         MyPageManager.addContent("Files", streamVideos);
