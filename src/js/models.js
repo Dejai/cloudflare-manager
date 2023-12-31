@@ -28,7 +28,7 @@ class PageManager {
         try {
             for(var val of this.ToBeSynced){
                 this.infoMessage(`Syncing ${val}`, -1);
-                var results = await MyCloudFlare.Files("GET", `/sync/${val}`);
+                var results = await MyCloudFlare.Files("GET", `/${val}/sync`);
                 this.setResultsMessage(results);
             }
             // After sync, reload the page
