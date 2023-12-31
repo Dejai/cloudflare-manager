@@ -13,7 +13,7 @@
         <div id="groupDetailsSection" class="hidden showOnGroupSelected contentDetailsSection">
 
             <div>
-                <h3 id="groupName"> The Details &mdash; <button onclick="onSaveGroupDetails()">SAVE</button></h3>
+                <h3 id="groupName"> The Details &mdash; <button id="saveGroupDetailsButton" onclick="onSaveGroupDetails()">SAVE</button></h3>
     
                 <div id="groupDetailsForm">
                     <div class="groupDetailsFormSubsection">
@@ -21,12 +21,12 @@
                     
                     <div class="groupDetailsFormSubsection">
                         <label for="name">Name: </label><br/>
-                        <input id="name" type="text" name="name" placeholder="Enter Group Name" style="width:50%" required />
+                        <input id="value" type="text" name="value" placeholder="Enter Group Name" style="width:50%" required />
                     </div>
         
                     <div class="groupDetailsFormSubsection">
                         <label for="name">Key: </label><br/>
-                        <input id="key" type="text" name="key" placeholder="Enter Group Name" style="width:50%" required />
+                        <input id="key" type="text" name="key" placeholder="Enter Group Key" style="width:50%" required />
                     </div>
                 </div>
             </div>

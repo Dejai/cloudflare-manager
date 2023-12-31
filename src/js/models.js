@@ -111,7 +111,7 @@ class Adventure {
 class Group {
     constructor(detailsJson={}){
         this.Key = detailsJson?.key ?? "";
-        this.Name = detailsJson?.name ?? "";
+        this.Value = detailsJson?.value ?? "";
     }
 }
 

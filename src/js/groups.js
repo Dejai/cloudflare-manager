@@ -2,9 +2,11 @@
 
 // Get the list of groups
 async function getListOfGroups(){
-    var groups = await MyFetch.call("GET", `https://files.dejaithekid.com/groups/`);
+    var groups = await MyCloudFlare.KeyValues("GET", "/groups");
+    console.log("Groups again");
+    console.log(groups);
     groups = groups.map(result => new Group(result));
-    groups.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
+    groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
     MyPageManager.addContent("Groups", groups);
 }
 
@@ -50,8 +52,14 @@ async function  onSaveGroupDetails(){
         }
 
         // Save changes in cloudflare
-        var results = await MyFetch.call("POST", "https://files.dejaithekid.com/group", { body: JSON.stringify(fields) });
-        MyPageManager.setResultsMessage(results);
+        console.log(fields);
+        console.log( JSON.stringify(fields) );
+
+        var results = await MyCloudFlare.KeyValues("POST", "/group", { body: JSON.stringify(fields) });
+        console.log(results);
+        var message = (results?.status ?? "") != 400 ? "OK": (results?.message ?? "Something went wrong");
+        // var results = await MyFetch.call("POST", "https://files.dejaithekid.com/group", { body: JSON.stringify(fields) });
+        MyPageManager.setResultsMessage( { "type": "Group", "message": message });
 
     } catch(err){
         MyLogger.LogError(err);
@@ -59,8 +67,38 @@ async function  onSaveGroupDetails(){
     }
 }
 
+// Add a new group
 async function onAddGroup(){
     MyDom.fillForm("#groupDetailsForm", {});
     MyDom.hideContent(".hideOnGroupSelected");
     MyDom.showContent(".showOnGroupSelected");
+    MyUrls.replaceSearch({"tab" : "groups" });
+}
+
+
+function fillForm2(formID, formObj) {
+    var formSelector = formID?.replace("#", "");
+    var formFields = document.querySelectorAll(`#${formSelector} [name]`);
+    var objectKeys = Object.keys(formObj);
+    for(var field of formFields){
+        var fieldKey = field.getAttribute("name");
+        var pascalKey = fieldKey.substring(0,1).toUpperCase() + fieldKey.substring(1);
+        // Setting the value
+        var valueToSet = (objectKeys.includes(pascalKey)) ? formObj[pascalKey] : "";
+        field.value = valueToSet;
+        if(field.tagName == "TEXTAREA"){
+            field.innerText = valueToSet;
+        }
+    }
+    // for(var key of Object.keys(formObj)) {
+    // 	var camelKey = key.substring(0,1).toLowerCase() + key.substring(1);
+    // 	var fieldValue = formObj[key];
+    // 	var field = document.querySelector(`#${formSelector} [name="${camelKey}"]`);
+    // 	if(field != undefined){
+    // 		field.value = fieldValue;
+    // 		if(field.tagName == "TEXTAREA") {
+    // 			field.innerText = fieldValue;
+    // 		} 
+    // 	}
+    // }
 }
