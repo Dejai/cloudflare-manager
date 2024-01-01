@@ -117,3 +117,17 @@ async function onOpenAccessModal(){
 function onCloseAccessModal(){
     MyDom.removeClass(".modalContainer", "open");
 }
+
+// Sync the adventures
+async function onSyncUsers(){
+    MyPageManager.infoMessage("Syncing Users", -1);
+    var results = await MyCloudFlare.Files("GET", `/users/sync`);
+    MyPageManager.setResultsMessage(results);
+    MyPageManager.removeContent("Users");
+    await onGetListOfUsers();
+    // Reload if current tab
+    var tab = MyUrls.getSearchParam("tab") ?? "";
+    if(tab == "users"){
+        onShowUsers();
+    }
+}

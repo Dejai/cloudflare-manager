@@ -3,7 +3,8 @@ class PageManager {
 
     constructor(){
         this.Content = {};
-        this.ToBeSynced = new Set(["users"]); // always start with users
+        this.ToBeSynced = new Set();
+        //  new Set(["users"]); // always start with users
     }
 
     // CHeck if content mapped
@@ -30,19 +31,26 @@ class PageManager {
         }
     }
 
+    // Clear existing content
+    removeContent(key){
+        if(this.hasContentKey(key)){
+            delete this.Content[key];
+        }
+    }
+
     // Keep track of things to be synced
     addToBySynced(val){ this.ToBeSynced.add(val); }
     async onSync() {
         try {
-            for(var val of this.ToBeSynced){
-                this.infoMessage(`Syncing ${val}`, -1);
-                var results = await MyCloudFlare.Files("GET", `/${val}/sync`);
-                this.setResultsMessage(results);
+            for(var func of this.ToBeSynced){
+                console.log(func);
+                // var name = key.toLowerCase();
+                // this.infoMessage(`Syncing ${key}`, -1);
+                // var results = await MyCloudFlare.Files("GET", `/${name}/sync`);
+                // this.setResultsMessage(results);
+                // this.removeContent(key);
             }
-            // After sync, reload the page
-            setTimeout(()=> {
-                MyUrls.refreshPage();
-            }, 3000);
+
             
         } catch(err) {
             MyLogger.LogError(err);
@@ -88,6 +96,49 @@ class PageManager {
         }
     }
     
+}
+
+// Used to sync the different objects that need to be synced
+class SyncManager{
+    constructor(){
+        this.Queue = {};
+
+        // listen for syncing
+        setInterval( ()=> {
+            MyLogger.LogInfo("Checking sync queue ... ");
+            for(var key of Object.keys(this.Queue)){
+                var currDate = new Date();
+                var date = this.Queue[key].Date;
+                var func = this.Queue[key].Func;
+                if(date < currDate){
+                    MyLogger.LogInfo("Syncing: " + key);
+                    func();
+                    delete this.Queue[key]; // Remove it from the queue after running func
+                }
+            }
+        }, 10000);
+    }
+
+    addSync(key, func){
+        var newDate = new Date();
+        // Always add 10 seconds to the datetime
+        newDate.setSeconds( newDate.getSeconds() + 10 );
+        this.Queue[key] = {
+            "Date": newDate,
+            "Func": func
+        }
+        MyLogger.LogInfo("Sync added to queue for " + key);
+    }
+}
+
+// An instance for an entity to be synced (includes function to run)
+class SyncFunction{
+    constructor(name, func){
+        this.Name = name;
+        this.Func = func;
+        this.Date = new Date();
+        this.Date.setTime( this.Date.getTime() + 10);
+    }
 }
 
 // The "Adventure" object

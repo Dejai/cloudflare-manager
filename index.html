@@ -13,16 +13,15 @@
 		<div id="menuItems" style="height:44px;">
 			<div class="menuItem menuItemLeft" style="z-index:10">
                 <h2 class="pointer" style="border-right:3px solid #D4D1CD; padding-right:1%;" onclick="MyUrls.navigateTo('/')">Cloudflare Manager</h2>
-
                 <div id="loginSection" style="padding-left:1%;min-width:10%;">
                     <span id="authLink" class="pointer loginAction" data-auth-action="logout" onclick="MyAuth.onAuthAction(this.getAttribute('data-auth-action'))">
                         <i class="fa-regular fa-circle-user"></i>
                         <span id="loginAction"></span>
                     </span>
                 </div>
-                <div id="syncButton" class="hidden showAfterLoadedAll" style="padding-left:1%;max-width:30%;">
+                <!-- <div id="syncButton" class="hidden showAfterLoadedAll" style="padding-left:1%;max-width:30%;">
                     <button onclick="MyPageManager.onSync()">SYNC</button>
-                </div>
+                </div> -->
                 <div id="messageSection" style="padding-left:3%">
                     MESSAGE
                 </div>
@@ -62,6 +61,7 @@
 <script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=1.2.1"></script>
 <!-- Manager Scripts -->
 <script src="src/js/models.js?v=1.2.1"></script>
+<script src="src/js/adventureFiles.js?v=1.2.1"></script>
 <script src="src/js/adventures.js?v=1.2.1"></script>
 <script src="src/js/groups.js?v=1.2.1"></script>
 <script src="src/js/paths.js?v=1.2.1"></script>

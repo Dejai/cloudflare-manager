@@ -3,6 +3,7 @@
 const MyTrello = new TrelloWrapper("adventures");
 const MyCloudFlare = new CloudflareWrapper();
 const MyPageManager = new PageManager();
+const MySyncManager = new SyncManager();
 
 const savingMessages = {
     "saving": "<span style='color:lightgray'>Saving changes ... </span>",
@@ -73,6 +74,8 @@ MyDom.ready( async () => {
         var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
         MyDom.setContent("#modalSection", {"innerHTML": accessForm}, true);
 
+        // Always add a sync for users right after loading
+        MySyncManager.addSync("Users", onSyncUsers);
         
     } catch (err){
         MyLogger.LogError(err);
