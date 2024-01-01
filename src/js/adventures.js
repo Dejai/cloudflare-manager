@@ -54,7 +54,7 @@ async function onSelectAdventure(option){
         MyDom.setContent("#fileModalForm #adventure", {"innerHTML": advOpts});
 
     } catch(err){
-        console.error(err);
+        MyLogger.LogError(err);
     }
 
 }
@@ -247,7 +247,7 @@ function onGeneratePreview(){
         var seconds = Math.ceil( (videoTime % 60) );
         time = `${minute}m${seconds}s`;
     } catch(err){
-        console.error(err);
+        MyLogger.LogError(err);
     } finally {
         MyDom.setContent("#preview", {"value": time});
     }

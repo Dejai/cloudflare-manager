@@ -15,7 +15,7 @@ class PageManager {
     // Adding content
     addContent(key, content){
         if(!this.hasContentKey(key) ){
-            this.Content[key] = [];
+            this.Content[key] = undefined;
         }
 
         // If content is a list

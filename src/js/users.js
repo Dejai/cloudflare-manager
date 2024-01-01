@@ -63,33 +63,47 @@ async function onGetAccessByUserKey(userKey){
 }
 
 // Add a new access
-async function onSaveAccess(){
+async function onSaveAccess(button){
+
+    var saveStatus = new SaveStatus(button);
+    saveStatus.saving();
+
     try {
         var details = MyDom.getFormDetails("#accessForm");
         var errors = details?.errors;
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            MyPageManager.errorMessage(errorMessage, 10);
+            saveStatus.error(errorMessage);
             return;
         }
         var userKey = MyDom.getContent("#addAccessButton")?.value;
         var accessKey = "Access-" + userKey;
         var userAccess = MyPageManager.getContent(accessKey)?.Access ?? undefined;
-        if(userAccess != undefined){
-            var fields = details?.fields ?? "";
-            var scope = fields?.scope?.toLowerCase();
-            var group = fields?.group?.toLowerCase();
-            userAccess[scope] = group;
+        if(userAccess == undefined){
+            throw new Error("UserKey is undefined");
+        }
 
-            // Save this access
-            var results = await MyCloudFlare.Files("POST", `/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
-            MyPageManager.setResultsMessage(results);
+        var fields = details?.fields ?? "";
+        var scope = fields?.scope?.toLowerCase();
+        var group = fields?.group?.toLowerCase();
+        userAccess[scope] = group;
 
+        // Save this access
+        var results = await MyCloudFlare.Files("POST", `/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
+        var message = results?.message ?? "OK"
+        if(message != "OK"){
+            throw new Error(message);
+        }
+        saveStatus.results(results);
+
+        setTimeout( () => {
             onCloseAccessModal();
             onGetAccessByUserKey(userKey);
-        }
+        }, 1000);
+
     } catch(err){
         MyLogger.LogError(err);
+        saveStatus.error(err.message);
     }
 }
 
