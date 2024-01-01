@@ -2,7 +2,11 @@
     
     <div class="tab-sections">
         <div class="listofContentSection">
-            <h3>List of Adventures &mdash; <button id="newAdventureButton" onclick="onAddAdventure()">ADD</button> </h3>
+            <h3>
+                <i class="listToggleIcon fa-solid fa-circle-chevron-down" onclick="onToggleList()"></i>
+                List of Adventures &mdash; 
+                <button id="newAdventureButton" onclick="onAddAdventure()">ADD</button> 
+            </h3>
             <!-- Shows the list of adventures to pick from -->
             <div id="listOfAdventures" class="listOfContent" ></div>
         </div>

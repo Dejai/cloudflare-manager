@@ -25,12 +25,14 @@ button { cursor:pointer; }
 .cf-manage-tab.active { background-color: white; color:black; }
 
 /* List of options to pick from */
+
 .entityOption.selected { background-color:blue !important; color:white !important; padding:2%; }
 
 /* The Tab Sections */
 .tab-sections { display:flex; flex-wrap:wrap; flex-direction:row; justify-content: left; gap:10px; }
 .listofContentSection { min-width:100%;  margin-left:0.5%; }
-.listOfContent { max-height: 100px; border-top: 2px dotted white; border-bottom:2px dotted white; overflow:scroll; margin-top:1%; }
+.listOfContent { max-height: 500px; border-top: 2px dotted white; border-bottom:2px dotted white; overflow:scroll; margin-top:1%; display:none; }
+.searchContainer { display:none; }
 .contentDetailsSection { min-width:100%; }
 
 /* Forms */
@@ -101,9 +103,12 @@ tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; co
     
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
+    .listToggler { display:none; }
     .listofContentSection { min-width:15%; }
-    .listOfContent { max-height: 500px; }
+    .listOfContent { display:block; }
+    .searchContainer { display: block; }
     .contentDetailsSection { min-width:40%; max-width:85%; }
+    .listToggleIcon { display:none !important; }
 
     /* Form fields */    
     .form-section .form-field-section-small { min-width:10%; max-width:40%; }

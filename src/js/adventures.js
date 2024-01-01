@@ -113,7 +113,6 @@ async function  onSaveAdventureDetails(button){
 
         // Add adventures to be synced
         MySyncManager.addSync("Adventures", onSyncAdventures);
-        console.log(MyPageManager);
 
     } catch(err){
         MyLogger.LogError(err);
@@ -132,5 +131,25 @@ async function onSyncAdventures(){
     var tab = MyUrls.getSearchParam("tab") ?? "";
     if(tab == "adventures"){
         onShowAdventures();
+    }
+}
+
+// Toggle the visibility of the list of adventures
+function onToggleListOfAdventures(icon){
+    var closed = "fa-circle-chevron-down";
+    var open = "fa-circle-chevron-down";
+    var disp = icon.style.display;
+    if(disp == "none"){
+        return;
+    }
+    var list = document.querySelector(".tab-section.active .listOfContent");
+    if(icon.classList.contains(closed)){
+        icon.classList.add(open);
+        icon.classList.remove(closed);
+        list.style.display = "block";
+    } else { 
+        icon.classList.add(closed);
+        icon.classList.remove(open);
+        list.style.display = "none";
     }
 }

@@ -41,7 +41,7 @@ async function onSelectUser(option){
         MyDom.fillForm("#userDetailsForm", user);
         MyDom.setContent("#addAccessButton", {"value": key} );
         onSetSelectedEntity(key);
-        onGetAccessByUserKey(key);        
+        onGetAccessByUserKey(key);  
     } catch (err) {
         MyLogger.LogError(err);
     }

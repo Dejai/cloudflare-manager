@@ -2,8 +2,12 @@
 
     <div class="tab-sections">
         <div class="listofContentSection">
-            <h3>List of Paths &mdash; <button onclick="onAddPath()">ADD</button> </h3>
-            <div id="searchPaths"></div>
+            <h3>
+                <i class="listToggleIcon fa-solid fa-circle-chevron-down" onclick="onToggleList()"></i>
+                List of Paths &mdash; 
+                <button onclick="onAddPath()">ADD</button>
+            </h3>
+            <div id="searchPaths" class="searchContainer"></div>
             <!-- Shows the list of adventures to pick from -->
             <div id="listOfPaths" class="listOfContent"></div>
         </div>

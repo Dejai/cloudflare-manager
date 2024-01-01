@@ -138,3 +138,23 @@ function onSetSelectedEntity(contentID=""){
     // Add it to the given content ID
     MyDom.addClass(`.tab-section.active .entityOption[data-content-id="${contentID}"]`, "selected");
 }
+
+// Toggle the visibility of a list
+function onToggleList(){
+    var icon = document.querySelector(".tab-section.active .listToggleIcon");
+    var closed = "fa-circle-chevron-right";
+    var open = "fa-circle-chevron-down";
+    var list = document.querySelector(".tab-section.active .listOfContent");
+    var search = document.querySelector(".tab-section.active .searchContainer") ?? list;
+    if(icon.classList.contains(closed)){
+        icon.classList.add(open);
+        icon.classList.remove(closed);
+        list.style.display = "block";
+        search.style.display = "block";
+    } else { 
+        icon.classList.add(closed);
+        icon.classList.remove(open);
+        list.style.display = "none";
+        search.style.display = "none";
+    }
+}
