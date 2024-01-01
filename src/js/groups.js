@@ -47,15 +47,20 @@ async function onSelectGroup(option){
 }
 
 // Save Adventure details
-async function onSaveGroupDetails(){
+async function onSaveGroupDetails(button){
     try {
+        // Save status tracker
+        var saveStatus = new SaveStatus(button);
+        saveStatus.saving();
+
         // Get form details
         var formDetails = MyDom.getFormDetails("#groupDetailsForm");
         var fields = formDetails?.fields;
         var errors = formDetails?.errors;
         if(errors.length > 0){
             var errorMessage = errors.join(" ; ");
-            MyPageManager.errorMessage(errorMessage, 10);
+            // MyPageManager.errorMessage(errorMessage, 10);
+            saveStatus.error(errorMessage);
             return;
         }
 
@@ -71,7 +76,8 @@ async function onSaveGroupDetails(){
 
         // Save changes in cloudflare
         var results = await MyCloudFlare.KeyValues("POST", "/group", { body: JSON.stringify(fields) });
-        MyPageManager.setResultsMessage(results);
+        // MyPageManager.setResultsMessage(results);
+        saveStatus.results(results, "Group");
 
         // Reload the list of groups after adding the group; 
         await onShowGroups();

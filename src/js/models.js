@@ -132,39 +132,6 @@ class Group {
     }
 }
 
-// Class to store the video details
-class StreamVideo {
-    constructor(videoObj) {
-        this.AdventureID = videoObj?.adventureID ?? "";
-        this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
-        this.Adventure = this.AdventureID;
-        this.AdventureName = "";
-        this.ContentID = videoObj?.uid ?? "";
-        this.ContentType = "stream";
-        this.Creator = videoObj?.creator ?? "";
-        this.ShowCreator = videoObj?.showCreator ?? "No";
-        this.Date = videoObj?.date ?? "";
-        this.Name = videoObj?.name ?? "";
-        this.Description = videoObj?.description ?? "";
-        this.Duration = videoObj?.duration ?? 0;
-        this.Order = videoObj?.order ?? 0;
-        this.Ready = videoObj?.readyToStream ?? false;
-        this.Signed = videoObj?.requireSignedURLs ?? false;
-        this.Preview = videoObj?.preview ?? "0m0s";
-        this.Urls = videoObj?.urls ?? {};
-
-        this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
-    }
-
-    setAdventureName(adventureMap){
-        this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
-    }
-
-    setEditIcons(iconsHtml){
-        this.EditIcons = iconsHtml;
-    }
-}
-
 // The "Path" object
 class Path {
     constructor(jsonObj={}){
@@ -224,5 +191,80 @@ class UserAccess {
             accessList.push( {"Scope": key, "Group": val});
         }
         return accessList;
+    }
+}
+
+// Class to store the video details
+class StreamVideo {
+    constructor(videoObj) {
+        this.AdventureID = videoObj?.adventureID ?? "";
+        this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
+        this.Adventure = this.AdventureID;
+        this.AdventureName = "";
+        this.ContentID = videoObj?.uid ?? "";
+        this.ContentType = "stream";
+        this.Creator = videoObj?.creator ?? "";
+        this.ShowCreator = videoObj?.showCreator ?? "No";
+        this.Date = videoObj?.date ?? "";
+        this.Name = videoObj?.name ?? "";
+        this.Description = videoObj?.description ?? "";
+        this.Duration = videoObj?.duration ?? 0;
+        this.Order = videoObj?.order ?? 0;
+        this.Ready = videoObj?.readyToStream ?? false;
+        this.Signed = videoObj?.requireSignedURLs ?? false;
+        this.Preview = videoObj?.preview ?? "0m0s";
+        this.Urls = videoObj?.urls ?? {};
+
+        this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
+    }
+
+    setAdventureName(adventureMap){
+        this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
+    }
+
+    setEditIcons(iconsHtml){
+        this.EditIcons = iconsHtml;
+    }
+}
+
+// Used to keep track of something being "Saved"
+class SaveStatus{
+    constructor(element){
+        this.InitialText = element?.innerText ?? "Default";
+        this.Element = element;
+        this.Spinner = `<i class="fa-solid fa-spinner dtk-spinning dtk-spinning-1500" style="font-size:120%;"></i>`
+    }
+    saving(){
+        this.Element.innerHTML = "SAVING " + this.Spinner;
+        this.Element.disabled = true;
+    }
+    error(message, clearAfter=3){
+        console.log("Setting error message: " + message);
+        this.Element.classList.add("saveError");
+        this.Element.innerHTML = "ERROR: " + message; 
+        this.reset(clearAfter);
+    }
+    success(message="", clearAfter=2){
+        this.Element.classList.add("saveSuccess");
+        this.Element.innerHTML = "SUCCESS: " + message.toUpperCase(); 
+        this.reset(clearAfter);
+    }
+    results(results, type="Content"){
+        var message = results?.message ?? "OK";
+        if( message == "OK" ) {
+            this.success(`${type} saved!`);
+        } else {
+            var errMessage = `Could not save ${type.toLowerCase()}; ${message}`;
+            this.error(errMessage);
+        }
+    }
+    reset(clearAfter=3){
+        var time = 1000 * clearAfter;
+        setTimeout( ()=> {
+            this.Element.classList.remove("saveError");
+            this.Element.classList.remove("saveSuccess");
+            this.Element.disabled = false;
+            this.Element.innerHTML = this.InitialText;
+        },time);
     }
 }

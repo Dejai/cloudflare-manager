@@ -14,6 +14,8 @@ button { cursor:pointer; }
 /* Message section */
 #messageSection { opacity:0; }
 #messageSection.active { transition:opacity ease 1s; opacity:100; }
+.saveError { background-color: red !important; color:white !important; }
+.saveSuccess { background-color: limegreen !important; color:black !important; }
 
 /* Manage tabs */
 #manageTabs { display:flex; flex-wrap: wrap; flex-direction: row; justify-content: left; gap:10px; align-items:center; align-content:center;  }
