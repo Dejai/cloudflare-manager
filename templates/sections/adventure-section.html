@@ -1,26 +1,21 @@
 <div id="adventuresTabSection" class="hidden hideOnTabSwitch showOnAdventuresLoaded tab-section" data-tab-name="adventures"  style="position:relative;">
     
     <div class="tab-sections">
-        <div class="content-select-section listofContentSection">
-            <h3>List of Adventures</h3>
-            <button id="newAdventureButton" onclick="onNewAdventure()">New Adventure</button>
-            <div id="newAdventureNameInputSection" class="hidden">
-                <input type="text" id="newAdventureName" placeholder="Enter adventure name ">
-                <button onclick="onAddAdventure()">Add</button>    
-            </div>
+        <div class="listofContentSection">
+            <h3>List of Adventures &mdash; <button id="newAdventureButton" onclick="onAddAdventure()">ADD</button> </h3>
             <!-- Shows the list of adventures to pick from -->
             <div id="listOfAdventures" class="listOfContent" ></div>
         </div>
     
-        <div  id="adventureDetailsSection" class="hidden showOnAdventureSelected contentDetailsSection">
-            <h3 id="adventureName">The Details &mdash; <button onclick="onSaveAdventureDetails()">SAVE</button> </h3>
+        <div  id="adventureDetailsSection" class="hidden hideOnTabSwitch showOnAdventureSelected contentDetailsSection">
+            <h3 id="adventureName">Adventure Details &mdash; <button onclick="onSaveAdventureDetails()">SAVE</button> </h3>
             
             <div id="adventureDetailsForm" class="form-section">
                 <input id="adventureID" type="text" name="adventureID" required hidden />
                 
                 <div class="adventureDetailsFormSubsection form-field-section-small">
                     <label for="status">Status: </label><br/>
-                    <select class="form-field" name="status" id="status">
+                    <select class="form-field" name="status" id="status" required>
                         <option value="Active">Active</option>
                         <option value="Draft">Draft</option>
                         <option value="Inactive">Inactive</option>

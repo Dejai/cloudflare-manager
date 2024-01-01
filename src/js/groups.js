@@ -4,20 +4,26 @@
 async function getListOfGroups(){
     var groups = await MyCloudFlare.KeyValues("GET", "/groups");
     groups = groups.map(result => new Group(result));
-    groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
     MyPageManager.addContent("Groups", groups);
+}
+
+// Select Groups tab
+function onGroupsTab(){
+    MyDom.hideContent(".hideOnTabSwitch");
+    onShowGroups();
 }
 
 async function onShowGroups() {
     try {
-        MyDom.hideContent(".hideOnTabSwitch");
-        var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", MyPageManager.getContent("Groups") );
+        var groups = MyPageManager.getContent("Groups");
+        groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
+        var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", groups );
         MyDom.setContent("#listOfGroups", {"innerHTML": groupList});
+
         onSetActiveTab("groups");
         loadContentFromURL();
-        MyDom.hideContent(".hideOnGroupsLoaded");
+
         MyDom.showContent(".showOnGroupsLoaded");
-        loadContentFromURL();
     } catch (err) {
         MyLogger.LogError(err);
     }
@@ -28,8 +34,11 @@ async function onSelectGroup(option){
     try {
         var key = option.getAttribute("data-group-key") ?? "";
         MyUrls.modifySearch({"tab" : "groups", "content":key});
-        var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == key)?.[0];
+        var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == key)?.[0] ?? {};
         MyDom.fillForm("#groupDetailsForm", group);
+
+        onSetSelectedEntity(key);
+
         MyDom.hideContent(".hideOnGroupSelected");
         MyDom.showContent(".showOnGroupSelected");
     } catch (err) {
@@ -38,8 +47,9 @@ async function onSelectGroup(option){
 }
 
 // Save Adventure details
-async function  onSaveGroupDetails(){
+async function onSaveGroupDetails(){
     try {
+        // Get form details
         var formDetails = MyDom.getFormDetails("#groupDetailsForm");
         var fields = formDetails?.fields;
         var errors = formDetails?.errors;
@@ -49,9 +59,22 @@ async function  onSaveGroupDetails(){
             return;
         }
 
+        // Get/update existing group or add a new one.
+        var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == fields.key)?.[0];
+        if(group != undefined){
+            group.update(fields);
+        } else {
+            var newGroup = new Group(fields);
+            MyPageManager.addContent("Groups", newGroup);
+            MyUrls.modifySearch({"content":fields.key});
+        }
+
         // Save changes in cloudflare
         var results = await MyCloudFlare.KeyValues("POST", "/group", { body: JSON.stringify(fields) });
         MyPageManager.setResultsMessage(results);
+
+        // Reload the list of groups after adding the group; 
+        await onShowGroups();
 
     } catch(err){
         MyLogger.LogError(err);
@@ -62,35 +85,8 @@ async function  onSaveGroupDetails(){
 // Add a new group
 async function onAddGroup(){
     MyDom.fillForm("#groupDetailsForm", {});
+    onSetSelectedEntity();
     MyDom.hideContent(".hideOnGroupSelected");
     MyDom.showContent(".showOnGroupSelected");
     MyUrls.replaceSearch({"tab" : "groups" });
-}
-
-
-function fillForm2(formID, formObj) {
-    var formSelector = formID?.replace("#", "");
-    var formFields = document.querySelectorAll(`#${formSelector} [name]`);
-    var objectKeys = Object.keys(formObj);
-    for(var field of formFields){
-        var fieldKey = field.getAttribute("name");
-        var pascalKey = fieldKey.substring(0,1).toUpperCase() + fieldKey.substring(1);
-        // Setting the value
-        var valueToSet = (objectKeys.includes(pascalKey)) ? formObj[pascalKey] : "";
-        field.value = valueToSet;
-        if(field.tagName == "TEXTAREA"){
-            field.innerText = valueToSet;
-        }
-    }
-    // for(var key of Object.keys(formObj)) {
-    // 	var camelKey = key.substring(0,1).toLowerCase() + key.substring(1);
-    // 	var fieldValue = formObj[key];
-    // 	var field = document.querySelector(`#${formSelector} [name="${camelKey}"]`);
-    // 	if(field != undefined){
-    // 		field.value = fieldValue;
-    // 		if(field.tagName == "TEXTAREA") {
-    // 			field.innerText = fieldValue;
-    // 		} 
-    // 	}
-    // }
 }

@@ -2,23 +2,19 @@
 
     <div class="tab-sections">
 
-        <div class="content-select-section">
-            <h3>List of Groups</h3>
-            <button onclick="onAddGroup()">Add Group</button> <br/>
+        <div class="listofContentSection">
+            <h3>List of Groups &mdash; <button onclick="onAddGroup()">ADD</button> </h3>
             <!-- Shows the list of adventures to pick from -->
-            <div id="listOfGroups" style="max-height:400px; padding-left:1%; "></div>
+            <div id="listOfGroups" class="listOfContent"></div>
         </div>
 
         <!-- The Group details & list of users -->
-        <div id="groupDetailsSection" class="hidden showOnGroupSelected contentDetailsSection">
+        <div id="groupDetailsSection" class="hidden showOnGroupSelected hideOnTabSwitch contentDetailsSection">
 
             <div>
                 <h3 id="groupName"> The Details &mdash; <button id="saveGroupDetailsButton" onclick="onSaveGroupDetails()">SAVE</button></h3>
     
                 <div id="groupDetailsForm">
-                    <div class="groupDetailsFormSubsection">
-                    </div>
-                    
                     <div class="groupDetailsFormSubsection">
                         <label for="name">Name: </label><br/>
                         <input id="value" type="text" name="value" placeholder="Enter Group Name" style="width:50%" required />

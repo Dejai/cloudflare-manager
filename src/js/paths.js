@@ -4,15 +4,22 @@
 async function getListOfPaths(){
     var paths = await MyCloudFlare.KeyValues("GET", "/paths");
     paths = paths.map(result => new Path(result));
-    paths.sort( (a, b) => { return a.Key.localeCompare(b.Key) });
     MyPageManager.addContent("Paths", paths);
+}
+
+// Select the paths tab
+function onPathsTab(){
+    MyDom.hideContent(".hideOnTabSwitch");
+    onShowPaths();
 }
 
 async function onShowPaths() {
     try {
-        MyDom.hideContent(".hideOnTabSwitch");
-        var pathList = await MyTemplates.getTemplateAsync("templates/lists/path-list.html", MyPageManager.getContent("Paths") );
+        var paths = MyPageManager.getContent("Paths");
+        paths.sort( (a, b) => { return a.Key.localeCompare(b.Key) });
+        var pathList = await MyTemplates.getTemplateAsync("templates/lists/path-list.html", paths );
         MyDom.setContent("#listOfPaths", {"innerHTML": pathList});
+        
         onSetActiveTab("paths");
         loadContentFromURL();
 
@@ -21,7 +28,6 @@ async function onShowPaths() {
         
         MyDom.hideContent(".hideOnPathsLoaded");
         MyDom.showContent(".showOnPathsLoaded");
-        loadContentFromURL();
     } catch (err) {
         MyLogger.LogError(err);
     }
@@ -34,6 +40,9 @@ async function onSelectPath(option){
         MyUrls.modifySearch({"tab" : "paths", "content":key});
         var path = MyPageManager.getContent("Paths")?.filter(x => x.Key == key)?.[0];
         MyDom.fillForm("#pathDetailsForm", path);
+
+        onSetSelectedEntity(key);
+        
         MyDom.hideContent(".hideOnPathSelected");
         MyDom.showContent(".showOnPathSelected");
     } catch (err) {
@@ -44,6 +53,8 @@ async function onSelectPath(option){
 // Save Adventure details
 async function  onSavePathDetails(){
     try {
+
+        // Get fields
         var formDetails = MyDom.getFormDetails("#pathDetailsForm");
         var fields = formDetails?.fields;
         var errors = formDetails?.errors;
@@ -52,11 +63,24 @@ async function  onSavePathDetails(){
             MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
+        fields["value"] = encodeURIComponent(fields["path"]);
+
+        // Update existing or add new path
+        var path = MyPageManager.getContent("Paths")?.filter(x => x.Key == fields.key)?.[0];
+        if(path != undefined){
+            path.update(fields);
+        } else {
+            var newPath = new Path(fields);
+            MyPageManager.addContent("Paths", newPath);
+            MyUrls.modifySearch({"content":fields.key});
+        }
 
         // Save changes in cloudflare
-        fields["value"] = encodeURIComponent(fields["path"]);
         var results = await MyCloudFlare.KeyValues("POST", "/path", { body: JSON.stringify(fields) });
         MyPageManager.setResultsMessage(results);
+
+        // Reload list of paths
+        onShowPaths();
 
     } catch(err){
         MyLogger.LogError(err);
@@ -65,7 +89,9 @@ async function  onSavePathDetails(){
 }
 
 async function onAddPath(){
-    MyDom.fillForm("#pathDetailsForm", {});
+    var pathCode = MyHelper.getCode(5);
+    MyDom.fillForm("#pathDetailsForm", { "Key": pathCode });
     MyDom.hideContent(".hideOnPathSelected");
     MyDom.showContent(".showOnPathSelected");
+    onSetSelectedEntity(pathCode);
 }

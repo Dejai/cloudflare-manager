@@ -100,7 +100,7 @@ async function loadContentFromURL(){
     try{
         var content = MyUrls.getSearchParam("content");
         if(content != undefined){
-            var contentEle = document.querySelector(`.tab-section.active .content-selector[data-content-id="${content}"]`);
+            var contentEle = document.querySelector(`.tab-section.active .entityOption[data-content-id="${content}"]`);
             if(contentEle != undefined){
                 contentEle.click();
             } else {
@@ -125,4 +125,13 @@ function onSetActiveTab(tabName){
 
     // Adjust the URL
     MyUrls.modifySearch({"tab": tabName});
+}
+
+// Set the current selected entity option
+function onSetSelectedEntity(contentID=""){
+    // Remove all existing selected ones
+    MyDom.removeClass(".entityOption", "selected");
+
+    // Add it to the given content ID
+    MyDom.addClass(`.tab-section.active .entityOption[data-content-id="${contentID}"]`, "selected");
 }

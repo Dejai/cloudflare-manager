@@ -3,19 +3,26 @@ async function getListOfAdventures(){
     var adventures = await MyCloudFlare.Files("GET", "/adventures");
     adventures = adventures.map(result => new Adventure(result));
     adventures.push(new Adventure({"name": "_Default", "adventureID": 0}));
-    adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
     MyPageManager.addContent("Adventures", adventures);
     return adventures;
 }
 
+// Select adventures tab
+function onAdventuresTab(){
+    MyDom.hideContent(".hideOnTabSwitch");
+    onShowAdventures();
+}
+
 // Show the list of adventures
-async function onShowAdventures(loadFromUrl=false) {
+async function onShowAdventures() {
     try {
-        MyDom.hideContent(".hideOnTabSwitch");
-        var adventureList = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", MyPageManager.getContent("Adventures") );
+        var adventures = MyPageManager.getContent("Adventures");
+        adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
+        var adventureList = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", adventures );
         MyDom.setContent("#listOfAdventures", {"innerHTML": adventureList});
         onSetActiveTab("adventures");
         loadContentFromURL();
+        
         // Set the group options in the adventure details form
         var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContent("Groups"));
         MyDom.setContent("#adventureDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
@@ -37,6 +44,7 @@ async function onSelectAdventure(option){
         MyDom.fillForm("#adventureDetailsForm", adventure);   
         
         loadAdventureFilesByID(adventureID);
+        onSetSelectedEntity(adventureID);
 
         MyDom.hideContent(".hideOnAdventureSelected");
         MyDom.showContent(".showOnAdventureSelected");
@@ -51,29 +59,15 @@ async function onSelectAdventure(option){
 
 }
 
-// Adding a new template
-async function onNewAdventure(){
-    MyDom.hideContent("#newAdventureButton");
-    MyDom.showContent("#newAdventureNameInputSection");
-}
-
-// Adding a new adventure
+// Add a new group
 async function onAddAdventure(){
     var adventureID = MyHelper.getCode(22, "mix")?.toLowerCase();
-    var adventureName = MyDom.getContent("#newAdventureName")?.value ?? "";
-    if(adventureName == ""){
-        MyPageManager.errorMessage("Adventure name is required");
-        return;
-    }
-    var adventure = new Adventure({ 
-        "adventureID": adventureID, 
-        "name": adventureName, 
-        "status": "Draft" });
-    MyPageManager.addContent("Adventures", [adventure]);
-    var adventureListItem = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", adventure);
-    MyDom.setContent("#listOfAdventures", {"innerHTML": adventureListItem}, true);
-    MyDom.showContent("#newAdventureButton");
-    MyDom.hideContent("#newAdventureNameInputSection");
+    MyDom.fillForm("#adventureDetailsForm", { "AdventureID": adventureID } );
+    MyDom.hideContent(".hideOnAdventureSelected");
+    MyDom.showContent(".showOnAdventureSelected");
+    MyUrls.replaceSearch({"tab" : "adventures" });
+    loadAdventureFilesByID(adventureID);
+    onSetSelectedEntity(adventureID);
 }
 
 // Load the adventure files based on an advenure ID
@@ -98,22 +92,37 @@ async function loadAdventureFilesByID(adventureID) {
 // Save Adventure details
 async function  onSaveAdventureDetails(){
     try {
+
+        // Get form details
         var formDetails = MyDom.getFormDetails("#adventureDetailsForm");
         var fields = formDetails["fields"] ?? {};
         var errors = formDetails["errors"] ?? [];
+        // If _Default, just return
+        if(fields?.adventureID == 0){
+            return;
+        }
         if(errors.length > 0){
-            var errorMessage = errors.join(" ");
+            var errorMessage = errors.join(" / ");
             MyPageManager.errorMessage(errorMessage, 10);
             return;
         }
+
+        // Update existing or add new adventure
         var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == fields?.adventureID)?.[0];
-        if(adventure){
+        if(adventure != undefined){
             adventure.update(fields);
+        } else { 
+            var newAdventure = new Adventure(fields);
+            MyPageManager.addContent("Adventures", newAdventure);
+            MyUrls.modifySearch({"content": newAdventure.AdventureID});
         }
-        
+
         // Submit this one to be saved in Cloudflare
         var results = await MyFetch.call("POST", `${MyCloudFlare.Endpoint}/adventure/`, { body: JSON.stringify(fields)} );
         MyPageManager.setResultsMessage(results);
+
+        // Reload the list after saving.
+        onShowAdventures();
 
         // Add adventures to be synced
         MyPageManager.addToBySynced("adventures");

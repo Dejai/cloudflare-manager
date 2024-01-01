@@ -8,10 +8,15 @@ async function onGetListOfUsers(){
     MyPageManager.addContent("Users", users);
 }
 
+// Click on the users tab
+function onUsersTab(){
+    MyDom.hideContent(".hideOnTabSwitch");
+    onShowUsers();
+}
+
 // Show the list of users
 async function onShowUsers() {
     try {
-        MyDom.hideContent(".hideOnTabSwitch");
         var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContent("Users") );
         MyDom.setContent("#listOfUsers", {"innerHTML": userList});
         onSetActiveTab("users");
@@ -35,6 +40,7 @@ async function onSelectUser(option){
         var user = MyPageManager.getContent("Users")?.filter(x => x.UserKey == key)?.[0];
         MyDom.fillForm("#userDetailsForm", user);
         MyDom.setContent("#addAccessButton", {"value": key} );
+        onSetSelectedEntity(key);
         onGetAccessByUserKey(key);        
     } catch (err) {
         MyLogger.LogError(err);
@@ -79,9 +85,6 @@ async function onSaveAccess(){
             var results = await MyCloudFlare.Files("POST", `/access/?key=${userKey}`, { body: JSON.stringify(userAccess)});
             MyPageManager.setResultsMessage(results);
 
-            // Add access to be synced
-            MyPageManager.addToBySynced("access");
-            
             onCloseAccessModal();
             onGetAccessByUserKey(userKey);
         }

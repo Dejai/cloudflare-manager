@@ -8,15 +8,23 @@ class PageManager {
 
     // CHeck if content mapped
     hasContentKey(key){ return Object.keys(this.Content).includes(key); }
+    
     // Get existing content
     getContent(key){ return this.Content[key] ?? []; }
+    
     // Adding content
     addContent(key, content){
         if(!this.hasContentKey(key) ){
             this.Content[key] = [];
         }
-        if(Array.isArray(content)){
-            this.Content[key] = this.Content[key].concat(content);
+
+        // If content is a list
+        if(Array.isArray(this.Content[key])){
+            if(Array.isArray(content)){
+                this.Content[key] = this.Content[key].concat(content);
+            } else {
+                this.Content[key].push(content);
+            }    
         } else {
             this.Content[key] = content;
         }
@@ -113,6 +121,15 @@ class Group {
         this.Key = detailsJson?.key ?? "";
         this.Value = detailsJson?.value ?? "";
     }
+    
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
+    }
 }
 
 // Class to store the video details
@@ -155,6 +172,15 @@ class Path {
         this.Value = jsonObj?.value ?? "";
         this.Path = jsonObj?.path ?? "";
         this.Date = new Date(jsonObj?.date);
+    }
+    
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
     }
 }
 
