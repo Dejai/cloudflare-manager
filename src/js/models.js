@@ -3,8 +3,6 @@ class PageManager {
 
     constructor(){
         this.Content = {};
-        this.ToBeSynced = new Set();
-        //  new Set(["users"]); // always start with users
     }
 
     // CHeck if content mapped
@@ -35,26 +33,6 @@ class PageManager {
     removeContent(key){
         if(this.hasContentKey(key)){
             delete this.Content[key];
-        }
-    }
-
-    // Keep track of things to be synced
-    addToBySynced(val){ this.ToBeSynced.add(val); }
-    async onSync() {
-        try {
-            for(var func of this.ToBeSynced){
-                console.log(func);
-                // var name = key.toLowerCase();
-                // this.infoMessage(`Syncing ${key}`, -1);
-                // var results = await MyCloudFlare.Files("GET", `/${name}/sync`);
-                // this.setResultsMessage(results);
-                // this.removeContent(key);
-            }
-
-            
-        } catch(err) {
-            MyLogger.LogError(err);
-            this.errorMessage("Error: " + err.message, 10);
         }
     }
 

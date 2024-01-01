@@ -112,7 +112,7 @@ async function  onSaveAdventureDetails(button){
         onShowAdventures();
 
         // Add adventures to be synced
-        MyPageManager.addToBySynced(onSyncAdventures);
+        MySyncManager.addSync("Adventures", onSyncAdventures);
         console.log(MyPageManager);
 
     } catch(err){
