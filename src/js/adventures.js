@@ -100,7 +100,7 @@ async function  onSaveAdventureDetails(button){
         var formDetails = MyDom.getFormDetails("#adventureDetailsForm");
         var fields = formDetails["fields"] ?? {};
         var errors = formDetails["errors"] ?? [];
-        
+
         // If _Default, just return
         if(fields?.adventureID == 0){
             saveStatus.info("Cannot save _Default adventure", 3);
@@ -134,7 +134,7 @@ async function  onSaveAdventureDetails(button){
 
     } catch(err){
         MyLogger.LogError(err);
-        saveStatus.error(err.Message, 7);
+        saveStatus.error(err.message, 7);
     }
 }
 
@@ -161,7 +161,11 @@ function onCloseModal(refesh=false){
 }
 
 // Save the edits to a fieldl (and entire row)
-async function onSaveFile(closeModal=false) {
+async function onSaveFile(button) {
+
+    var saveStatus = new SaveStatus(button);
+    saveStatus.saving();
+
     try {
         var formDetails = MyDom.getFormDetails("#fileModalForm");
         var fields = formDetails["fields"] ?? {};
@@ -169,7 +173,7 @@ async function onSaveFile(closeModal=false) {
         
         if(errors.length > 0){
             var errorMessage = errors.join(" ");
-            MyPageManager.errorMessage(errorMessage, 10);
+            saveStatus.error(errorMessage);
             return;
         }
 
@@ -177,22 +181,27 @@ async function onSaveFile(closeModal=false) {
         var results = { "status": 400 };
         var videoID = fields?.contentID;
         var results = await MyCloudFlare.Files("POST", `/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
-        if( (results?.status ?? 400) == 200 ) {
-            MyPageManager.successMessage("File details saved!");
-        } else {
-            MyPageManager.errorMessage(results?.message + " " + results?.data, 10);
+        var message = results?.message ?? "OK";
+        if(message != "OK"){
+            throw new Error(message);
         }
+        saveStatus.results(results, "File");
 
         // Determine if to close modal or go next
-        var saveAndNext = document.querySelector("#nextFile")?.checked ?? false;
-        if(saveAndNext){ 
-            onNavigateFile("next");
-        } else { 
-            onCloseModal(true);
-        }
+        setTimeout( ()=> {
+            var saveAndNext = document.querySelector("#nextFile")?.checked ?? false;
+            if(saveAndNext){ 
+                onNavigateFile("next");
+                MyDom.setContent("#nextFile", {"checked":""});
+            } else { 
+                onCloseModal(true);
+            }
+        }, 2000);
+
+        
     } catch(err){
         MyLogger.LogError(err);
-        MyPageManager.errorMessage(err.Message, 10);
+        saveStatus.error(err.message, 7);
     }
 }
 
@@ -216,20 +225,6 @@ async function onNavigateFile(direction="next"){
         setTimeout( ()=> {
             MyDom.setContent("#navMessage", {"innerText": ""});
         }, 2000);
-    }
-}
-
-// Save the open file and move to the next
-async function onSaveAndNext(){
-    var rows = Array.from(document.querySelectorAll("#adventureFiles .fileRow"));
-    var contentIDs = rows.map(x => x.getAttribute("data-content-id"));
-    var numRows = rows.length;
-    var currRow = rows.filter(x => x.classList.contains("selectedRow"))?.[0]?.getAttribute("data-content-id") ?? "";
-    var rowIdx = contentIDs.indexOf(currRow);
-    var closeAfter = (rowIdx == numRows-1);
-    await onSaveFile(closeAfter);
-    if(!closeAfter){
-        rows[rowIdx+1]?.querySelector(".fieldCell").click();
     }
 }
 

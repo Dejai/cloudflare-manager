@@ -91,7 +91,7 @@ function loadTabFromUrl(){
         }
     } catch(err){
         MyLogger.LogError(err);
-        MyPageManager.errorMessage(err.Message);
+        MyPageManager.errorMessage(err.message);
     }
 }
 
@@ -109,7 +109,7 @@ async function loadContentFromURL(){
         }
     } catch(err) {
         MyLogger.LogError(err);
-        MyPageManager.errorMessage(err.Message);
+        MyPageManager.errorMessage(err.message);
     }
 }
 
