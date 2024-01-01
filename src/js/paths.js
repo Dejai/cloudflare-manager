@@ -51,7 +51,11 @@ async function onSelectPath(option){
 }
 
 // Save Adventure details
-async function  onSavePathDetails(){
+async function  onSavePathDetails(button){
+
+    var saveStatus = new SaveStatus(button);
+    saveStatus.saving();
+
     try {
 
         // Get fields
@@ -60,7 +64,7 @@ async function  onSavePathDetails(){
         var errors = formDetails?.errors;
         if(errors.length > 0){
             var errorMessage = errors.join(" ; ");
-            MyPageManager.errorMessage(errorMessage, 10);
+            saveStatus.error(errorMessage);
             return;
         }
         fields["value"] = encodeURIComponent(fields["path"]);
@@ -77,14 +81,14 @@ async function  onSavePathDetails(){
 
         // Save changes in cloudflare
         var results = await MyCloudFlare.KeyValues("POST", "/path", { body: JSON.stringify(fields) });
-        MyPageManager.setResultsMessage(results);
+        saveStatus.results(results);
 
         // Reload list of paths
         onShowPaths();
 
     } catch(err){
         MyLogger.LogError(err);
-        MyPageManager.errorMessage(err.Message, 10);
+        saveStatus.error(err.message, 10);
     }
 }
 

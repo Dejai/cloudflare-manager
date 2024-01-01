@@ -82,7 +82,7 @@ async function onSaveGroupDetails(button){
 
     } catch(err){
         MyLogger.LogError(err);
-        saveStatus.error(err.Message, 7);
+        saveStatus.error(err.Message, 10);
     }
 }
 

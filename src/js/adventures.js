@@ -201,7 +201,7 @@ async function onSaveFile(button) {
         
     } catch(err){
         MyLogger.LogError(err);
-        saveStatus.error(err.message, 7);
+        saveStatus.error(err.message, 10);
     }
 }
 
