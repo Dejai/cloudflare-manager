@@ -235,11 +235,17 @@ class SaveStatus{
         this.Spinner = `<i class="fa-solid fa-spinner dtk-spinning dtk-spinning-1500" style="font-size:120%;"></i>`
     }
     saving(){
-        this.Element.innerHTML = "SAVING " + this.Spinner;
+        this.info( "SAVING " + this.Spinner)
         this.Element.disabled = true;
     }
+    info(message, clearAfter=0){
+        this.Element.classList.add("saveInfo");
+        this.Element.innerHTML = message;
+        if(clearAfter > 0){
+            this.reset(clearAfter);
+        }
+    }
     error(message, clearAfter=3){
-        console.log("Setting error message: " + message);
         this.Element.classList.add("saveError");
         this.Element.innerHTML = "ERROR: " + message; 
         this.reset(clearAfter);
@@ -261,6 +267,7 @@ class SaveStatus{
     reset(clearAfter=3){
         var time = 1000 * clearAfter;
         setTimeout( ()=> {
+            this.Element.classList.remove("saveInfo");
             this.Element.classList.remove("saveError");
             this.Element.classList.remove("saveSuccess");
             this.Element.disabled = false;

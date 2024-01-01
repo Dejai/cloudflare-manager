@@ -14,6 +14,7 @@ button { cursor:pointer; }
 /* Message section */
 #messageSection { opacity:0; }
 #messageSection.active { transition:opacity ease 1s; opacity:100; }
+.saveInfo { color: white!important; }
 .saveError { background-color: red !important; color:white !important; }
 .saveSuccess { background-color: limegreen !important; color:black !important; }
 

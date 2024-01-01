@@ -90,20 +90,25 @@ async function loadAdventureFilesByID(adventureID) {
 }
 
 // Save Adventure details
-async function  onSaveAdventureDetails(){
-    try {
+async function  onSaveAdventureDetails(button){
 
+    var saveStatus = new SaveStatus(button);
+    saveStatus.saving();
+    
+    try {
         // Get form details
         var formDetails = MyDom.getFormDetails("#adventureDetailsForm");
         var fields = formDetails["fields"] ?? {};
         var errors = formDetails["errors"] ?? [];
+        
         // If _Default, just return
         if(fields?.adventureID == 0){
+            saveStatus.info("Cannot save _Default adventure", 3);
             return;
         }
         if(errors.length > 0){
             var errorMessage = errors.join(" / ");
-            MyPageManager.errorMessage(errorMessage, 10);
+            saveStatus.error(errorMessage);
             return;
         }
 
@@ -118,8 +123,8 @@ async function  onSaveAdventureDetails(){
         }
 
         // Submit this one to be saved in Cloudflare
-        var results = await MyFetch.call("POST", `${MyCloudFlare.Endpoint}/adventure/`, { body: JSON.stringify(fields)} );
-        MyPageManager.setResultsMessage(results);
+        var results = await MyCloudFlare.Files("POST", `/adventure/`, { body: JSON.stringify(fields)} );
+        saveStatus.results(results, "Adventure");
 
         // Reload the list after saving.
         onShowAdventures();
@@ -129,7 +134,7 @@ async function  onSaveAdventureDetails(){
 
     } catch(err){
         MyLogger.LogError(err);
-        MyPageManager.errorMessage(err.Message, 10);
+        saveStatus.error(err.Message, 7);
     }
 }
 
@@ -171,7 +176,7 @@ async function onSaveFile(closeModal=false) {
         // Submit this one to be saved in Cloudflare
         var results = { "status": 400 };
         var videoID = fields?.contentID;
-        var results = await MyFetch.call("POST", `${MyCloudFlare.Endpoint}/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
+        var results = await MyCloudFlare.Files("POST", `/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
         if( (results?.status ?? 400) == 200 ) {
             MyPageManager.successMessage("File details saved!");
         } else {
