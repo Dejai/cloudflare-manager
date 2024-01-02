@@ -83,7 +83,6 @@ class SyncManager{
 
         // listen for syncing
         setInterval( ()=> {
-            MyLogger.LogInfo("Checking sync queue ... ");
             for(var key of Object.keys(this.Queue)){
                 var currDate = new Date();
                 var date = this.Queue[key].Date;
@@ -109,15 +108,6 @@ class SyncManager{
     }
 }
 
-// An instance for an entity to be synced (includes function to run)
-class SyncFunction{
-    constructor(name, func){
-        this.Name = name;
-        this.Func = func;
-        this.Date = new Date();
-        this.Date.setTime( this.Date.getTime() + 10);
-    }
-}
 
 // The "Adventure" object
 class Adventure {
