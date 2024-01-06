@@ -96,15 +96,20 @@ class SyncManager{
         }, 10000);
     }
 
-    addSync(key, func){
+    addSync(key, func, instant=false){
         var newDate = new Date();
+        // Add date with adjusted seconds
+        var adjustedSeconds = newDate.getSeconds();
+        adjustedSeconds += (instant) ? -20 : 10;
+        console.log(adjustedSeconds);
         // Always add 10 seconds to the datetime
-        newDate.setSeconds( newDate.getSeconds() + 10 );
+        newDate.setSeconds( adjustedSeconds );
         this.Queue[key] = {
             "Date": newDate,
             "Func": func
         }
         MyLogger.LogInfo("Sync added to queue for " + key);
+        console.log(this.Queue[key]);
     }
 }
 
