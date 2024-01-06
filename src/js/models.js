@@ -9,7 +9,7 @@ class PageManager {
     hasContentKey(key){ return Object.keys(this.Content).includes(key); }
     
     // Get existing content
-    getContent(key){ return this.Content[key] ?? []; }
+    getContentByKey(key){ return this.Content[key] ?? []; }
     
     // Adding content
     addContent(key, content){
@@ -108,7 +108,6 @@ class SyncManager{
     }
 }
 
-
 // The "Adventure" object
 class Adventure {
     constructor(detailsJson={}) {
@@ -131,6 +130,40 @@ class Adventure {
                 this[pascalKey] = fields[key];
             }
         }
+    }
+}
+
+// The "Event" object
+class Event {
+    constructor(jsonDetails){
+        this.Status = jsonDetails?.status ?? "";
+        this.EventID = jsonDetails?.eventID ?? "";
+        this.EventKey = jsonDetails?.eventKey ?? "";
+        this.Name = jsonDetails?.name ?? "";
+        this.AccessType = jsonDetails?.accessType ?? "";
+        this.AccessGroup = jsonDetails?.accessGroup ?? "";
+        this.Template = jsonDetails?.template ?? "";
+    }
+
+    // Update this adventure with fields from the form
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
+    }
+}
+
+// The response to an event
+class EventResponse {
+    constructor(details){
+        this.ResponseKey = details?.responseKey ?? "";
+        this.EventKey = details?.eventKey ?? "";
+        this.User = details?.user ?? "";
+        this.ResponseDate = new Date(details?.responseDate)
+        this.ResponseDateFormatted = this.ResponseDate?.toLocaleDateString();
     }
 }
 
@@ -210,6 +243,34 @@ class UserAccess {
             accessList.push( {"Scope": key, "Group": val});
         }
         return accessList;
+    }
+}
+
+// Response details (for popup)
+class ResponseDetails {
+    constructor(label, text){
+        this.ResponseLabel = label;
+        this.ResponseText = text;
+        this.adjustLabel();
+    }
+    adjustLabel(){
+        switch(this.ResponseLabel){
+            case "65189b72a84f0a7fbaeba9cd":
+                this.ResponseLabel = "gala30";
+                break;
+            case "65189d14f4387ce1ae886ded":
+                this.ResponseLabel = "boatRide30";
+                break;
+            case "65212aa3905211ae4c8a3328":
+                this.ResponseLabel = "beachParty30";
+                break;
+            case "651caf20afa24983b0315d32":
+                this.ResponseLabel = "";
+                break;
+            default:
+                this.ResponseLabel = this.ResponseLabel;
+        }
+
     }
 }
 

@@ -1,32 +1,51 @@
-// Load the adventure files based on an advenure ID
-async function loadAdventureFilesByID(adventureID) {
+// Load the event responses based on an advenure ID
+async function loadEventResponseByID(eventID) {
     try {
-        MyDom.showContent(".showOnFilesLoading");
-        MyDom.setContent("#listOfAdventureFiles", {"innerHTML": ""});
-        var adventureVideos = (adventureID != "") ? await MyCloudFlare.Files("GET",`/stream/?search=${adventureID}`) : [];
-        var streamVideos = adventureVideos.map( vid => new StreamVideo(vid));
-        streamVideos.sort( (a,b) => { return a.Order - b.Order });
-        MyPageManager.addContent("Files", streamVideos);
-        var templateName = streamVideos.length > 0 ? "file-row" : "file-row-empty";
-        var fileRowsTemplate = await MyTemplates.getTemplateAsync(`templates/rows/${templateName}.html`, streamVideos);
-        MyDom.setContent("#listOfAdventureFiles", {"innerHTML": fileRowsTemplate});
-        MyDom.showContent(".showOnFilesLoaded");
-        MyDom.hideContent(".hideOnFilesLoaded");
+        MyDom.showContent(".showOnResponsesLoading");
+        MyDom.setContent("#listOfEventResponses", {"innerHTML": ""});
+        var responses = (eventID != "") ? await MyCloudFlare.Files("GET",`/event/responses/?key=${eventID}`) : [];
+        var eventRepsonses = responses.map( vid => new EventResponse(vid));
+        if(eventRepsonses.length > 0){
+            MySearcher.addSearchBar("Responses", "#listOfEventResponses", "#responsesSearchSection");
+        }
+        eventRepsonses.sort( (a,b) => { return b.ResponseDate - a.ResponseDate });
+        MyPageManager.addContent("Responses", eventRepsonses);
+        var rowsTemplate = await MyTemplates.getTemplateAsync(`templates/rows/response-row.html`, eventRepsonses);
+        MyDom.setContent("#listOfEventResponses", {"innerHTML": rowsTemplate});
+        MyDom.showContent(".showOnResponsesLoaded");
+        MyDom.hideContent(".hideOnResponsesLoaded");
     } catch (err) {
         MyLogger.LogError(err);
     }
 }
 
 // Open the modal
-function onSelectFile(cell){
+async function onSelectResponse(cell){
     row = cell.closest("tr");
     var contentID = row?.getAttribute("data-content-id") ?? "";
     if (contentID != "") {
         onSetSelectedRow(row);
-        MyDom.setContent("#previewTimePercent", {"value": "0"});
-        var file = MyPageManager.getContentByKey("Files")?.filter(x => x.ContentID == contentID)?.[0];
-        MyDom.fillForm("#fileModalForm", file);
-        MyDom.addClass("#fileFormModal.modalContainer", "open");
+
+        var responseObj = MyPageManager.getContentByKey("Responses")?.filter(x => x.ResponseKey == contentID)?.[0];
+
+        // Fill in user Details
+        var user = MyPageManager.getContentByKey("Users")?.filter(x => x.UserKey == responseObj.User)?.[0];
+        MyDom.setContent("#responseUsername", {"innerHTML": `${user.FirstName} ${user.LastName}`});
+
+        // Show the popup, with a loading
+        let spinnerIcon = `<i class="fa-solid fa-spinner dtk-spinning dtk-spinning-1500" style="font-size:200%;"></i>`
+        MyDom.setContent("#responseDetailsPopup", {"innerHTML": spinnerIcon});
+        MyDom.addClass("#responseDetailsModal.modalContainer", "open");        
+
+
+        // Get the response details
+        var response = await MyCloudFlare.Files("GET", `event/response2/?response=${responseObj.ResponseKey}`);
+        var responseDetails = Array.from(Object.entries(response)).map( pair => new ResponseDetails(pair[0], pair[1]));
+        responseDetails = responseDetails.filter(x => x.ResponseLabel != "");
+
+        // Show the response details
+        var template = await MyTemplates.getTemplateAsync("templates/details/response-details.html", responseDetails);
+        MyDom.setContent("#responseDetailsPopup", {"innerHTML": template});
     }
 }
 
@@ -35,7 +54,7 @@ function onCloseModal(refesh=false){
     MyDom.removeClass(".modalContainer", "open");
     if(refesh){
         var advID = MyUrls.getSearchParam("content") ?? "";
-        loadAdventureFilesByID(advID);
+        loadEventResponseByID(advID);
     }
 }
 
@@ -59,7 +78,7 @@ async function onSaveFile(button) {
         // Submit this one to be saved in Cloudflare
         var results = { "status": 400 };
         var videoID = fields?.contentID;
-        var results = await MyCloudFlare.Files("POST", `/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
+        var results = await MyCloudFlare.Responses("POST", `/stream/?video=${videoID}`, { body: JSON.stringify(fields)} );
         var message = results?.message ?? "OK";
         if(message != "OK"){
             throw new Error(message);
@@ -91,8 +110,8 @@ function onSetSelectedRow(row){
 }
 
 // Go to the prev file
-async function onNavigateFile(direction="next"){
-    var rows = Array.from(document.querySelectorAll("#adventureFiles .fileRow"));
+async function onNavigateResponse(direction="next"){
+    var rows = Array.from(document.querySelectorAll("#eventResponses .responseRow"));
     var contentIDs = rows.map(x => x.getAttribute("data-content-id"));
     var currRow = rows.filter(x => x.classList.contains("selectedRow"))?.[0]?.getAttribute("data-content-id") ?? "";
     var rowIdx = contentIDs.indexOf(currRow);
@@ -100,9 +119,9 @@ async function onNavigateFile(direction="next"){
     if(nextRow != undefined){
         nextRow.querySelector(".fieldCell").click();
     } else { 
-        MyDom.setContent("#navMessage", {"innerText": "Reached end of the list."});
+        MyDom.setContent("#responseDetailsModal #navMessage", {"innerText": "Reached end of the list."});
         setTimeout( ()=> {
-            MyDom.setContent("#navMessage", {"innerText": ""});
+            MyDom.setContent("#responseDetailsModal #navMessage", {"innerText": ""});
         }, 2000);
     }
 }

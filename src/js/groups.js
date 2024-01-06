@@ -15,7 +15,7 @@ function onGroupsTab(){
 
 async function onShowGroups() {
     try {
-        var groups = MyPageManager.getContent("Groups");
+        var groups = MyPageManager.getContentByKey("Groups");
         groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
         var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", groups );
         MyDom.setContent("#listOfGroups", {"innerHTML": groupList});
@@ -34,7 +34,7 @@ async function onSelectGroup(option){
     try {
         var key = option.getAttribute("data-group-key") ?? "";
         MyUrls.modifySearch({"tab" : "groups", "content":key});
-        var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == key)?.[0] ?? {};
+        var group = MyPageManager.getContentByKey("Groups")?.filter(x => x.Key == key)?.[0] ?? {};
         MyDom.fillForm("#groupDetailsForm", group);
 
         onSetSelectedEntity(key);
@@ -64,7 +64,7 @@ async function onSaveGroupDetails(button){
         }
 
         // Get/update existing group or add a new one.
-        var group = MyPageManager.getContent("Groups")?.filter(x => x.Key == fields.key)?.[0];
+        var group = MyPageManager.getContentByKey("Groups")?.filter(x => x.Key == fields.key)?.[0];
         if(group != undefined){
             group.update(fields);
         } else {

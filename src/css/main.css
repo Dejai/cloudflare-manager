@@ -64,6 +64,13 @@ button { cursor:pointer; }
 
 .tableCellOnMobile {  display:none; width:0; height:0; opacity:0; visibility: collapse; }
 
+/* Event responses */
+#responseDetailsModal .responseLabel { font-weight: bolder; }
+#responseDetailsModal .responseText { padding-left:5%; }
+#eventResponsesSection .searchBarSection { background-color: white; border-radius: 77px; width: 25%; padding: 0.5; padding: 0.5%; margin-bottom: 1%; }
+#eventResponsesSection input:focus { outline: none; box-shadow:none; }
+#eventResponsesSection .searchClearIcon { color: red; }
+
 /* Table Header */
 tr.showBottomBorder td,th { border-bottom: 2px solid white; }
 #bulkRow td { padding:0.5% 0%; }

@@ -38,44 +38,80 @@ MyDom.ready( async () => {
             throw new Error("Unauthorized");
         }
 
+
+        // Load the different tabs
+        var tabs = Array.from(document.querySelectorAll(".cf-manage-tab"));
+        var contentFuncs = {
+            "adventures": getListOfAdventures(),
+            "events": getListOfEvents(),
+            "groups": getListOfGroups(),
+            "users": onGetListOfUsers(),
+            "paths": getListOfPaths()
+        }
+        for(var tab of tabs)
+        {
+            var tabName = tab.getAttribute("data-tab-name");
+            var func = contentFuncs[tabName] ?? undefined;
+            var templateName = tabName.substring(0, tabName.length-1);
+            if(func != undefined){
+                await func;
+            }
+            var section = await MyTemplates.getTemplateAsync(`templates/sections/${templateName}-section.html`, {});
+            MyDom.setContent("#mainContentSection", {"innerHTML": section }, true);
+            MyDom.showContent(`#headerContent .tab[data-tab-name="${tabName}"]`);
+        }
+
+        // Load the content
+
+
         // Load the adventures
-        await getListOfAdventures();
-        var adventureSection = await MyTemplates.getTemplateAsync("templates/sections/adventure-section.html", {});
-        MyDom.setContent("#mainContentSection", {"innerHTML": adventureSection }, true);
-        MyDom.showContent('#headerContent .tab[data-tab-name="adventures"]');
+        // await getListOfAdventures();
+        // var adventureSection = await MyTemplates.getTemplateAsync("templates/sections/adventure-section.html", {});
+        // MyDom.setContent("#mainContentSection", {"innerHTML": adventureSection }, true);
+        // MyDom.showContent('#headerContent .tab[data-tab-name="adventures"]');
+
+        // Load the events
+        // await getListOfAdventures();
+        // var eventSection = await MyTemplates.getTemplateAsync("templates/sections/event-section.html", {});
+        // MyDom.setContent("#mainContentSection", {"innerHTML": eventSection }, true);
+        // MyDom.showContent('#headerContent .tab[data-tab-name="events"]');
 
         // Add form for adventure
-        var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
-        MyDom.setContent("#modalSection", {"innerHTML": adventureForm}, true);
+        // var adventureForm = await MyTemplates.getTemplateAsync("templates/forms/file-edit-form.html", {});
+        // MyDom.setContent("#modalSection", {"innerHTML": adventureForm}, true);
         
-        // Load the Groups
-        await getListOfGroups();
-        var groupSection = await MyTemplates.getTemplateAsync("templates/sections/group-section.html", {});
-        MyDom.setContent("#mainContentSection", { "innerHTML": groupSection }, true);
-        MyDom.showContent('#headerContent .tab[data-tab-name="groups"]');
+        // // Load the Groups
+        // await getListOfGroups();
+        // var groupSection = await MyTemplates.getTemplateAsync("templates/sections/group-section.html", {});
+        // MyDom.setContent("#mainContentSection", { "innerHTML": groupSection }, true);
+        // MyDom.showContent('#headerContent .tab[data-tab-name="groups"]');
 
-        // Load the users
-        await onGetListOfUsers();
-        var userSection = await MyTemplates.getTemplateAsync("templates/sections/user-section.html", {});
-        MyDom.setContent("#mainContentSection", { "innerHTML": userSection }, true);
-        MyDom.showContent('#headerContent .tab[data-tab-name="users"]');
+        // // Load the users
+        // await onGetListOfUsers();
+        // var userSection = await MyTemplates.getTemplateAsync("templates/sections/user-section.html", {});
+        // MyDom.setContent("#mainContentSection", { "innerHTML": userSection }, true);
+        // MyDom.showContent('#headerContent .tab[data-tab-name="users"]');
 
-        // Load the users
-        await getListOfPaths();
-        var pathsSecction = await MyTemplates.getTemplateAsync("templates/sections/path-section.html", {});
-        MyDom.setContent("#mainContentSection", { "innerHTML": pathsSecction }, true);
-        MyDom.showContent('#headerContent .tab[data-tab-name="paths"]');
+        // // Load the users
+        // await getListOfPaths();
+        // var pathsSecction = await MyTemplates.getTemplateAsync("templates/sections/path-section.html", {});
+        // MyDom.setContent("#mainContentSection", { "innerHTML": pathsSecction }, true);
+        // MyDom.showContent('#headerContent .tab[data-tab-name="paths"]');
+
+
 
         // Load the tab from the URL
         loadTabFromUrl();
-        MyDom.showContent("#syncButton");
 
         // Load Access form
         var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
         MyDom.setContent("#modalSection", {"innerHTML": accessForm}, true);
 
+        var responseDetails = await MyTemplates.getTemplateAsync("templates/forms/response-details-form.html", {});
+        MyDom.setContent("#modalSection", {"innerHTML": responseDetails}, true);
+
         // Always add a sync for users right after loading
-        MySyncManager.addSync("Users", onSyncUsers);
+        // MySyncManager.addSync("Users", onSyncUsers);
         
     } catch (err){
         MyLogger.LogError(err);

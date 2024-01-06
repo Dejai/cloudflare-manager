@@ -15,7 +15,7 @@ function onPathsTab(){
 
 async function onShowPaths() {
     try {
-        var paths = MyPageManager.getContent("Paths");
+        var paths = MyPageManager.getContentByKey("Paths");
         paths.sort( (a, b) => { return a.Key.localeCompare(b.Key) });
         var pathList = await MyTemplates.getTemplateAsync("templates/lists/path-list.html", paths );
         MyDom.setContent("#listOfPaths", {"innerHTML": pathList});
@@ -38,7 +38,7 @@ async function onSelectPath(option){
     try {
         var key = option.getAttribute("data-path-key") ?? "";
         MyUrls.modifySearch({"tab" : "paths", "content":key});
-        var path = MyPageManager.getContent("Paths")?.filter(x => x.Key == key)?.[0];
+        var path = MyPageManager.getContentByKey("Paths")?.filter(x => x.Key == key)?.[0];
         MyDom.fillForm("#pathDetailsForm", path);
 
         onSetSelectedEntity(key);
@@ -70,7 +70,7 @@ async function  onSavePathDetails(button){
         fields["value"] = encodeURIComponent(fields["path"]);
 
         // Update existing or add new path
-        var path = MyPageManager.getContent("Paths")?.filter(x => x.Key == fields.key)?.[0];
+        var path = MyPageManager.getContentByKey("Paths")?.filter(x => x.Key == fields.key)?.[0];
         if(path != undefined){
             path.update(fields);
         } else {

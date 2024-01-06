@@ -17,7 +17,7 @@ function onAdventuresTab(){
 // Show the list of adventures
 async function onShowAdventures() {
     try {
-        var adventures = MyPageManager.getContent("Adventures");
+        var adventures = MyPageManager.getContentByKey("Adventures");
         adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
         var adventureList = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", adventures );
         MyDom.setContent("#listOfAdventures", {"innerHTML": adventureList});
@@ -25,7 +25,7 @@ async function onShowAdventures() {
         loadContentFromURL();
         
         // Set the group options in the adventure details form
-        var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContent("Groups"));
+        var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));
         MyDom.setContent("#adventureDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
         
         MyDom.hideContent(".hideOnAdventuresLoaded");
@@ -41,7 +41,7 @@ async function onSelectAdventure(option){
     try{
         var adventureID = option.getAttribute("data-adventure-id") ?? "";
         MyUrls.modifySearch({"tab" : "adventures", "content":adventureID});
-        var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == adventureID)?.[0];
+        var adventure = MyPageManager.getContentByKey("Adventures")?.filter(x => x.AdventureID == adventureID)?.[0];
         MyDom.fillForm("#adventureDetailsForm", adventure);   
         
         loadAdventureFilesByID(adventureID);
@@ -51,7 +51,7 @@ async function onSelectAdventure(option){
         MyDom.showContent(".showOnAdventureSelected");
 
         // Set adventure options in the 
-        var advOpts = await MyTemplates.getTemplateAsync("templates/options/adventure-option.html", MyPageManager.getContent("Adventures"));
+        var advOpts = await MyTemplates.getTemplateAsync("templates/options/adventure-option.html", MyPageManager.getContentByKey("Adventures"));
         MyDom.setContent("#fileModalForm #adventure", {"innerHTML": advOpts});
 
     } catch(err){
@@ -95,7 +95,7 @@ async function  onSaveAdventureDetails(button){
         }
 
         // Update existing or add new adventure
-        var adventure = MyPageManager.getContent("Adventures")?.filter(x => x.AdventureID == fields?.adventureID)?.[0];
+        var adventure = MyPageManager.getContentByKey("Adventures")?.filter(x => x.AdventureID == fields?.adventureID)?.[0];
         if(adventure != undefined){
             adventure.update(fields);
         } else { 

@@ -17,7 +17,7 @@ function onUsersTab(){
 // Show the list of users
 async function onShowUsers() {
     try {
-        var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContent("Users") );
+        var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContentByKey("Users") );
         MyDom.setContent("#listOfUsers", {"innerHTML": userList});
         onSetActiveTab("users");
         loadContentFromURL();
@@ -37,7 +37,7 @@ async function onSelectUser(option){
     try {
         var key = option.getAttribute("data-user-key") ?? "";
         MyUrls.modifySearch({"tab" : "users", "content":key});
-        var user = MyPageManager.getContent("Users")?.filter(x => x.UserKey == key)?.[0];
+        var user = MyPageManager.getContentByKey("Users")?.filter(x => x.UserKey == key)?.[0];
         MyDom.fillForm("#userDetailsForm", user);
         MyDom.setContent("#addAccessButton", {"value": key} );
         onSetSelectedEntity(key);
@@ -78,7 +78,7 @@ async function onSaveAccess(button){
         }
         var userKey = MyDom.getContent("#addAccessButton")?.value;
         var accessKey = "Access-" + userKey;
-        var userAccess = MyPageManager.getContent(accessKey)?.Access ?? undefined;
+        var userAccess = MyPageManager.getContentByKey(accessKey)?.Access ?? undefined;
         if(userAccess == undefined){
             throw new Error("UserKey is undefined");
         }
@@ -108,7 +108,7 @@ async function onSaveAccess(button){
 }
 
 async function onOpenAccessModal(){
-    var groups = MyPageManager.getContent("Groups");
+    var groups = MyPageManager.getContentByKey("Groups");
     var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", groups);
     MyDom.setContent("#accessForm #group", {"innerHTML": "<option></option>" + groupOpts});
     MyDom.addClass("#accessFormModal.modalContainer", "open");

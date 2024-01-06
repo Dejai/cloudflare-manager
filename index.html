@@ -3,8 +3,8 @@
 <head>
 	<title>Cloudflare Manager</title>
     <base href="./">
-	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.2.1">
-    <link rel="stylesheet" href="src/css/main.css?v=1.2.1">
+	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.2.5">
+    <link rel="stylesheet" href="src/css/main.css?v=1.2.5">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -36,9 +36,10 @@
             <h2 id="unauthorized" class="hidden showOnLoginRequired">You are not authorized to use this page. :( </h2>
             <div id="manageTabs">
                 <span class="cf-manage-tab pointer tab hidden" data-tab-name="adventures" onclick="onAdventuresTab()">Adventures</span>
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="groups"  onclick="onGroupsTab()">Groups</span>
+                <span class="cf-manage-tab pointer tab hidden" data-tab-name="events" onclick="onEventsTab()">Events</span>
                 <span class="cf-manage-tab pointer tab hidden" data-tab-name="users" onclick="onUsersTab()">Users</span>
                 <span class="cf-manage-tab pointer tab hidden" data-tab-name="paths" onclick="onPathsTab()">Paths</span>
+                <span class="cf-manage-tab pointer tab hidden" data-tab-name="groups"  onclick="onGroupsTab()">Groups</span>
                 <i id="mainLoadingIcon" class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
             </div>
         </div>
@@ -48,20 +49,23 @@
     </div>
 
     <!-- Modal section -->
-    <div id="modalSection"></div>
+    <div id="modalSection">
+    </div>
     
     <p style="position:fixed; bottom:0; right:0;">v1.2.1</p>
 </body>
 <!-- Common Scripts -->
-<script src="https://dejai.github.io/scripts/js/v2/my.js?v=1.2.1"></script>
-<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v=1.2.1"></script>
-<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=1.2.1"></script>
+<script src="https://dejai.github.io/scripts/js/v2/my.js?v=1.2.5"></script>
+<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v=1.2.5"></script>
+<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=1.2.5"></script>
 <!-- Manager Scripts -->
-<script src="src/js/models.js?v=1.2.1"></script>
-<script src="src/js/adventureFiles.js?v=1.2.1"></script>
-<script src="src/js/adventures.js?v=1.2.1"></script>
-<script src="src/js/groups.js?v=1.2.1"></script>
-<script src="src/js/paths.js?v=1.2.1"></script>
-<script src="src/js/users.js?v=1.2.1"></script>
-<script src="src/js/main.js?v=1.2.1"></script>
+<script src="src/js/models.js?v=1.2.5"></script>
+<script src="src/js/adventureFiles.js?v=1.2.5"></script>
+<script src="src/js/adventures.js?v=1.2.5"></script>
+<script src="src/js/eventResponses.js?v=1.2.5"></script>
+<script src="src/js/events.js?v=1.2.5"></script>
+<script src="src/js/groups.js?v=1.2.5"></script>
+<script src="src/js/paths.js?v=1.2.5"></script>
+<script src="src/js/users.js?v=1.2.5"></script>
+<script src="src/js/main.js?v=1.2.5"></script>
 </html>
