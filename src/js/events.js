@@ -42,6 +42,8 @@ async function onSelectEvent(option){
         MyUrls.modifySearch({"tab" : "events", "content":eventID});
         var event = MyPageManager.getContentByKey("Events")?.filter(x => x.EventKey == eventID)?.[0];
         MyDom.fillForm("#eventDetailsForm", event);   
+
+        MyDom.setContent("#eventPreviewLink", {"href": `https://adventures.dejaithekid.com/events/?id=${event.EventID}`})
         
         loadEventResponseByID(eventID);
         onSetSelectedEntity(eventID);
