@@ -41,7 +41,8 @@ async function onSelectResponse(cell){
         // Get the response details
         var response = await MyCloudFlare.Files("GET", `event/response2/?response=${responseObj.ResponseKey}`);
         var responseDetails = Array.from(Object.entries(response)).map( pair => new ResponseDetails(pair[0], pair[1]));
-        responseDetails = responseDetails.filter(x => x.ResponseLabel != "");
+        responseDetails = responseDetails.filter(x => x.ResponseLabel != "" && x.ResponseLabel != 'null');
+        console.log(responseDetails);
 
         // Show the response details
         var template = await MyTemplates.getTemplateAsync("templates/details/response-details.html", responseDetails);

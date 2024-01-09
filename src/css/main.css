@@ -37,6 +37,8 @@ button { cursor:pointer; }
 .searchContainer .searchBarSection { padding: 2%; }
 
 .contentDetailsSection { min-width:100%; }
+.contentDetailsSection a:link{ color: #448ef6; }
+.contentDetailsSection a:visited{ color: #448ef6; }
 
 /* Forms */
 .form-section { display:flex; flex-wrap:wrap; flex-direction:row; justify-content: left; gap:10px; }

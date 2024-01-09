@@ -12,13 +12,11 @@
         </div>
     
         <div  id="eventDetailsSection" class="hidden hideOnTabSwitch showOnEventSelected contentDetailsSection">
-            <h3 id="eventName">Event Details &mdash; <button onclick="onSaveEventDetails(this)">SAVE</button> </h3>
-            
-            <p class="pointer">
-               <a id="eventPreviewLink" href="" target="_blank">
-                Preview: <i class="fa-regular fa-eye"></i>
-               </a> 
-            </p>
+            <h3 id="eventName">
+                Event Details &mdash; <button onclick="onSaveEventDetails(this)">SAVE</button> 
+                &nbsp; 
+                <a class="pointer" style="margin-left:2%;font-size:smaller;" id="eventPreviewLink" href="" target="_blank">Preview: <i class="fa-regular fa-eye"></i></a> 
+            </h3>
             
             <div id="eventDetailsForm" class="form-section">
                 <input id="eventID" type="text" name="eventID" required hidden />
