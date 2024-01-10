@@ -37,17 +37,22 @@ async function onSelectResponse(cell){
         MyDom.setContent("#responseDetailsPopup", {"innerHTML": spinnerIcon});
         MyDom.addClass("#responseDetailsModal.modalContainer", "open");        
 
-
         // Get the response details
-        var response = await MyCloudFlare.Files("GET", `event/response2/?response=${responseObj.ResponseKey}`);
-        var responseDetails = Array.from(Object.entries(response)).map( pair => new ResponseDetails(pair[0], pair[1]));
-        responseDetails = responseDetails.filter(x => x.ResponseLabel != "" && x.ResponseLabel != 'null');
-        console.log(responseDetails);
+        var responseDetails = await onGetResponseDetails(responseObj.ResponseKey);
 
         // Show the response details
         var template = await MyTemplates.getTemplateAsync("templates/details/response-details.html", responseDetails);
         MyDom.setContent("#responseDetailsPopup", {"innerHTML": template});
     }
+}
+
+// Get the details of a response (by key)
+async function onGetResponseDetails(responseKey) {
+     // Get the response details
+     var response = await MyCloudFlare.Files("GET", `event/response2/?response=${responseKey}`);
+     var responseDetails = Array.from(Object.entries(response)).map( pair => new ResponseDetails(pair[0], pair[1]));
+     responseDetails = responseDetails.filter(x => x.ResponseLabel != "" && x.ResponseLabel != 'null');
+     return responseDetails
 }
 
 // Close the modal
@@ -127,27 +132,87 @@ async function onNavigateResponse(direction="next"){
     }
 }
 
-// Generate a preview time based on duration
-function onGeneratePreview(){
-    var time = "0m0s"
-    try { 
-        var duration = MyDom.getContent("#fileDuration")?.value ?? "";
-        var percent = MyDom.getContent("#previewTimePercent")?.value ?? "";
-        if(duration == "" || percent == ""){
-            throw new Error("Missing duration or percent");
+// Summarize the responses (based on label) for an event
+async function onSummarizeEventResponses(button){
+    
+    var saveStatus = new SaveStatus(button);
+    saveStatus.info("Summarizing ...");
+
+    try {
+        var summaryVisible = !document.querySelector("#eventSummarySubsection")?.classList.contains("hidden") ?? false;
+        if(summaryVisible){
+            throw new Error("Already visible");
         }
-        percent = Number(percent);
-        duration = Number(duration);
-        // Get percentage of duration
-        var percentage = percent / 100;
-        var videoTime = Math.floor( (duration * percentage) );
-        // var quarterWay = Math.floor( (duration * 0.25) );
-        var minute = Math.floor( (videoTime / 60) );
-        var seconds = Math.ceil( (videoTime % 60) );
-        time = `${minute}m${seconds}s`;
+
+        var responses = MyPageManager.getContentByKey("Responses");
+        for(var resp of responses)
+        {
+            // If already summarized, just continue
+            if(resp.Summarized){
+                continue
+            }
+
+            var userKey = resp.User;
+            var responseDetails = await onGetResponseDetails(resp.ResponseKey);
+            for( var detail of responseDetails)
+            {
+                let label = detail.ResponseLabel;
+                let text = detail.ResponseText;
+
+                // Get existing summary?
+                var summary = MyPageManager.getContentByKey("ResponseSummary")?.filter(x => x.ResponseLabel == label)?.[0] ?? undefined;
+                if(summary == undefined){
+                    summary = new EventResponseSummary(label);
+                    MyPageManager.addContent("ResponseSummary", [summary]);
+                }
+
+                // Setting the appropriate summary value
+                if(label == "comments" && text != ""){
+                    summary.addResponse(`${text} - ${userKey}`);
+                } else if (text.startsWith("Yes") || text.startsWith("Maybe")){
+                    var pref = text.split(" ")?.[0]?.replace(",", "");
+                    summary.addResponse(`${pref} - ${userKey}`);
+                }
+            }
+            resp.setSummarized(); // mark this response as summarized;
+            
+        }
+        saveStatus.info("RESPONSES");
+    
+        // Get summary & display
+        var eventResponseSummary = MyPageManager.getContentByKey("ResponseSummary");
+        var template = await MyTemplates.getTemplateAsync("templates/options/event-response-label-tab.html", eventResponseSummary);
+        MyDom.setContent("#eventSummaryLabels", {"innerHTML": template});
+    
+        MyDom.hideContent(".hideOnResponseSummary");
+        MyDom.showContent(".showOnResponseSummary");
     } catch(err){
         MyLogger.LogError(err);
-    } finally {
-        MyDom.setContent("#preview", {"value": time});
+
+        // Do the flip to make sure things are back to visible
+        MyDom.showContent(".hideOnResponseSummary");
+        MyDom.hideContent(".showOnResponseSummary");
+        MyDom.hideContent("#eventSummaryDetails");
+        saveStatus.info("SUMMARY");
+
+    }
+
+}
+
+// Show the response details
+async function onShowResponseSummary(tab){
+    var label = tab.innerText;
+    var summary = MyPageManager.getContentByKey("ResponseSummary")?.filter(x => x.ResponseLabel == label)?.[0] ?? undefined;
+    MyDom.removeClass(".event-response-tab", "active");
+    if(summary != undefined) 
+    {
+        tab.classList.add("active");
+        var responseList = summary.ResponseList.map(x => { return { "Response": x}});
+        MyDom.setContent("#eventSummaryLabelCount", {"innerHTML": responseList.length});
+        var template = await MyTemplates.getTemplateAsync("templates/rows/response-summary-row.html", responseList);
+        MyDom.setContent("#eventSummaryList", {"innerHTML": template});
+        MyDom.showContent("#eventSummaryDetails");
     }
 }
+
+// Toggling back 

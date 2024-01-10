@@ -24,6 +24,16 @@ button { cursor:pointer; }
 .cf-manage-tab:hover { background-color: white; color:black; }
 .cf-manage-tab.active { background-color: white; color:black; }
 
+
+/* Summary button */
+#eventSummaryButton { background-color:#448ef6; color:white; border:none; }
+
+/* Response tabs */
+#eventSummaryLabels { display:flex; flex-wrap: wrap; flex-direction: row; justify-content: left; gap:10px; align-items:center; align-content:center;  }
+.event-response-tab { border:1px solid white; padding:0.5%; margin-right:0.5%; border-radius:20px;}
+.event-response-tab:hover { background-color: white; color:black; }
+.event-response-tab.active { background-color: white; color:black; }
+
 /* List of options to pick from */
 .entityOption.selected { background-color:blue !important; color:white !important; padding:2%; }
 

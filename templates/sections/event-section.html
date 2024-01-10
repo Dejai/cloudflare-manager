@@ -55,43 +55,48 @@
                     <label for="accessGroup">Access Group: </label><br/>
                     <select class="form-field" name="accessGroup" id="accessGroup"></select>
                 </div>
-                
-                <!-- <div class="eventDetailsFormSubsection form-field-section-large">
-                    <label for="thumbnail">Thumbnail: </label><br/>
-                    <input class="form-field" id="thumbnail" type="text" name="thumbnail" placeholder="Enter URL to image" />
-                </div> -->
             </div>
 
             <div id="eventResponsesSection" class="hidden showOnEventSelected">
-                <h3>The Responses</h3>
-                <table id="eventResponses" style="width:99%; text-align:left; border-spacing:0; ">
-                    <colgroup>
-                        <col style="width:5%;">
-                        <col style="width:20%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th colspan="3">
-                                <div id="responsesSearchSection">
-                                </div>
-                            </th>
-                        </tr>
-                        <tr class="showBottomBorder">
-                            <th>
-                                <p class="hidden showOnResponsesLoading hideOnResponsesLoaded">
-                                    <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:150%;"></i>
-                                </p>
-                            </th>
-                            <th><p class="hidden1 showOnLoaded">Response Date</p></th>
-                            <th><p class="hidden1 showOnLoaded">User</p></th>
-                        </tr>
-                    </thead>
-                    <tbody id="listOfEventResponses"></tbody>
-                </table>
+                <h3>
+                    The Responses
+                    &mdash;
+                    <button id="eventSummaryButton" class="dtk-button-round-corners noBorders" onclick="onSummarizeEventResponses(this)">SUMMARY</button>
+                </h3>
+                <div id="eventResponsesTableSection" class="hideOnResponseSummary">
+                    <table id="eventResponses" style="width:99%; text-align:left; border-spacing:0; ">
+                        <colgroup>
+                            <col style="width:5%;">
+                            <col style="width:20%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="3">
+                                    <div id="responsesSearchSection"></div>
+                                </th>
+                            </tr>
+                            <tr class="showBottomBorder">
+                                <th>
+                                    <p class="hidden showOnResponsesLoading hideOnResponsesLoaded">
+                                        <i class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:150%;"></i>
+                                    </p>
+                                </th>
+                                <th><p class="hidden1 showOnLoaded">Response Date</p></th>
+                                <th><p class="hidden1 showOnLoaded">User</p></th>
+                            </tr>
+                        </thead>
+                        <tbody id="listOfEventResponses"></tbody>
+                    </table>
+                </div>
+                <div id="eventSummarySubsection" class="hidden showOnResponseSummary">
+                    <div id="eventSummaryLabels"></div>
+                    <div id="eventSummaryDetails" class="hidden">
+                        <h4><span id="eventSummaryLabelCount"></span> Responses</h4>
+                        <div id="eventSummaryList"></div>
+                    </div>
+                </div>
             </div>
         </div>
-            
-
     </div>
     <div id="fileEditModal"></div>
 </div>

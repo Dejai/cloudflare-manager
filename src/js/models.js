@@ -1,3 +1,99 @@
+
+// The "Adventure" object
+class Adventure {
+    constructor(detailsJson={}) {
+        this.AdventureID = detailsJson?.adventureID ?? "";
+        this.Status = detailsJson?.status ?? "Draft";
+        this.Name = detailsJson?.name ?? "";
+        this.Date = detailsJson?.date ?? "";
+        this.Description = detailsJson?.description ?? "";
+        this.Thumbnail = detailsJson?.thumbnail ?? "";
+        this.AccessType = detailsJson?.accessType ?? "";
+        this.AccessGroup = detailsJson?.accessGroup ?? "";
+        // this.Labels = JSON.stringify(detailsJson?.labels ?? []);
+    }
+
+    // Update this adventure with fields from the form
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
+    }
+}
+
+// The "Event" object
+class Event {
+    constructor(jsonDetails){
+        this.Status = jsonDetails?.status ?? "";
+        this.EventID = jsonDetails?.eventID ?? "";
+        this.EventKey = jsonDetails?.eventKey ?? "";
+        this.Name = jsonDetails?.name ?? "";
+        this.AccessType = jsonDetails?.accessType ?? "";
+        this.AccessGroup = jsonDetails?.accessGroup ?? "";
+        this.Template = jsonDetails?.template ?? "";
+    }
+
+    // Update this adventure with fields from the form
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
+    }
+}
+
+// The response to an event
+class EventResponse {
+    constructor(details){
+        this.ResponseKey = details?.responseKey ?? "";
+        this.EventKey = details?.eventKey ?? "";
+        this.User = details?.user ?? "";
+        this.ResponseDate = new Date(details?.responseDate)
+        this.ResponseDateFormatted = this.ResponseDate?.toLocaleDateString();
+
+        // Keep track if this response has been summarized
+        this.Summarized = false;
+    }
+
+    setSummarized(){
+        this.Summarized = true;
+    }
+}
+
+// Summary of an Event Response
+class EventResponseSummary{
+    constructor(label){
+        this.ResponseLabel = label;
+        this.ResponseList = [];
+    }
+
+    addResponse(item){
+        this.ResponseList.push(item);
+    }
+}
+
+// The "Group" object
+class Group {
+    constructor(detailsJson={}){
+        this.Key = detailsJson?.key ?? "";
+        this.Value = detailsJson?.value ?? "";
+    }
+    
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
+    }
+}
+
 // A way to manage list of things on the page
 class PageManager { 
 
@@ -76,119 +172,6 @@ class PageManager {
     
 }
 
-// Used to sync the different objects that need to be synced
-class SyncManager{
-    constructor(){
-        this.Queue = {};
-
-        // listen for syncing
-        setInterval( ()=> {
-            for(var key of Object.keys(this.Queue)){
-                var currDate = new Date();
-                var date = this.Queue[key].Date;
-                var func = this.Queue[key].Func;
-                if(date < currDate){
-                    MyLogger.LogInfo("Syncing: " + key);
-                    func();
-                    delete this.Queue[key]; // Remove it from the queue after running func
-                }
-            }
-        }, 10000);
-    }
-
-    addSync(key, func, instant=false){
-        var newDate = new Date();
-        // Add date with adjusted seconds
-        var adjustedSeconds = newDate.getSeconds();
-        adjustedSeconds += (instant) ? -20 : 10;
-        console.log(adjustedSeconds);
-        // Always add 10 seconds to the datetime
-        newDate.setSeconds( adjustedSeconds );
-        this.Queue[key] = {
-            "Date": newDate,
-            "Func": func
-        }
-        MyLogger.LogInfo("Sync added to queue for " + key);
-        console.log(this.Queue[key]);
-    }
-}
-
-// The "Adventure" object
-class Adventure {
-    constructor(detailsJson={}) {
-        this.AdventureID = detailsJson?.adventureID ?? "";
-        this.Status = detailsJson?.status ?? "Draft";
-        this.Name = detailsJson?.name ?? "";
-        this.Date = detailsJson?.date ?? "";
-        this.Description = detailsJson?.description ?? "";
-        this.Thumbnail = detailsJson?.thumbnail ?? "";
-        this.AccessType = detailsJson?.accessType ?? "";
-        this.AccessGroup = detailsJson?.accessGroup ?? "";
-        // this.Labels = JSON.stringify(detailsJson?.labels ?? []);
-    }
-
-    // Update this adventure with fields from the form
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
-}
-
-// The "Event" object
-class Event {
-    constructor(jsonDetails){
-        this.Status = jsonDetails?.status ?? "";
-        this.EventID = jsonDetails?.eventID ?? "";
-        this.EventKey = jsonDetails?.eventKey ?? "";
-        this.Name = jsonDetails?.name ?? "";
-        this.AccessType = jsonDetails?.accessType ?? "";
-        this.AccessGroup = jsonDetails?.accessGroup ?? "";
-        this.Template = jsonDetails?.template ?? "";
-    }
-
-    // Update this adventure with fields from the form
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
-}
-
-// The response to an event
-class EventResponse {
-    constructor(details){
-        this.ResponseKey = details?.responseKey ?? "";
-        this.EventKey = details?.eventKey ?? "";
-        this.User = details?.user ?? "";
-        this.ResponseDate = new Date(details?.responseDate)
-        this.ResponseDateFormatted = this.ResponseDate?.toLocaleDateString();
-    }
-}
-
-// The "Group" object
-class Group {
-    constructor(detailsJson={}){
-        this.Key = detailsJson?.key ?? "";
-        this.Value = detailsJson?.value ?? "";
-    }
-    
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
-}
-
 // The "Path" object
 class Path {
     constructor(jsonObj={}){
@@ -205,49 +188,6 @@ class Path {
                 this[pascalKey] = fields[key];
             }
         }
-    }
-}
-
-// The "User" object
-class User { 
-    constructor(userDetails) {
-        this.FirstName = userDetails?.FirstName ?? "";
-        this.LastName = userDetails?.LastName ?? "";
-        this.EmailAddress = userDetails?.EmailAddress ?? "";
-        this.PhoneNumber = userDetails?.PhoneNumber ?? "";
-        this.UserKey = userDetails?.Key ?? "";
-        this.Updated = userDetails?.Updated ?? "";
-        // Adding a recent message
-        this.UpdatedStatus = (this.isRecentlyAdded()) ? "new" : "";
-    }
-
-    isRecentlyAdded(){
-        var results = false; 
-        try { 
-            var updatedDate = new Date(this.Updated);
-            var yesterday = new Date();
-            yesterday.setDate( yesterday.getDate() - 2);
-            results = (updatedDate > yesterday);
-        } catch (err){
-            MyLogger.LogError(err);
-        } finally {
-            return results;
-        }
-    }
-}
-
-// The Access object
-class UserAccess { 
-    constructor(accessDetails){
-        this.Access = accessDetails ?? {};
-    }
-    getAccessList(){
-        var accessList = [];
-        for(var key of Object.keys(this.Access)){
-            var val = this.Access[key];
-            accessList.push( {"Scope": key, "Group": val});
-        }
-        return accessList;
     }
 }
 
@@ -276,39 +216,6 @@ class ResponseDetails {
                 this.ResponseLabel = this.ResponseLabel;
         }
 
-    }
-}
-
-// Class to store the video details
-class StreamVideo {
-    constructor(videoObj) {
-        this.AdventureID = videoObj?.adventureID ?? "";
-        this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
-        this.Adventure = this.AdventureID;
-        this.AdventureName = "";
-        this.ContentID = videoObj?.uid ?? "";
-        this.ContentType = "stream";
-        this.Creator = videoObj?.creator ?? "";
-        this.ShowCreator = videoObj?.showCreator ?? "No";
-        this.Date = videoObj?.date ?? "";
-        this.Name = videoObj?.name ?? "";
-        this.Description = videoObj?.description ?? "";
-        this.Duration = videoObj?.duration ?? 0;
-        this.Order = videoObj?.order ?? 0;
-        this.Ready = videoObj?.readyToStream ?? false;
-        this.Signed = videoObj?.requireSignedURLs ?? false;
-        this.Preview = videoObj?.preview ?? "0m0s";
-        this.Urls = videoObj?.urls ?? {};
-
-        this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
-    }
-
-    setAdventureName(adventureMap){
-        this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
-    }
-
-    setEditIcons(iconsHtml){
-        this.EditIcons = iconsHtml;
     }
 }
 
@@ -358,5 +265,116 @@ class SaveStatus{
             this.Element.disabled = false;
             this.Element.innerHTML = this.InitialText;
         },time);
+    }
+}
+
+// Class to store the video details
+class StreamVideo {
+    constructor(videoObj) {
+        this.AdventureID = videoObj?.adventureID ?? "";
+        this.AdventureID = (this.AdventureID == "") ? "0" : this.AdventureID;
+        this.Adventure = this.AdventureID;
+        this.AdventureName = "";
+        this.ContentID = videoObj?.uid ?? "";
+        this.ContentType = "stream";
+        this.Creator = videoObj?.creator ?? "";
+        this.ShowCreator = videoObj?.showCreator ?? "No";
+        this.Date = videoObj?.date ?? "";
+        this.Name = videoObj?.name ?? "";
+        this.Description = videoObj?.description ?? "";
+        this.Duration = videoObj?.duration ?? 0;
+        this.Order = videoObj?.order ?? 0;
+        this.Ready = videoObj?.readyToStream ?? false;
+        this.Signed = videoObj?.requireSignedURLs ?? false;
+        this.Preview = videoObj?.preview ?? "0m0s";
+        this.Urls = videoObj?.urls ?? {};
+
+        this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
+    }
+
+    setAdventureName(adventureMap){
+        this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
+    }
+
+    setEditIcons(iconsHtml){
+        this.EditIcons = iconsHtml;
+    }
+}
+
+// Used to sync the different objects that need to be synced
+class SyncManager{
+    constructor(){
+        this.Queue = {};
+
+        // listen for syncing
+        setInterval( ()=> {
+            for(var key of Object.keys(this.Queue)){
+                var currDate = new Date();
+                var date = this.Queue[key].Date;
+                var func = this.Queue[key].Func;
+                if(date < currDate){
+                    MyLogger.LogInfo("Syncing: " + key);
+                    func();
+                    delete this.Queue[key]; // Remove it from the queue after running func
+                }
+            }
+        }, 10000);
+    }
+
+    addSync(key, func, instant=false){
+        var newDate = new Date();
+        // Add date with adjusted seconds
+        var adjustedSeconds = newDate.getSeconds();
+        adjustedSeconds += (instant) ? -20 : 10;
+        // Always add 10 seconds to the datetime
+        newDate.setSeconds( adjustedSeconds );
+        this.Queue[key] = {
+            "Date": newDate,
+            "Func": func
+        }
+        MyLogger.LogInfo("Sync added to queue for " + key);
+    }
+}
+
+// The "User" object
+class User { 
+    constructor(userDetails) {
+        this.FirstName = userDetails?.FirstName ?? "";
+        this.LastName = userDetails?.LastName ?? "";
+        this.EmailAddress = userDetails?.EmailAddress ?? "";
+        this.PhoneNumber = userDetails?.PhoneNumber ?? "";
+        this.UserKey = userDetails?.Key ?? "";
+        this.Updated = userDetails?.Updated ?? "";
+        // Adding a recent message
+        this.UpdatedStatus = (this.isRecentlyAdded()) ? "new" : "";
+    }
+
+    isRecentlyAdded(){
+        var results = false; 
+        try { 
+            var updatedDate = new Date(this.Updated);
+            var yesterday = new Date();
+            yesterday.setDate( yesterday.getDate() - 2);
+            results = (updatedDate > yesterday);
+        } catch (err){
+            MyLogger.LogError(err);
+        } finally {
+            return results;
+        }
+    }
+}
+
+// The Access object
+class UserAccess { 
+    constructor(accessDetails){
+        this.Access = accessDetails ?? {};
+    }
+    getAccessList(){
+        var accessList = [];
+        for(var key of Object.keys(this.Access)){
+            var val = this.Access[key];
+            accessList.push( {"Scope": key, "Group": val});
+        }
+        return accessList;
     }
 }
