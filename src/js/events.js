@@ -1,20 +1,46 @@
+// GET: Getting the entity from Cloudflare
+async function onGetEvents(){
 
-// Get the list of events
-async function getListOfEvents(){
+    // Always start with a sync check
+    await onSyncEntity("Events");
+
+    // Get the actual events & save to page manager
     var events = await MyCloudFlare.Files("GET", "/events");
     events = events.map(result => new Event(result));
     MyPageManager.addContent("Events", events);
-    return events;
+
+    // Load the content
+    onLoadEvents();
 }
 
-// Select events tab
-function onEventsTab(){
-    MyDom.hideContent(".hideOnTabSwitch");
-    onShowEvents();
+// LOAD: Adding the formatted content to the page (may be hidden)
+async function onLoadEvents(){
+    var events = MyPageManager.getContentByKey("Events");
+    events.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
+    var eventList = await MyTemplates.getTemplateAsync("templates/lists/event-list.html", events );
+    MyDom.setContent("#listOfEvents", {"innerHTML": eventList});
+    loadContentFromURL();
+}
+
+// SHOW: Showing the entity when the tab is clicked
+async function onShowEvents(){
+    try {
+        onSetActiveTab("events");
+
+        // Set the group options in the event details form
+        var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));
+        MyDom.setContent("#eventDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
+        
+        MyDom.hideContent(".hideOnEventsLoaded");
+        MyDom.showContent(".showOnEventsLoaded");
+        MyDom.showContent("#eventsTabSection");
+    } catch (err) {
+        MyLogger.LogError(err);
+    }
 }
 
 // Show the list of events
-async function onShowEvents() {
+async function onShowEvents2() {
     try {
         var events = MyPageManager.getContentByKey("Events");
         events.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
@@ -35,7 +61,7 @@ async function onShowEvents() {
     }
 }
 
-// Get the Event & its files
+// SELECT: Pick an event and show it's content
 async function onSelectEvent(option){
     try{
         var eventID = option.getAttribute("data-event-id") ?? "";
@@ -68,7 +94,7 @@ async function onAddEvent(){
     onSetSelectedEntity(eventID);
 }
 
-// Save Event details
+// SAVE: Save Event details
 async function  onSaveEventDetails(button){
 
     var saveStatus = new SaveStatus(button);
@@ -109,25 +135,9 @@ async function  onSaveEventDetails(button){
         // Reload the list after saving.
         onShowEvents();
 
-        // Add events to be synced
-        MySyncManager.addSync("Events", onSyncEvents);
-
     } catch(err){
         MyLogger.LogError(err);
         saveStatus.error(err.message, 7);
     }
 }
 
-// Sync the events
-async function onSyncEvents(){
-    MyPageManager.infoMessage("Syncing Events", -1);
-    var results = await MyCloudFlare.Files("GET", `/events/sync`);
-    MyPageManager.setResultsMessage(results);
-    MyPageManager.removeContent("Events");
-    await getListOfEvents();
-    // Reload if current tab
-    var tab = MyUrls.getSearchParam("tab") ?? "";
-    if(tab == "events"){
-        onShowEvents();
-    }
-}

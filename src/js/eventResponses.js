@@ -144,20 +144,26 @@ async function onSummarizeEventResponses(button){
             throw new Error("Already visible");
         }
 
-        var responses = MyPageManager.getContentByKey("Responses");
+        let eventKey = MyDom.getContent("#eventDetailsSection #eventKey")?.value + "_";
+
+        // Get the list of indexed responses
+        var responses = await MyCloudFlare.Files("GET", "event/response2");
+        responses = responses.filter(x => x.key?.startsWith(eventKey));
+
+        //  Clear stored responses & reload
+        MyPageManager.removeContent("ResponseSummary");
+
+        // Loop through responses & map
         for(var resp of responses)
         {
-            // If already summarized, just continue
-            if(resp.Summarized){
-                continue
-            }
-
-            var userKey = resp.User;
-            var responseDetails = await onGetResponseDetails(resp.ResponseKey);
-            for( var detail of responseDetails)
+            let userKey = resp["key"]?.replace(eventKey, "");
+            for(var keyPair of Object.entries(resp))
             {
-                let label = detail.ResponseLabel;
-                let text = detail.ResponseText;
+                let label = keyPair[0];
+                let value = keyPair[1];
+                if(label == "null" || label == "key"){
+                    continue;
+                }
 
                 // Get existing summary?
                 var summary = MyPageManager.getContentByKey("ResponseSummary")?.filter(x => x.ResponseLabel == label)?.[0] ?? undefined;
@@ -167,15 +173,13 @@ async function onSummarizeEventResponses(button){
                 }
 
                 // Setting the appropriate summary value
-                if(label == "comments" && text != ""){
-                    summary.addResponse(`${text} - ${userKey}`);
-                } else if (text.startsWith("Yes") || text.startsWith("Maybe")){
-                    var pref = text.split(" ")?.[0]?.replace(",", "");
-                    summary.addResponse(`${pref} - ${userKey}`);
+                if(label == "comments" && value != ""){
+                    summary.addResponse(`${value} <br/><span style="margin-left:3%;">- <em>${userKey}</em></span>`);
+                } else if (value.startsWith("Yes") || value.startsWith("Maybe")){
+                    var pref = value.split(" ")?.[0]?.replace(",", "");
+                    summary.addResponse(`${pref} <span style="margin-left:1%;">- <em>${userKey}</em></span>`);
                 }
             }
-            resp.setSummarized(); // mark this response as summarized;
-            
         }
         saveStatus.info("RESPONSES");
     

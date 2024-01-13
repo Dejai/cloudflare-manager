@@ -3,7 +3,6 @@
 const MyTrello = new TrelloWrapper("adventures");
 const MyCloudFlare = new CloudflareWrapper();
 const MyPageManager = new PageManager();
-const MySyncManager = new SyncManager();
 
 const savingMessages = {
     "saving": "<span style='color:lightgray'>Saving changes ... </span>",
@@ -38,28 +37,23 @@ MyDom.ready( async () => {
             throw new Error("Unauthorized");
         }
 
-
         // Load the different tabs
         var tabs = Array.from(document.querySelectorAll(".cf-manage-tab"));
-        var contentFuncs = {
-            "adventures": getListOfAdventures(),
-            "events": getListOfEvents(),
-            "groups": getListOfGroups(),
-            "users": onGetListOfUsers(),
-            "paths": getListOfPaths()
-        }
         for(var tab of tabs)
         {
             var tabName = tab.getAttribute("data-tab-name");
-            var func = contentFuncs[tabName] ?? undefined;
             var templateName = tabName.substring(0, tabName.length-1);
-            if(func != undefined){
-                await func;
-            }
             var section = await MyTemplates.getTemplateAsync(`templates/sections/${templateName}-section.html`, {});
             MyDom.setContent("#mainContentSection", {"innerHTML": section }, true);
             MyDom.showContent(`#headerContent .tab[data-tab-name="${tabName}"]`);
         }
+
+        // Getting the content (note: these are asynchronous calls, so will finish when they finish)
+        onGetEvents();
+        onGetUsers();
+        onGetPaths();
+        onGetGroups();
+        onGetAdventures();
 
         // Load the tab from the URL
         loadTabFromUrl();
@@ -70,9 +64,6 @@ MyDom.ready( async () => {
 
         var responseDetails = await MyTemplates.getTemplateAsync("templates/forms/response-details-form.html", {});
         MyDom.setContent("#modalSection", {"innerHTML": responseDetails}, true);
-
-        // Always add a sync for users right after loading
-        MySyncManager.addSync("Users", onSyncUsers, true);
         
     } catch (err){
         MyLogger.LogError(err);
@@ -115,6 +106,8 @@ async function loadContentFromURL(){
 
 // Set the current active tab
 function onSetActiveTab(tabName){
+    MyDom.hideContent(".hideOnTabSwitch");
+    
     // Remove classes first
     MyDom.removeClass(".tab-section", "active");
     MyDom.removeClass(".cf-manage-tab", "active");
@@ -126,6 +119,7 @@ function onSetActiveTab(tabName){
     // Adjust the URL
     MyUrls.modifySearch({"tab": tabName});
 }
+
 
 // Set the current selected entity option
 function onSetSelectedEntity(contentID=""){

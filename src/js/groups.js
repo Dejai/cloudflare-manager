@@ -1,27 +1,30 @@
 
 
-// Get the list of groups
-async function getListOfGroups(){
+// GET: Getting the entity from Cloudflare
+async function onGetGroups(){
     var groups = await MyCloudFlare.KeyValues("GET", "/groups");
     groups = groups.map(result => new Group(result));
     MyPageManager.addContent("Groups", groups);
+
+    // Load after getting
+    onLoadGroups();
 }
 
-// Select Groups tab
-function onGroupsTab(){
-    MyDom.hideContent(".hideOnTabSwitch");
-    onShowGroups();
+// LOAD: Adding the formatted content to the page (may be hidden)
+async function onLoadGroups(){
+    var groups = MyPageManager.getContentByKey("Groups");
+    groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
+    var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", groups );
+    MyDom.setContent("#listOfGroups", {"innerHTML": groupList});
+    loadContentFromURL();
 }
 
+// SHOW: Showing the entity when the tab is clicked
 async function onShowGroups() {
     try {
-        var groups = MyPageManager.getContentByKey("Groups");
-        groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
-        var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", groups );
-        MyDom.setContent("#listOfGroups", {"innerHTML": groupList});
+
 
         onSetActiveTab("groups");
-        loadContentFromURL();
 
         MyDom.showContent(".showOnGroupsLoaded");
     } catch (err) {

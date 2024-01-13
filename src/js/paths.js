@@ -1,27 +1,28 @@
 
 
 // Get the list of paths
-async function getListOfPaths(){
+async function onGetPaths(){
     var paths = await MyCloudFlare.KeyValues("GET", "/paths");
     paths = paths.map(result => new Path(result));
     MyPageManager.addContent("Paths", paths);
+
+    // Load content after getting
+    onLoadPaths();
 }
 
-// Select the paths tab
-function onPathsTab(){
-    MyDom.hideContent(".hideOnTabSwitch");
-    onShowPaths();
+// LOAD: Adding the formatted content to the page (may be hidden)
+async function onLoadPaths(){
+    var paths = MyPageManager.getContentByKey("Paths");
+    paths.sort( (a, b) => { return a.Key.localeCompare(b.Key) });
+    var pathList = await MyTemplates.getTemplateAsync("templates/lists/path-list.html", paths);
+    MyDom.setContent("#listOfPaths", {"innerHTML": pathList});
+    loadContentFromURL();
 }
 
+// SHOW: Showing the entity when the tab is clicked
 async function onShowPaths() {
     try {
-        var paths = MyPageManager.getContentByKey("Paths");
-        paths.sort( (a, b) => { return a.Key.localeCompare(b.Key) });
-        var pathList = await MyTemplates.getTemplateAsync("templates/lists/path-list.html", paths );
-        MyDom.setContent("#listOfPaths", {"innerHTML": pathList});
-        
         onSetActiveTab("paths");
-        loadContentFromURL();
 
         // Add user search bar
         MySearcher.addSearchBar("Paths", "#listOfPaths", "#searchPaths");

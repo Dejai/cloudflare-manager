@@ -1,6 +1,6 @@
 
 // Get the list of adventures
-async function getListOfAdventures(){
+async function onGetAdventures(){
     var adventures = await MyCloudFlare.Files("GET", "/adventures");
     adventures = adventures.map(result => new Adventure(result));
     adventures.push(new Adventure({"name": "_Default", "adventureID": 0}));
@@ -111,9 +111,6 @@ async function  onSaveAdventureDetails(button){
         // Reload the list after saving.
         onShowAdventures();
 
-        // Add adventures to be synced
-        MySyncManager.addSync("Adventures", onSyncAdventures);
-
     } catch(err){
         MyLogger.LogError(err);
         saveStatus.error(err.message, 7);
@@ -126,7 +123,7 @@ async function onSyncAdventures(){
     var results = await MyCloudFlare.Files("GET", `/adventures/sync`);
     MyPageManager.setResultsMessage(results);
     MyPageManager.removeContent("Adventures");
-    await getListOfAdventures();
+    await onGetAdventures();
     // Reload if current tab
     var tab = MyUrls.getSearchParam("tab") ?? "";
     if(tab == "adventures"){

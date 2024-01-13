@@ -1,26 +1,29 @@
+// GET: Getting the entity from Cloudflare
+async function onGetUsers(){
 
+    // Always start with a sync check
+    await onSyncEntity("Users");
 
-// Get the list of users
-async function onGetListOfUsers(){
     var users = await MyCloudFlare.Files("GET", "/users");
     users = users.map(result => new User(result));
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
+
+    // Load the users after getting them
+    onLoadUsers();
 }
 
-// Click on the users tab
-function onUsersTab(){
-    MyDom.hideContent(".hideOnTabSwitch");
-    onShowUsers();
+// LOAD: Adding the formatted content to the page (may be hidden)
+async function onLoadUsers(){
+    var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContentByKey("Users") );
+    MyDom.setContent("#listOfUsers", {"innerHTML": userList});
+    loadContentFromURL();
 }
 
-// Show the list of users
-async function onShowUsers() {
+// SHOW: Showing the entity when the tab is clicked
+async function onShowUsers(){
     try {
-        var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContentByKey("Users") );
-        MyDom.setContent("#listOfUsers", {"innerHTML": userList});
         onSetActiveTab("users");
-        loadContentFromURL();
 
         // Add user search bar
         MySearcher.addSearchBar("Users", "#listOfUsers", "#searchUsers");
@@ -32,7 +35,8 @@ async function onShowUsers() {
     }
 }
 
-// Select a user from the list & show their details
+
+// SELECT: Select a user from the list & show their details
 async function onSelectUser(option){
     try {
         var key = option.getAttribute("data-user-key") ?? "";
@@ -116,18 +120,4 @@ async function onOpenAccessModal(){
 
 function onCloseAccessModal(){
     MyDom.removeClass(".modalContainer", "open");
-}
-
-// Sync the adventures
-async function onSyncUsers(){
-    MyPageManager.infoMessage("Syncing Users", -1);
-    var results = await MyCloudFlare.Files("GET", `/users/sync`);
-    MyPageManager.setResultsMessage(results);
-    MyPageManager.removeContent("Users");
-    await onGetListOfUsers();
-    // Reload if current tab
-    var tab = MyUrls.getSearchParam("tab") ?? "";
-    if(tab == "users"){
-        onShowUsers();
-    }
 }

@@ -301,41 +301,6 @@ class StreamVideo {
     }
 }
 
-// Used to sync the different objects that need to be synced
-class SyncManager{
-    constructor(){
-        this.Queue = {};
-
-        // listen for syncing
-        setInterval( ()=> {
-            for(var key of Object.keys(this.Queue)){
-                var currDate = new Date();
-                var date = this.Queue[key].Date;
-                var func = this.Queue[key].Func;
-                if(date < currDate){
-                    MyLogger.LogInfo("Syncing: " + key);
-                    func();
-                    delete this.Queue[key]; // Remove it from the queue after running func
-                }
-            }
-        }, 10000);
-    }
-
-    addSync(key, func, instant=false){
-        var newDate = new Date();
-        // Add date with adjusted seconds
-        var adjustedSeconds = newDate.getSeconds();
-        adjustedSeconds += (instant) ? -20 : 10;
-        // Always add 10 seconds to the datetime
-        newDate.setSeconds( adjustedSeconds );
-        this.Queue[key] = {
-            "Date": newDate,
-            "Func": func
-        }
-        MyLogger.LogInfo("Sync added to queue for " + key);
-    }
-}
-
 // The "User" object
 class User { 
     constructor(userDetails) {
