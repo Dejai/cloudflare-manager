@@ -10,6 +10,7 @@ async function onGetEvents(){
     MyPageManager.addContent("Events", events);
 
     // Load the content
+    loadTabFromUrl();
     onLoadEvents();
 }
 
@@ -27,28 +28,6 @@ async function onShowEvents(){
     try {
         onSetActiveTab("events");
 
-        // Set the group options in the event details form
-        var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));
-        MyDom.setContent("#eventDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
-        
-        MyDom.hideContent(".hideOnEventsLoaded");
-        MyDom.showContent(".showOnEventsLoaded");
-        MyDom.showContent("#eventsTabSection");
-    } catch (err) {
-        MyLogger.LogError(err);
-    }
-}
-
-// Show the list of events
-async function onShowEvents2() {
-    try {
-        var events = MyPageManager.getContentByKey("Events");
-        events.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
-        var eventList = await MyTemplates.getTemplateAsync("templates/lists/event-list.html", events );
-        MyDom.setContent("#listOfEvents", {"innerHTML": eventList});
-        onSetActiveTab("events");
-        loadContentFromURL();
-        
         // Set the group options in the event details form
         var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));
         MyDom.setContent("#eventDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});

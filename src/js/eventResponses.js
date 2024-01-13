@@ -1,6 +1,9 @@
 // Load the event responses based on an advenure ID
 async function loadEventResponseByID(eventID) {
     try {
+
+        await onSyncEntity("EventResponses", "events/responses");
+
         MyDom.showContent(".showOnResponsesLoading");
         MyDom.setContent("#listOfEventResponses", {"innerHTML": ""});
         var responses = (eventID != "") ? await MyCloudFlare.Files("GET",`/event/responses/?key=${eventID}`) : [];

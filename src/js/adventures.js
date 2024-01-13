@@ -1,32 +1,30 @@
 
 // Get the list of adventures
 async function onGetAdventures(){
+    // Sync the adventures
+    await onSyncEntity("Adventures");
+
     var adventures = await MyCloudFlare.Files("GET", "/adventures");
     adventures = adventures.map(result => new Adventure(result));
     adventures.push(new Adventure({"name": "_Default", "adventureID": 0}));
     MyPageManager.addContent("Adventures", adventures);
-    return adventures;
+
+    onLoadAdventures();
 }
 
-// Select adventures tab
-function onAdventuresTab(){
-    MyDom.hideContent(".hideOnTabSwitch");
-    onShowAdventures();
+// LOAD: Adding the formatted content to the page (may be hidden)
+async function onLoadAdventures(){
+    var adventures = MyPageManager.getContentByKey("Adventures");
+    adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
+    var adventureList = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", adventures );
+    MyDom.setContent("#listOfAdventures", {"innerHTML": adventureList});
 }
 
-// Show the list of adventures
+// SHOW: Showing the entity when the tab is clicked
 async function onShowAdventures() {
     try {
-        var adventures = MyPageManager.getContentByKey("Adventures");
-        adventures.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
-        var adventureList = await MyTemplates.getTemplateAsync("templates/lists/adventure-list.html", adventures );
-        MyDom.setContent("#listOfAdventures", {"innerHTML": adventureList});
         onSetActiveTab("adventures");
         loadContentFromURL();
-        
-        // Set the group options in the adventure details form
-        var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));
-        MyDom.setContent("#adventureDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
         
         MyDom.hideContent(".hideOnAdventuresLoaded");
         MyDom.showContent(".showOnAdventuresLoaded");
@@ -39,6 +37,10 @@ async function onShowAdventures() {
 // Get the Adventure & its files
 async function onSelectAdventure(option){
     try{
+        // Set the group options in the adventure details form
+        var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));
+        MyDom.setContent("#adventureDetailsForm #accessGroup", {"innerHTML": "<option></option>" + groupOpts});
+        
         var adventureID = option.getAttribute("data-adventure-id") ?? "";
         MyUrls.modifySearch({"tab" : "adventures", "content":adventureID});
         var adventure = MyPageManager.getContentByKey("Adventures")?.filter(x => x.AdventureID == adventureID)?.[0];
