@@ -21,6 +21,8 @@ async function loadAdventureFilesByID(adventureID) {
 function onSelectFile(cell){
     row = cell.closest("tr");
     var contentID = row?.getAttribute("data-content-id") ?? "";
+    console.log(contentID);
+
     if (contentID != "") {
         onSetSelectedRow(row);
         MyDom.setContent("#previewTimePercent", {"value": "0"});

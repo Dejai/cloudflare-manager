@@ -10,8 +10,8 @@ async function onGetEvents(){
     MyPageManager.addContent("Events", events);
 
     // Load the content
-    loadTabFromUrl();
-    onLoadEvents();
+    await onLoadEvents();
+    loadTabFromUrl("events");
 }
 
 // LOAD: Adding the formatted content to the page (may be hidden)
@@ -20,13 +20,13 @@ async function onLoadEvents(){
     events.sort( (a, b) => { return a.Name.localeCompare(b.Name) });
     var eventList = await MyTemplates.getTemplateAsync("templates/lists/event-list.html", events );
     MyDom.setContent("#listOfEvents", {"innerHTML": eventList});
-    loadContentFromURL();
 }
 
 // SHOW: Showing the entity when the tab is clicked
 async function onShowEvents(){
     try {
         onSetActiveTab("events");
+        loadContentFromURL();
 
         // Set the group options in the event details form
         var groupOpts = await MyTemplates.getTemplateAsync("templates/options/group-option.html", MyPageManager.getContentByKey("Groups"));

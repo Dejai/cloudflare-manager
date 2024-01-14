@@ -9,7 +9,9 @@ async function onGetAdventures(){
     adventures.push(new Adventure({"name": "_Default", "adventureID": 0}));
     MyPageManager.addContent("Adventures", adventures);
 
-    onLoadAdventures();
+    await onLoadAdventures();
+    loadTabFromUrl("adventures");
+
 }
 
 // LOAD: Adding the formatted content to the page (may be hidden)

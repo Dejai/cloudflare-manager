@@ -32,10 +32,10 @@ Object.defineProperty(Date.prototype, "ToDateFormat", {
 
 
 // Check search params & load specific tab
-function loadTabFromUrl(){
+function loadTabFromUrl(tabToLoad=""){
     try{
-        var tab = MyUrls.getSearchParam("tab");
-        if(tab != undefined){
+        var tab = MyUrls.getSearchParam("tab") ?? "n/a";
+        if(tab == tabToLoad){
             var tabEle = document.querySelector(`.tab[data-tab-name="${tab}"]`);
             tabEle.click();
         }
@@ -66,11 +66,11 @@ async function loadContentFromURL(){
 // Set the current active tab
 function onSetActiveTab(tabName){
     MyDom.hideContent(".hideOnTabSwitch");
-    MyDom.hideContent("#mainLoadingIcon");
 
     // Remove classes first
     MyDom.removeClass(".tab-section", "active");
     MyDom.removeClass(".cf-manage-tab", "active");
+    MyDom.removeClass(".entityOption", "selected");
 
     // Add classes
     MyDom.addClass(`.tab-section[data-tab-name="${tabName}"]`, 'active');
@@ -78,6 +78,7 @@ function onSetActiveTab(tabName){
 
     // Adjust the URL
     MyUrls.modifySearch({"tab": tabName});
+    
 }
 
 

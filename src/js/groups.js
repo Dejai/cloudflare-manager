@@ -7,7 +7,8 @@ async function onGetGroups(){
     MyPageManager.addContent("Groups", groups);
 
     // Load after getting
-    onLoadGroups();
+    await onLoadGroups();
+    loadTabFromUrl("groups");
 }
 
 // LOAD: Adding the formatted content to the page (may be hidden)
@@ -16,15 +17,13 @@ async function onLoadGroups(){
     groups.sort( (a, b) => { return a.Value.localeCompare(b.Value) });
     var groupList = await MyTemplates.getTemplateAsync("templates/lists/group-list.html", groups );
     MyDom.setContent("#listOfGroups", {"innerHTML": groupList});
-    loadContentFromURL();
 }
 
 // SHOW: Showing the entity when the tab is clicked
 async function onShowGroups() {
     try {
-
-
         onSetActiveTab("groups");
+        loadContentFromURL();
 
         MyDom.showContent(".showOnGroupsLoaded");
     } catch (err) {

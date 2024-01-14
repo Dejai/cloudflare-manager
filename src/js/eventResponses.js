@@ -2,7 +2,7 @@
 async function loadEventResponseByID(eventID) {
     try {
 
-        await onSyncEntity("EventResponses", "events/responses");
+        await onSyncEntity("EventResponses", "events/responses/sync");
 
         MyDom.showContent(".showOnResponsesLoading");
         MyDom.setContent("#listOfEventResponses", {"innerHTML": ""});

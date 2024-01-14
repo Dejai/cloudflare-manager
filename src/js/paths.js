@@ -7,7 +7,8 @@ async function onGetPaths(){
     MyPageManager.addContent("Paths", paths);
 
     // Load content after getting
-    onLoadPaths();
+    await onLoadPaths();
+    loadTabFromUrl("paths");
 }
 
 // LOAD: Adding the formatted content to the page (may be hidden)
@@ -16,13 +17,13 @@ async function onLoadPaths(){
     paths.sort( (a, b) => { return a.Key.localeCompare(b.Key) });
     var pathList = await MyTemplates.getTemplateAsync("templates/lists/path-list.html", paths);
     MyDom.setContent("#listOfPaths", {"innerHTML": pathList});
-    loadContentFromURL();
 }
 
 // SHOW: Showing the entity when the tab is clicked
 async function onShowPaths() {
     try {
         onSetActiveTab("paths");
+        loadContentFromURL();
 
         // Add user search bar
         MySearcher.addSearchBar("Paths", "#listOfPaths", "#searchPaths");

@@ -10,20 +10,21 @@ async function onGetUsers(){
     MyPageManager.addContent("Users", users);
 
     // Load the users after getting them
-    onLoadUsers();
+    await onLoadUsers();
+    loadTabFromUrl("users");
 }
 
 // LOAD: Adding the formatted content to the page (may be hidden)
 async function onLoadUsers(){
     var userList = await MyTemplates.getTemplateAsync("templates/lists/user-list.html", MyPageManager.getContentByKey("Users") );
     MyDom.setContent("#listOfUsers", {"innerHTML": userList});
-    loadContentFromURL();
 }
 
 // SHOW: Showing the entity when the tab is clicked
 async function onShowUsers(){
     try {
         onSetActiveTab("users");
+        loadContentFromURL();
 
         // Add user search bar
         MySearcher.addSearchBar("Users", "#listOfUsers", "#searchUsers");

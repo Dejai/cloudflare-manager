@@ -55,14 +55,27 @@ MyDom.ready( async () => {
         onGetGroups();
         onGetAdventures();
 
-        // Load the tab from the URL
+         // Wait on all section to be done before hiding loading
+         new Promise( (resolve) => {
+            setInterval( ()=>{
+                if( Object.keys(MyPageManager.Content).length >= tabs.length) {
+                    MyDom.hideContent("#mainLoadingIcon");
+                    resolve(true);
+                }
+            }, 500);
+        });
 
-        // Load Access form
-        var accessForm = await MyTemplates.getTemplateAsync("templates/forms/access-form.html", {});
-        MyDom.setContent("#modalSection", {"innerHTML": accessForm}, true);
+        // Load the modal templates
+        const modalTemplates = {
+            "Access Form": "templates/forms/access-form.html",
+            "Response Details": "templates/forms/response-details-form.html",
+            "File Details": "templates/forms/file-edit-form.html" };
 
-        var responseDetails = await MyTemplates.getTemplateAsync("templates/forms/response-details-form.html", {});
-        MyDom.setContent("#modalSection", {"innerHTML": responseDetails}, true);
+        for(let path of Object.values(modalTemplates)) 
+        {
+            var template = await MyTemplates.getTemplateAsync(path, {});
+            MyDom.setContent("#modalSection", {"innerHTML": template}, true);
+        }
         
     } catch (err){
         MyLogger.LogError(err);
