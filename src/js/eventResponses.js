@@ -52,7 +52,7 @@ async function onSelectResponse(cell){
 // Get the details of a response (by key)
 async function onGetResponseDetails(responseKey) {
      // Get the response details
-     var response = await MyCloudFlare.Files("GET", `event/response2/?response=${responseKey}`);
+     var response = await MyCloudFlare.Files("GET", `event/response/?response=${responseKey}`);
      var responseDetails = Array.from(Object.entries(response)).map( pair => new ResponseDetails(pair[0], pair[1]));
      responseDetails = responseDetails.filter(x => x.ResponseLabel != "" && x.ResponseLabel != 'null');
      return responseDetails
@@ -150,7 +150,7 @@ async function onSummarizeEventResponses(button){
         let eventKey = MyDom.getContent("#eventDetailsSection #eventKey")?.value + "_";
 
         // Get the list of indexed responses
-        var responses = await MyCloudFlare.Files("GET", "event/response2");
+        var responses = await MyCloudFlare.Files("GET", "event/response/?response=index");
         responses = responses.filter(x => x.key?.startsWith(eventKey));
 
         //  Clear stored responses & reload
