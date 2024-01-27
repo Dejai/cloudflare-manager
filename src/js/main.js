@@ -27,6 +27,7 @@ MyDom.ready( async () => {
         // Check if logged in
         if(!loginDetails.IsLoggedIn){
             MyDom.showContent("#headerContent #loginRequired");
+            MyDom.hideContent("#mainLoadingIcon");
             throw new Error("Login required");
         }
 
