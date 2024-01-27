@@ -179,6 +179,13 @@ class Path {
         this.Value = jsonObj?.value ?? "";
         this.Path = jsonObj?.path ?? "";
         this.Date = new Date(jsonObj?.date);
+
+        // Short link to the
+        this.Domain = jsonObj?.domain ?? "adventures.dejaithekid.com";
+    }
+
+    getUrl(){
+        return `https://${this.Domain}/?code=${this.Key}`;
     }
     
     update(fields){

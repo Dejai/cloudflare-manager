@@ -101,3 +101,46 @@ async function onAddPath(){
     MyDom.showContent(".showOnPathSelected");
     onSetSelectedEntity(pathCode);
 }
+
+
+// Open preview of a path
+async function onOpenPreview(button) {
+    try {
+        let container = button.closest("#pathDetailsForm");
+        let key = MyDom.getContent("[name='key']", container)?.value ?? "";
+        var path = MyPageManager.getContentByKey("Paths")?.filter(x => x.Key == key)?.[0];
+        if(path != undefined){
+            MyUrls.navigateTo(path.getUrl(), "_blank");
+        }
+    } catch(err) {
+        MyLogger.LogError(err);
+    }
+    
+}
+
+async function onCopyPathCode(button){
+    try{
+        let container = button.closest("#pathDetailsForm");
+        let key = MyDom.getContent("[name='key']", container)?.value ?? "";
+        var path = MyPageManager.getContentByKey("Paths")?.filter(x => x.Key == key)?.[0];
+        if(path != undefined){
+
+            let pathUrl = path.getUrl();
+
+            MyDom.hideContent("#copyPathPreview");
+            MyDom.showContent("#copyPathMessage");
+
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(pathUrl);
+           
+        }
+    } catch(err){
+        MyLogger.LogError(err);
+    } finally {
+        // Reset copy
+        setTimeout( ()=> {
+            MyDom.showContent("#copyPathPreview");
+            MyDom.hideContent("#copyPathMessage");
+        }, 2000);
+    }
+}
