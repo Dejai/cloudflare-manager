@@ -76,6 +76,9 @@ function onSetActiveTab(tabName){
     MyDom.addClass(`.tab-section[data-tab-name="${tabName}"]`, 'active');
     MyDom.addClass(`.cf-manage-tab[data-tab-name="${tabName}"]`, 'active');
 
+    // Clear all searches
+    document.querySelectorAll(".searchClearIcon")?.forEach( (icon) => icon.click() );
+    
     // Adjust the URL
     MyUrls.modifySearch({"tab": tabName});
     
