@@ -309,22 +309,47 @@ class User {
         this.EmailAddress = userDetails?.EmailAddress ?? "";
         this.PhoneNumber = userDetails?.PhoneNumber ?? "";
         this.UserKey = userDetails?.key ?? userDetails?.Key ?? "";
-        this.Updated = userDetails?.Updated ?? "";
+        this.Updated = userDetails.updated ?? userDetails?.Updated ?? "";
         // Adding a recent message
-        this.UpdatedStatus = (this.isRecentlyAdded()) ? "new" : "";
+        this.UpdatedStatus = this.getUpdatedStatus();
     }
 
-    isRecentlyAdded(){
-        var results = false; 
+    getUpdatedStatus(){
+        var results = ["added"]; 
+        var age = 0;
         try { 
             var updatedDate = new Date(this.Updated);
-            var yesterday = new Date();
-            yesterday.setDate( yesterday.getDate() - 2);
-            results = (updatedDate > yesterday);
+            var todayDate = new Date()
+            age = Math.floor((todayDate.getTime() - updatedDate.getTime()) / (24*3600*1000)); 
+
+            var ranges = [1,3,7,14,30,60,90]
+            let rangeGotSet = false;
+            for(let range of ranges)
+            {
+                var compareDate = new Date();
+                compareDate.setDate( compareDate.getDate() - range);
+                if(updatedDate >= compareDate){
+                    results.push(range);
+                    rangeGotSet = true;
+                    break;
+                }
+            }
+            
+            // If no other range set, just say it's old
+            if(!rangeGotSet){
+                results.push("old")
+            }
+
+            // Add the age at the end
+            results.push(`(${age})`)
+
         } catch (err){
             MyLogger.LogError(err);
+
         } finally {
-            return results;
+            var combo = results.join(":")
+            return combo
+
         }
     }
 }
