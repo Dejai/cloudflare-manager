@@ -6,6 +6,7 @@ async function onGetUsers(){
 
     var users = await MyCloudFlare.Files("GET", "/users");
     users = users.map(result => new User(result));
+    console.log(users);
     users.sort( (a, b) => { return a.UserKey.localeCompare(b.UserKey) });
     MyPageManager.addContent("Users", users);
 

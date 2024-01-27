@@ -308,7 +308,7 @@ class User {
         this.LastName = userDetails?.LastName ?? "";
         this.EmailAddress = userDetails?.EmailAddress ?? "";
         this.PhoneNumber = userDetails?.PhoneNumber ?? "";
-        this.UserKey = userDetails?.Key ?? "";
+        this.UserKey = userDetails?.key ?? userDetails?.Key ?? "";
         this.Updated = userDetails?.Updated ?? "";
         // Adding a recent message
         this.UpdatedStatus = (this.isRecentlyAdded()) ? "new" : "";
