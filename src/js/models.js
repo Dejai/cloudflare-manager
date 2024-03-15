@@ -198,6 +198,30 @@ class Path {
     }
 }
 
+// The "Site" object
+class Site {
+    constructor(jsonObj={}){
+        this.Key = jsonObj?.key ?? "";
+        this.Value = jsonObj?.value ?? "";
+        this.Path = jsonObj?.path ?? "";
+        this.Date = new Date(jsonObj?.date);
+        this.Site = decodeURIComponent(this.Value)
+    }
+
+    getUrl(){
+        return `https://${this.Domain}/?code=${this.Key}`;
+    }
+    
+    update(fields){
+        for(var key of Object.keys(fields)) {
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = fields[key];
+            }
+        }
+    }
+}
+
 // Response details (for popup)
 class ResponseDetails {
     constructor(label, text){

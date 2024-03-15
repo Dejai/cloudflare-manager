@@ -1,0 +1,44 @@
+<div id="sitesTabSection" class="hidden showOnSitesLoaded hideOnTabSwitch tab-section" data-tab-name="sites">
+
+    <div class="tab-section-subsections">
+        <div class="listofContentSection">
+            <h3>
+                <i class="listToggleIcon fa-solid fa-circle-chevron-right" onclick="onToggleList()"></i>
+                List of Sites &mdash; 
+                <button onclick="onAddSite()">ADD</button>
+            </h3>
+            <div id="searchSites" class="searchContainer"></div>
+            <!-- Shows the list of adventures to pick from -->
+            <div id="listOfSites" class="listOfContent"></div>
+        </div>
+
+        <!-- The Site details & list of users -->
+        <div id="siteDetailsSection" class="hidden hideOnTabSwitch showOnSiteSelected contentDetailsSection">
+
+            <div>
+                <h3 id="siteName">Site Details &mdash; <button onclick="onSaveSiteDetails(this)">SAVE</button></h3>
+    
+                <div id="siteDetailsForm">
+                    <div class="siteDetailsFormSubsection">
+                    </div>
+                    
+                    <div class="siteDetailsFormSubsection">
+                        <label for="key">Name: </label><br/>
+                        <input id="key" type="text" name="key" placeholder="Enter Site Name" style="width:50%" required />
+                    </div>
+        
+                    <div class="siteDetailsFormSubsection">
+                        <label for="site">Site: </label><br/>
+                        <input id="site" type="text" name="site" placeholder="Enter Site Value" style="width:50%" required />
+                    </div>
+
+                    <div class="siteDetailsFormSubsection" style="padding-top:7%;">
+                        <button onclick="onOpenSite(this)">OPEN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</div>

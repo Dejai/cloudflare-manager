@@ -54,6 +54,7 @@ MyDom.ready( async () => {
         onGetUsers();
         onGetPaths();
         onGetGroups();
+        onGetSites();
         onGetAdventures();
 
          // Wait on all section to be done before hiding loading
