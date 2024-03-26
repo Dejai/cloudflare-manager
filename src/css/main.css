@@ -1,7 +1,6 @@
 /* General */
 button { cursor:pointer; }
 .searchableHidden { display: none; }
-#mainContainer { padding:0.5%; }
 .flex-break { flex-basis: 100%; height: 0; }
 .searchContainer .searchInput { font-size: 16px; }
 
@@ -20,13 +19,30 @@ button { cursor:pointer; }
 
 /* Manage tabs */
 #manageTabs { display:flex; flex-wrap: wrap; flex-direction: row; justify-content: left; gap:10px; align-items:center; align-content:center;  }
-.cf-manage-tab { border:1px solid white; padding:0.5%; margin-right:0.5%; border-radius:20px;}
-.cf-manage-tab:hover { background-color: white; color:black; }
-.cf-manage-tab.active { background-color: white; color:black; }
+.cfmTab { border:1px solid white; padding:0.5%; margin-right:0.5%; border-radius:20px;}
+.cfmTab:hover { background-color: white; color:black; }
+.cfmTab.active { background-color: white; color:black; }
+.cfmTab.selected { background-color: white; color:black; }
 
+/* Entity List Section */
+.searchBarSection { background-color: white; border-radius: 22px;}
+.searchBarInput:focus { border: none; outline:none; }
+
+/* Entity Cards */
+.entityCard { border: 1px solid white; padding: 1rem; box-shadow: #D4D1CD; }
+.entityItem.selected { background-color:blue !important; color:white !important; padding:1%;}
 
 /* Summary button */
 #eventSummaryButton { background-color:#448ef6; color:white; border:none; }
+
+/* Tables & Forms */
+.cfmTable { width:100%; table-layout: auto; border-spacing: 0px; }
+.cfmTable tbody tr,td { border-bottom: 1px solid white; border-top: 1px solid white; padding-top:0.5%; padding-bottom:1%; }
+.cfmTable tbody tr { transition: all ease 0.3s; }
+.cfmTable tbody tr:hover { transform: scale(1.01); }
+.cfmTable td,th { vertical-align: top; }
+
+
 
 /* Response tabs */
 #eventSummaryLabels { display:flex; flex-wrap: wrap; flex-direction: row; justify-content: left; gap:10px; align-items:center; align-content:center;  }
@@ -42,7 +58,7 @@ button { cursor:pointer; }
 /* The Tab Sections */
 .tab-section-subsections { display:flex; flex-wrap:wrap; flex-direction:row; justify-content: left; gap:10px; }
 .listofContentSection { min-width:100%;  margin-left:0.5%; }
-.listOfContent { max-height: 500px; border-top: 2px dotted white; border-bottom:2px dotted white; overflow:scroll; margin-top:1%; display:none; }
+/* .listOfContent { max-height: 500px; border-top: 2px dotted white; border-bottom:2px dotted white; overflow:scroll; margin-top:1%; display:none; } */
 .listofContentSection .searchContainer { display:none; background-color: white; border-radius: 50px; }
 .listofContentSection .searchContainer input:focus { outline:none; box-shadow: none; }
 .listofContentSection .searchContainer .searchClearIcon { color:red;}
@@ -127,6 +143,9 @@ tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; co
     
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
+    .entityCard { padding: 1rem; }
+
+
     .listToggler { display:none; }
     .listofContentSection { min-width:15%; }
     .listOfContent { display:block; }

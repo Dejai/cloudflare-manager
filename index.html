@@ -3,72 +3,85 @@
 <head>
 	<title>Cloudflare Manager</title>
     <base href="./">
-	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.3.7">
-    <link rel="stylesheet" href="src/css/main.css?v=1.3.7">
+	<link rel="stylesheet" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=1.3.9">
+    <link rel="stylesheet" href="src/css/base.css?v=1.3.9">
+    <link rel="stylesheet" href="src/css/main.css?v=1.3.9">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body class="dtk-margin-0 dtk-theme-cauldron">
     <div id="menuSection" class="dtk-theme-cauldron dtk-menu-sticky">
-		<div id="menuItems" style="height:44px;">
-			<div class="menuItem menuItemLeft" style="z-index:10">
-                <h2 class="pointer" style="border-right:3px solid #D4D1CD; padding-right:1%;" onclick="MyUrls.navigateTo('/')">Cloudflare Manager</h2>
-                <div id="loginSection" style="padding-left:1%;min-width:10%;">
-                    <span id="authLink" class="pointer loginAction" data-auth-action="logout" onclick="MyAuth.onAuthAction(this.getAttribute('data-auth-action'))">
-                        <i class="fa-regular fa-circle-user"></i>
-                        <span id="loginAction"></span>
-                    </span>
-                </div>
-                <div id="messageSection" style="padding-left:3%">
-                    MESSAGE
-                </div>
-                
-			</div>
-		</div>
-        <hr/>
-	</div>
-
-    <div id="mainContainer">
-
-        <!-- Main content -->
-        <div id="headerContent">
-            <h2 id="loginRequired" class="hidden showOnLoginRequired">Login required!</h2>
-            <h2 id="unauthorized" class="hidden showOnLoginRequired">You are not authorized to use this page. :( </h2>
-            <div id="manageTabs">
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="adventures" onclick="onShowAdventures()">Adventures</span>
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="events" onclick="onShowEvents()">Events</span>
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="users" onclick="onShowUsers()">Users</span>
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="paths" onclick="onShowPaths()">Paths</span>
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="groups"  onclick="onShowGroups()">Groups</span>
-                <span class="cf-manage-tab pointer tab hidden" data-tab-name="sites"  onclick="onShowSites()">Sites</span>
-                <i id="mainLoadingIcon" class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
+        <div class="flex-row flex-justify-left flex-align-center flex-gap-20 width-90 width-20-desktop">
+            <img src="/assets/logo.png" alt="logo" class="margin-left-2" style="max-height:60px; max-width:60px;" />
+            <div id="loginSection" class="padding-left-1">
+                <span id="authLink" class="pointer loginAction" data-auth-action="logout" onclick="MyAuth.onAuthAction(this.getAttribute('data-auth-action'))">
+                    <i class="fa-regular fa-circle-user"></i>
+                    <span id="loginAction"></span>
+                </span>
             </div>
         </div>
+        <hr/>
+	</div>
+    <div id="mainContent">
 
-        <!-- Where the content will live -->
-        <div id="mainContentSection" style="padding-top:1%;"></div>
+        <!-- Subheaders/Tabs -->
+        <div id="headerContent" class="flex-row flex-justify-left flex-gap-20 width-100 padding-left-1">
+            <i id="mainLoadingIcon" class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
+            <h2 id="loginRequired" class="hidden showOnLoginRequired width-100">Login required!</h2>
+            <h2 id="unauthorized" class="hidden showOnLoginRequired width-100">You are not authorized to use this page. :( </h2>
+            <div id="manageTabs" class="width-100 flex-row flex-wrap flex-justify-left flex-align-center flex-gap-20"></div>
+        </div>
+        <hr/>
+        <!-- List of Content -->    
+        <div class="contentContainer showOnTabSelected showOnContentSave flex-column flex-align-left flex-justify-left flex-gap-10 padding-left-1">
+            <h3 class="width-100 hidden showOnTabSelected hideOnContentSelect flex-row flex-justify-left flex-align-center flex-gap-20">
+                <div id="searchBarContainer"></div>
+                <button id="canAddNewContent" class="hidden" onclick="onAddContent()">ADD</button>
+            </h3>
+
+            <!-- Shows the list of adventures to pick from -->
+            <div id="listOfContent" class="showOnTabSelected hideOnContentSelect flex-row flex-wrap flex-justify-left flex-align-center flex-gap-20 width-100"></div>
+
+            <div id="displayContentSection" class="hidden showOnContentSelect hideOnTabSwitch hideOnContentSave padding-top-1 flex-column flex-align-left flex-gap-20">
+                <div class="flex-row flex-justify-left flex-align-center flex-gap-30">
+                    <h3 id="formHeader" class="margin-none">Manage <span></span></h3>
+                    <div>
+                        <button id="displaySaveButton" onclick="onSaveContent(this)">SAVE</button>
+                        <button onclick="onCancelContent()">CANCEL</button>    
+                    </div>
+                </div>
+                <div class="flex-column flex-align-left flex-gap-10">
+                    <div id="displayFormSection"></div>
+                    <div id="subSection" class="hidden showIfSubTabs hideOnTabSwitch margin-top-1 margin-left-1 flex-column flex-align-left width-100">
+                        <div id="subTabsList" class="flex-row flex-justify-left flex-align-center flex-gap-10 width-80 width-40-desktop"></div>
+                        <div class="flex-row flex-justify-left flex-align-center margin-top-1 width-100 width-40-desktop">
+                            <div id="subListSearch" class="width-50 width-40-desktop"></div>
+                            <button id="canAddNewSubContent" class="hidden" onclick="onAddSubContent()">ADD</button>
+                        </div>
+                        <p class="hidden showOnSubTabClick hideOnSelectContent hideOnTabSwitch italic"> <span id="subContentCounter" class="color-orange">0</span> records</p>
+                        <div id="subTabContent"></div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
     </div>
 
     <!-- Modal section -->
     <div id="modalSection">
     </div>
     
-    <p style="position:fixed; bottom:0; right:0;">v1.3.7</p>
+    <p style="position:fixed; bottom:0; right:0;">v1.3.8</p>
 </body>
 <!-- Common Scripts -->
-<script src="https://dejai.github.io/scripts/js/v2/my.js?v=1.3.7"></script>
-<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v=1.3.7"></script>
-<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=1.3.7"></script>
+<script src="https://dejai.github.io/scripts/js/v2/my.js?v=1.3.9"></script>
+<script src="https://dejai.github.io/scripts/js/v3/trellowrapper.js?v=1.3.9"></script>
+<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=1.3.9"></script>
 <!-- Manager Scripts -->
-<script src="src/js/models.js?v=1.3.7"></script>
-<script src="src/js/utils.js?v=1.3.7"></script>
-<script src="src/js/adventureFiles.js?v=1.3.7"></script>
-<script src="src/js/adventures.js?v=1.3.7"></script>
-<script src="src/js/eventResponses.js?v=1.3.7"></script>
-<script src="src/js/events.js?v=1.3.7"></script>
-<script src="src/js/groups.js?v=1.3.7"></script>
-<script src="src/js/paths.js?v=1.3.7"></script>
-<script src="src/js/sites.js?v=1.3.7"></script>
-<script src="src/js/users.js?v=1.3.7"></script>
-<script src="src/js/main.js?v=1.3.7"></script>
+<script src="src/js/utils.js?v=1.3.9"></script>
+<script src="src/js/forms.js?v=1.3.9"></script>
+<script src="src/js/models.js?v=1.3.9"></script>
+<script src="src/js/entities.js?v=1.3.9"></script>
+<script src="src/js/main.js?v=1.3.9"></script>
 </html>

@@ -4,6 +4,45 @@ function dateValueFormat(val){
     return (val < 10) ? "0"+val : ""+val;
 }
 
+// Count unique matches of elements based on selector
+function getNumberOfMatches(selector){
+    try { 
+        return document.querySelectorAll(selector)?.length
+    } catch(ex){
+        console.error(ex);
+        return 0;
+    }
+}
+
+// Get an object as JSON, with key in the given case
+function getAsJson(theObject, keyCase="camel"){
+    let json = {}
+    for(let pair of Object.entries(theObject))
+    {
+        let key = pair[0]
+        let val = pair[1]
+        let jsonKey = (keyCase == "camel") ? key.substring(0,1).toLowerCase() + key.substring(1) : key;
+        json[jsonKey] = val
+    }
+    return json
+}
+
+// Merge fields from an object into a string
+function mergeFields(value, object=undefined){
+    let results = value
+
+    if(object == undefined){
+        return results;
+    }
+
+    for(let pair of Object.entries(object)){
+        let key = pair[0] ?? "";
+        let val = pair[1] ?? "";
+        results = results.replaceAll(`{${key}}`, val)
+    }
+    return results
+}
+
 // Format a date in a way that I want;
 Object.defineProperty(Date.prototype, "ToDateFormat", {
     value: function ToDateFormat(format) {
@@ -27,8 +66,51 @@ Object.defineProperty(Date.prototype, "ToDateFormat", {
         return format;
     },
     writable: true,
-    configurable: true,
+    configurable: true
 });
+
+
+// Convert a string to a mapped HTML object
+Object.defineProperty(String.prototype, "ToHtml", {
+    value: function (tag, attributes="") {
+        switch(tag){
+            case "p":
+                return `<p>${this}</p>`;
+            case "tr":
+                return `<tr ${attributes}>${this}</tr>`;
+            case "th":
+                return `<th>${this}</th>`;
+            case "td":
+                return `<td>${this}</td>`;
+            default:
+                return this;
+        }
+    }
+})
+
+
+// Add a way to convert an object to JSON String
+Object.defineProperty(Object.prototype, "ToJsonString", {
+    value: function(keyCase="pascal") {
+        let json = {}
+        try { 
+            for(let pair of Object.entries(this))
+            {
+                let key = pair[0]?.replaceAll(" ", "")
+                let val = pair[1]
+                let jsonKey = (keyCase == "camel") ? key.substring(0,1).toLowerCase() + key.substring(1) : key;
+                json[jsonKey] = val
+            }
+        } catch(ex){
+            console.error(ex);
+        } finally {
+            return JSON.stringify(json);
+        }
+    }
+})
+
+
+
 
 
 // Check search params & load specific tab
@@ -69,12 +151,12 @@ function onSetActiveTab(tabName){
 
     // Remove classes first
     MyDom.removeClass(".tab-section", "active");
-    MyDom.removeClass(".cf-manage-tab", "active");
+    MyDom.removeClass(".cfmTab", "active");
     MyDom.removeClass(".entityOption", "selected");
 
     // Add classes
     MyDom.addClass(`.tab-section[data-tab-name="${tabName}"]`, 'active');
-    MyDom.addClass(`.cf-manage-tab[data-tab-name="${tabName}"]`, 'active');
+    MyDom.addClass(`.cfmTab[data-tab-name="${tabName}"]`, 'active');
 
     // Clear all searches
     document.querySelectorAll(".searchClearIcon")?.forEach( (icon) => icon.click() );

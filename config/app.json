@@ -1,0 +1,72 @@
+[
+    {
+        "Name": "Adventures",
+        "Endpoints": {
+            "Type": "FILES",
+            "Get": "/adventures",
+            "Post": "/adventure"
+        },
+        "Children":[
+            {
+                "Name": "Files",
+                "Display": "Table",
+                "Endpoints": {
+                    "Type": "FILES"
+                },
+                "CanAddNew": false
+            }
+        ]
+    },
+    {
+        "Name": "Events",
+        "Endpoints": {
+            "Type": "FILES",
+            "Get": "/events",
+            "Post": "/event"
+        },
+        "Children":[
+            {
+                "Name": "Responses",
+                "Display": "Table",
+                "Endpoints": {
+                    "Type": "FILES",
+                    "Sync": "events/responses/sync",
+                    "Get": "/event/responses/?key={EventKey}"
+                },
+                "CanAddNew": false
+            }
+        ]
+    },
+    {
+        "Name": "Users",
+        "Endpoints": { 
+            "Type": "FILES",
+            "Get": "/users",
+            "Post": "/user"
+        }
+    },
+    {
+        "Name": "Paths",
+        "Endpoints": { 
+            "Type": "KV",
+            "Get": "/paths",
+            "Post": "/path"
+        }
+    },
+    {
+        "Name": "Groups",
+        "Endpoints": { 
+            "Type": "KV",
+            "Get": "/groups",
+            "Post": "/group"
+        }
+    },
+    {
+        "Name": "Sites",
+        "Endpoints": { 
+            "Type": "KV",
+            "Get": "/sites",
+            "Post": "/site"
+        }
+    }
+]

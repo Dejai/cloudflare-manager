@@ -1,0 +1,6 @@
+[
+    {
+        "Key": "AccessTypes",
+        "Value": ["Public", "Login", "Group"]
+    }
+]

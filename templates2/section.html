@@ -1,0 +1,24 @@
+<div class="hidden hideOnTabSwitch entityTabSection tab-section" data-tab-name="{{Name}}">
+    <div class="tab-section-subsections">
+        <div class="listofContentSection">
+            <h3>
+                <i class="listToggleIcon fa-solid fa-circle-chevron-right" onclick="onToggleList()"></i>
+                List of {{Name}} &mdash;
+                <!-- <button onclick="onAddContent()">ADD</button> -->
+            </h3>
+            <!-- Shows the list of content to pick from -->
+            <div class="listOfContent">
+                {{MenuList}}
+            </div>
+        </div>
+        <!-- The Details section for the entity -->
+        <div class="hidden showOnGroupSelected hideOnTabSwitch contentDetailsSection">
+            <div>
+                <h3>{{Name}} Details &mdash; <button id="saveGroupDetailsButton" onclick="onSaveGroupDetails(this)">SAVE</button></h3>
+                <div id="entityForm">
+                    {{ FormFields }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
