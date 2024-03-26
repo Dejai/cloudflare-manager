@@ -1,6 +1,6 @@
 
 // Get the prefix on a date value
-function dateValueFormat(val){
+function doubleDigitize(val){
     return (val < 10) ? "0"+val : ""+val;
 }
 
@@ -46,24 +46,57 @@ function mergeFields(value, object=undefined){
 // Format a date in a way that I want;
 Object.defineProperty(Date.prototype, "ToDateFormat", {
     value: function ToDateFormat(format) {
-        let yyyy = dateValueFormat(this.getFullYear());
-        let dd = dateValueFormat(this.getDate());
-        let MM = dateValueFormat(this.getMonth()+1);
-        let hh = dateValueFormat(this.getHours());
-        let mm = dateValueFormat(this.getMinutes());
-        let ss = dateValueFormat(this.getSeconds());
-        var tt = hh < 12 ? "AM" : "PM";
 
-        // Return formatted format
-        format = format
-                    .replaceAll("yyyy",yyyy)
-                    .replaceAll("dd",dd)
-                    .replaceAll("MM",MM)
-                    .replaceAll("hh",hh)
-                    .replaceAll("mm",mm)
-                    .replaceAll("ss",ss)
-                    .replaceAll("tt",tt)
-        return format;
+        // Base values
+        var currDate = this;
+        var year = currDate.getFullYear()?.toString();
+        var monthNum = currDate.getMonth()+1;
+        var month = (monthNum < 10) ? "0"+monthNum : ""+monthNum;
+        var monthNameLong = currDate.toLocaleString('default', { month: 'long' });
+        var monthNameShort = currDate.toLocaleString('default', { month: 'short' });
+        var dayNum = currDate.getDate();
+        var day = (dayNum < 10) ? "0"+dayNum : ""+dayNum;
+        var hoursNum = currDate.getHours()
+        var hour = doubleDigitize(hoursNum);
+        var hour12 = doubleDigitize(hoursNum == 12 ? 12 : hoursNum % 12);
+        var minute = doubleDigitize(currDate.getMinutes());
+        var seconds = doubleDigitize(currDate.getSeconds());
+        var AmPm = hoursNum >= 12 ? "PM" : "AM"
+
+        // The date parts formatted
+        var formattedDate = format;
+        formattedDate = formattedDate.replace("yyyy", year);
+        formattedDate = formattedDate.replace("MMMM", monthNameLong);
+        formattedDate = formattedDate.replace("MMM", monthNameShort);
+        formattedDate = formattedDate.replace("MM", month);
+        formattedDate = formattedDate.replace("dd", day);
+        formattedDate = formattedDate.replace("hh", hour12);
+        formattedDate = formattedDate.replace("HH", hour);
+        formattedDate = formattedDate.replace("mm", minute);
+        formattedDate = formattedDate.replace("ss", seconds);
+        formattedDate = formattedDate.replace("tt", AmPm);
+
+        return formattedDate;
+
+        // let yyyy = doubleDigitize(this.getFullYear());
+        // let dd = doubleDigitize(this.getDate());
+        // let MM = doubleDigitize(this.getMonth()+1);
+        // let hh = doubleDigitize(this.getHours());
+        // let mm = doubleDigitize(this.getMinutes());
+        // let ss = doubleDigitize(this.getSeconds());
+        // var tt = hh < 12 ? "AM" : "PM";
+
+        // // Return formatted format
+        // format = format
+        //             .replaceAll("yyyy",yyyy)
+        //             .replaceAll("dd",dd)
+        //             .replaceAll("MM",MM)
+        //             .replaceAll("hh",hh)
+        //             .replaceAll("hh",hh)
+        //             .replaceAll("mm",mm)
+        //             .replaceAll("ss",ss)
+        //             .replaceAll("tt",tt)
+        // return format;
     },
     writable: true,
     configurable: true
@@ -88,6 +121,23 @@ Object.defineProperty(String.prototype, "ToHtml", {
     }
 })
 
+// Update fields in an object
+Object.defineProperty(Object.prototype, "UpdateFields", {
+    value: function(fields){
+        for(var pairs of Object.entries(fields)) {
+            let key = pairs[0] ??  "";
+            let val = pairs[1] ?? "";
+            if(val instanceof Date){
+                continue
+            }
+			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
+            if (this.hasOwnProperty(pascalKey)){
+                this[pascalKey] = val;
+            }
+        }
+    }
+})
+
 
 // Add a way to convert an object to JSON String
 Object.defineProperty(Object.prototype, "ToJsonString", {
@@ -99,7 +149,7 @@ Object.defineProperty(Object.prototype, "ToJsonString", {
                 let key = pair[0]?.replaceAll(" ", "")
                 let val = pair[1]
                 let jsonKey = (keyCase == "camel") ? key.substring(0,1).toLowerCase() + key.substring(1) : key;
-                json[jsonKey] = val
+                json[jsonKey] = (val instanceof Date) ? val.ToDateFormat("yyyy-MM-ddTHH:mm:ssZ") : encodeURIComponent(val)
             }
         } catch(ex){
             console.error(ex);

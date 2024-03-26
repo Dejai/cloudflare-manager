@@ -39,6 +39,7 @@
     },
     {
         "Name": "Users",
+        "CanAddNew": false,
         "Endpoints": { 
             "Type": "FILES",
             "Get": "/users",

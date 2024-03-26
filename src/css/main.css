@@ -41,7 +41,7 @@ button { cursor:pointer; }
 .cfmTable tbody tr { transition: all ease 0.3s; }
 .cfmTable tbody tr:hover { transform: scale(1.01); }
 .cfmTable td,th { vertical-align: top; }
-
+.formSubsection { margin-bottom: 2%; }
 
 
 /* Response tabs */
@@ -144,6 +144,7 @@ tr.fileRow.selected .fieldToSave2.view { background-color:#D4D1CD !important; co
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
     .entityCard { padding: 1rem; }
+    .formSubsection { margin-bottom: 0.5%; }
 
 
     .listToggler { display:none; }

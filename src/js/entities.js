@@ -13,7 +13,7 @@ class EntityManager {
     // Getters
     getEntity(){ return this.Entity }
     getEntityByKey(key){ this.setEntity(key); return this.Entity; }
-    getContentJson(){ return this.Content }
+    getContentDetails(){ return this.Content }
     
     // Setters
     setEntity(key){ this.Entity = this.EntityMap[key] ?? undefined; }
@@ -85,7 +85,7 @@ class CloudflareEntity {
         
         switch(this.Display){
             case "Pills":
-                let contentMap = this.Content.map( x => x.getContentJson() );
+                let contentMap = this.Content.map( x => x.getContentDetails() );
                 template = await MyTemplates.getTemplateAsync("templates2/entityCard.html", contentMap );
                 break;
             case "Table":
@@ -118,7 +118,7 @@ class CloudflareEntity {
 
     // Get one of the content items based on content ID 
     getMatchingContent(contentID){
-        return this.Content?.filter( x => x.getContentJson()?.ContentID == contentID )?.[0] ?? undefined;
+        return this.Content?.filter( x => x.getContentDetails()?.ContentID == contentID )?.[0] ?? undefined;
     }
     // Get one of the child entities based on name
     getMatchingChildEntity(name){
@@ -144,28 +144,44 @@ class CloudflareEntity {
     }
 
     // Saving the values of the content
-    async saveContent(content, fieldsJson){
+    async saveContent(fieldsJson){
         let type = this.Endpoints?.Type?.toLowerCase() ?? undefined
         let path = this.#getApiPath("Post");
-        if(path == undefined || type == undefined || content == undefined || fieldsJson == undefined){
-            return;
+        if(path == undefined || type == undefined || fieldsJson == undefined || this.CurrentContent == undefined){
+            console.log("leaving early")
+            return "Some required fields are missing";
         }
 
-        // Updating matching record
-        let match = this.Content.filter( x => x.ContentID == content.ContentID)?.[0];
-        if(match != undefined){
-            match.update(fieldsJson)
-        } else if(this.NewContent != undefined) { 
+        // Update the current content with the fields
+        this.CurrentContent.UpdateFields(fieldsJson)
+
+        // If it's new content, then save it to the list
+        if(this.NewContent != undefined) { 
             this.Content.push(this.NewContent)
         }
+
+        // Save the JSON string
+        let hasToJson = typeof this.CurrentContent?.toJson == "function"
+        if(!hasToJson){
+            console.log("Can't save without custom toJson() function")
+            return "Cannot save this entity without a custom toJson() function"
+        }
+        let jsonString = JSON.stringify(this.CurrentContent.toJson());
+
         // Make call based on type
         let results = [];
-        // if(type == "kv") { 
-        //     results = await MyCloudFlare.KeyValues("POST", path, { body: JSON.stringify(fieldsJson) } )
-        // } else if (type == "files") {
-        //     results = await MyCloudFlare.Files("POST", path, { body: JSON.stringify(fieldsJson) } )
-        // }
-        return results;
+        if(type == "kv") { 
+            results = await MyCloudFlare.KeyValues("POST", path, { body: jsonString } )
+        } else if (type == "files") {
+            results = await MyCloudFlare.Files("POST", path, { body: jsonString } )
+        }
+
+        // Check for errors
+        if(results?.status ?? "" == 400){
+            return results?.data ?? results?.error ?? "Something went wrong"
+        }
+        
+        return "";
     }
 
     // Helper: Get the path for an API call, filled in with variables if necessary

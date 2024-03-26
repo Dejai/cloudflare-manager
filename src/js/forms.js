@@ -13,6 +13,20 @@ class FormFieldInfo {
     }
 }
 
+class FormFieldLink { 
+    constructor(label, inputName, inputValue="", required=false){
+        this.Label = label;
+        this.Name = inputName;
+        this.Value = inputValue;
+        this.Required = (required) ? "required" : ""
+        this.Html = this.setHtml();
+    }
+
+    setHtml(){
+        return `<i class="fa-solid fa-eye pointer color-blue" data-href="${this.Value}" onclick="MyUrls.navigateTo(this.getAttribute('data-href'), '_blank')" /> ${this.Label}`
+    }
+}
+
 class FormFieldInput { 
     constructor(label, inputName, inputValue="", required=false){
         this.Label = label;
@@ -24,7 +38,7 @@ class FormFieldInput {
 
     setHtml(){
         return `<label for="${this.Name}">${this.Label}:</label><br/>
-                <input type="text" name="${this.Name}" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} />`
+                <input type="text" name="${this.Name}" class="width-70 width-20-desktop" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} />`
     }
 }
 
@@ -39,7 +53,7 @@ class FormFieldTextArea {
 
     setHtml(){
         return `<label for="${this.Name}">${this.Label}:</label><br/>
-                <Textarea type="text" name="${this.Name}" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} rows="10" class="width-100"/>${this.Value}</Textarea>`
+                <Textarea  class="width-70 width-20-desktop" type="text" name="${this.Name}" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} rows="10"/>${this.Value}</Textarea>`
     }
 }
 
@@ -67,6 +81,6 @@ class FormFieldSelect {
             }
         }
         return `<label for="${this.Name}">${this.Label}:</label><br/>
-                <select value="${this.Value}" ${this.Required}>${promptList}</select>`
+                <select  class="width-70 width-20-desktop" value="${this.Value}" ${this.Required}>${promptList}</select>`
     }
 }

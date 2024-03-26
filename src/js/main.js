@@ -151,7 +151,7 @@ async function onSelectContent(item){
 async function loadContentSection(action, content){
     let entity = MyEntityManager.getEntity();
     entity.setCurrentContent(content);
-    let contJson = content.getContentJson()
+    let contJson = content.getContentDetails()
 
     MyDom.hideContent(".hideOnContentSelect");
     MyDom.setContent("#formHeader", { "innerHTML": `${action} ${contJson.ContentType}`})
@@ -180,7 +180,7 @@ function onAddContent(){
     }
 }
 
-async function onSaveContent(button){s
+async function onSaveContent(button){
 
     var saveStatus = new SaveStatus(button);
     saveStatus.saving();
@@ -196,14 +196,21 @@ async function onSaveContent(button){s
     }
 
     // Get/update existing group or add a new one.
-    let content = MyEntityManager.getContentJson()
     let entity = MyEntityManager.getEntity()
-    await entity.saveContent(content, fields)
+    let saveResults = await entity.saveContent(fields)
+
+    if(saveResults != ""){
+        saveStatus.error(saveResults, 7);
+        return;
+    }
 
     let template = await entity.getContentListHtml()
     MyDom.setContent("#listOfContent", { "innerHTML": template })
 
-    onCloseContent();
+    saveStatus.success();
+    setTimeout( () => {
+        onCloseContent();
+    }, 500)
 }
 
 function onCancelContent(){

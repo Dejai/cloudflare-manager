@@ -13,7 +13,7 @@ class Adventure {
     }
 
     // Get the content object of this class
-    getContentJson(){
+    getContentDetails(){
         return { 
             ContentType: "Adventure",
             ContentID: this.AdventureID,
@@ -33,16 +33,6 @@ class Adventure {
             new FormFieldInput("Access Group", "accessGroup", this.AccessGroup, false)
         ]
     }
-
-    // Update this adventure with fields from the form
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
 }
 
 // The "Event" object
@@ -57,32 +47,8 @@ class Event {
         this.Template = jsonDetails?.template ?? "";
     }
 
-    // Update this adventure with fields from the form
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
-
-    // Get this object as JSON
-    getJson(){
-        let keyCase = "camel"
-        let json = {}
-        for(let pair of Object.entries(this))
-        {
-            let key = pair[0]
-            let val = pair[1]
-            let jsonKey = (keyCase == "camel") ? key.substring(0,1).toLowerCase() + key.substring(1) : key;
-            json[jsonKey] = val
-        }
-        return json
-    }
-
     // Get the content object of this class
-    getContentJson(){
+    getContentDetails(){
         return { 
             ContentType: "Event",
             ContentID: this.EventID,
@@ -112,7 +78,7 @@ class EventResponse {
         this.Answers = details?.answers?.join("<br/>") ?? [];
     }
     // Get the content object of this class
-    getContentJson(){
+    getContentDetails(){
         return { 
             ContentType: "Event Response",
             ContentID: this.ResponseKey,
@@ -140,11 +106,19 @@ class Group {
     }
 
     // Get the content object of this class
-    getContentJson(){
+    getContentDetails(){
         return { 
             ContentType: "Group",
             ContentID: this.Key,
             ContentName: this.Value
+        }
+    }
+
+    // Return this object as a JSON object
+    toJson(){
+        return {
+            "key": this.Key,
+            "value": encodeURIComponent(this.Value),
         }
     }
 
@@ -154,17 +128,6 @@ class Group {
             new FormFieldInput("Name", "value", this.Value, true),
             new FormFieldInput("Key", "key", this.Key, true)
         ]
-    }
-    
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-        this.ContentID = this.Key;
-        this.MenuLabel = this.Value;
     }
 }
 
@@ -179,7 +142,7 @@ class PageManager {
     hasContentKey(key){ return Object.keys(this.Content).includes(key); }
     
     // Get existing content
-    getContentJsonByKey(key){ return this.Content[key] ?? []; }
+    getContentDetailsByKey(key){ return this.Content[key] ?? []; }
     
     // Adding content
     addContent(key, content){
@@ -252,16 +215,20 @@ class Path {
         this.Key = jsonObj?.key ?? "";
         this.Value = jsonObj?.value ?? "";
         this.Path = jsonObj?.path ?? "";
-        this.Date = jsonObj?.date;
-        this.Domain = jsonObj?.domain ?? "adventures.dejaithekid.com";
+        this.Date = new Date(jsonObj?.date);
+        this.Domain = jsonObj?.domain ?? "";
     }
 
-    getUrl(){
-        return `https://${this.Domain}/?code=${this.Key}`;
+    // Return this object as a JSON object
+    toJson(){
+        return {
+            "key": this.Key,
+            "value": encodeURIComponent(this.Value),
+        }
     }
 
     // Get the content object of this class
-    getContentJson(){
+    getContentDetails(){
         return { 
             ContentType: "Path",
             ContentID: this.Key,
@@ -277,68 +244,8 @@ class Path {
             new FormFieldInput("Domain", "value", decodeURIComponent(this.Domain), true),
         ]
     }
-    
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
 }
 
-// The "Site" object
-class Site {
-    constructor(jsonObj={}){
-        this.Key = jsonObj?.key ?? "";
-        this.Value = jsonObj?.value ?? "";
-        this.Path = jsonObj?.path ?? "";
-        this.Date = new Date(jsonObj?.date);
-        this.Site = decodeURIComponent(this.Value)
-    }
-
-    getUrl(){
-        return `https://${this.Domain}/?code=${this.Key}`;
-    }
-
-    // Get the content object of this class
-    getContentJson(){
-        return { 
-            ContentType: "Site",
-            ContentID: this.Key,
-            ContentName: this.Key
-        }
-    }
-
-    // Get the fields list for this object
-    getFields(){
-        return [ 
-            new FormFieldInput("Name", "key", this.Key, true),
-            new FormFieldInput("Value", "value", this.Site, true)
-        ]
-    }
-    
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-        this.ContentID = this.Key;
-        this.MenuLabel = this.Value;
-    }
-    
-    update(fields){
-        for(var key of Object.keys(fields)) {
-			var pascalKey = key.substring(0,1).toUpperCase() + key.substring(1);
-            if (this.hasOwnProperty(pascalKey)){
-                this[pascalKey] = fields[key];
-            }
-        }
-    }
-}
 
 // Response details (for popup)
 class ResponseDetails {
@@ -417,6 +324,45 @@ class SaveStatus{
     }
 }
 
+// The "Site" object
+class Site {
+    constructor(jsonObj={}){
+        this.Key = jsonObj?.key ?? "";
+        this.Value = jsonObj?.value ?? "";
+        this.Date = new Date(jsonObj?.date);
+        this.Site = decodeURIComponent(this.Value)
+    }
+
+    // Return this object as a JSON object
+    toJson(){
+        return {
+            "key": this.Key,
+            "value": encodeURIComponent(this.Value),
+        }
+    }
+
+    // Get the content object of this class
+    getContentDetails(){
+        return { 
+            ContentType: "Site",
+            ContentID: this.Key,
+            ContentName: this.Key
+        }
+    }
+
+    // Get the fields list for this object
+    getFields(){
+        return [ 
+            new FormFieldInput("Name", "key", this.Key, true),
+            new FormFieldInput("Value", "value", decodeURIComponent(this.Value), true),
+            new FormFieldLink("Open", "site", this.Site, true)
+        ]
+    }
+
+    
+}
+
+
 // Class to store the video details
 class StreamVideo {
     constructor(videoObj) {
@@ -464,7 +410,7 @@ class User {
     }
 
     // Get the content object of this class
-    getContentJson(){
+    getContentDetails(){
         return { 
             ContentType: "User",
             ContentID: this.UserKey,
