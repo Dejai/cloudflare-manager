@@ -12,25 +12,20 @@ class Adventure {
         // this.Labels = JSON.stringify(detailsJson?.labels ?? []);
     }
 
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "Adventure",
-            ContentID: this.AdventureID,
-            ContentName: this.Name
-        }
-    }
+    getType(){ return "Adventure" }
+    getID(){ return this.AdventureID; }
+    getName() { return this.Name; }
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldSelect("Status", "status", this.Status, ["Active", "Draft", "Inactive"], true),
-            new FormFieldInput("Name", "name", this.Name, true),
-            new FormFieldInput("Date", "date", this.Date, true),
-            new FormFieldTextArea("Description", "description", this.Description, true),
-            new FormFieldInput("Thumbnail", "thumbnail", this.Thumbnail, false),
-            new FormFieldInput("Access Type", "accessType", this.AccessType, true),
-            new FormFieldInput("Access Group", "accessGroup", this.AccessGroup, false)
+            new FormField({ Type:"select", Label: "Status", Name: "status", Value: this.Status, Options: ["Active", "Draft", "Inactive"], Required: true} ),
+            new FormField({ Label: "Name", Name: "name", Value: this.Name, Required: true} ),
+            new FormField({ Label: "Date", Name: "date", Value: this.Date, Required: true} ),
+            new FormField({ Type:"textarea", Label: "Description", Name: "description", Value: this.Description, Required: true} ),
+            new FormField({ Label: "Thumbnail", Name: "thumbnail", Value: this.Thumbnail, Required: true} ),
+            new FormField({ Label: "Access Type", Name: "accessType", Value: this.AccessType, Required: true} ),
+            new FormField({ Label: "Access Group", Name: "accessGroup", Value: this.AccessGroup, Required: true} )
         ]
     }
 }
@@ -47,23 +42,18 @@ class Event {
         this.Template = jsonDetails?.template ?? "";
     }
 
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "Event",
-            ContentID: this.EventID,
-            ContentName: this.Name
-        }
-    }
+    getType(){ return "Event" }
+    getID(){ return this.EventID; }
+    getName() { return this.Name; }
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldInput("Status", "status", this.Status, true),
-            new FormFieldInput("Name", "name", this.Name, true),
-            new FormFieldInput("Event Key", "eventKey", this.EventKey, true),
-            new FormFieldInput("Access Type", "accessType", this.AccessType, true),
-            new FormFieldInput("Access Group", "accessGroup", this.AccessGroup, false)
+            new FormField({ Label: "Status", Name: "status", Value: this.Status, Required: true} ),
+            new FormField({ Label: "Name", Name: "name", Value: this.Name, Required: true } ),
+            new FormField({ Label: "Event Key", Name: "eventKey", Value: this.EventKey, Required: true } ),
+            new FormField({ Label: "Access Type", Name: "accessType", Value: this.AccessType, Required: true } ),
+            new FormField({ Label: "Access Group", Name: "accessGroup", Value: this.AccessGroup, Required: true } ),
         ]
     }
 }
@@ -77,22 +67,18 @@ class EventResponse {
         this.Comments = details?.comments ?? "";
         this.Answers = details?.answers?.join("<br/>") ?? [];
     }
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "Event Response",
-            ContentID: this.ResponseKey,
-            ContentName: this.User
-        }
-    }
+
+    getType(){ return "Response" }
+    getID(){ return this.ResponseKey; }
+    getName() { return this.User; }
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldInput("Date", "date", this.ResponseDate?.toLocaleDateString(), true),
-            new FormFieldInput("User", "user", this.User, true),
-            new FormFieldInput("Answers", "answers", this.Answers, true),
-            new FormFieldInput("Comments", "comments", this.Comments, true)
+            new FormField({ Label: "Date", Name: "date", Value: this.ResponseDate?.toLocaleDateString(), Required: true} ),
+            new FormField({ Label: "User", Name: "user", Value: this.User, Required: true} ),
+            new FormField({ Label: "Answers", Name: "answers", Value: this.Answers, Required: true} ),
+            new FormField({ Label: "Comments", Name: "comments", Value: this.Comments, Required: true} )
         ]
     }
 }
@@ -105,28 +91,15 @@ class Group {
         this.Value = detailsJson?.value ?? "";
     }
 
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "Group",
-            ContentID: this.Key,
-            ContentName: this.Value
-        }
-    }
-
-    // Return this object as a JSON object
-    toJson(){
-        return {
-            "key": this.Key,
-            "value": encodeURIComponent(this.Value),
-        }
-    }
+    getType(){ return "Group" }
+    getID(){ return this.Key; }
+    getName() { return this.Value; }
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldInput("Name", "value", this.Value, true),
-            new FormFieldInput("Key", "key", this.Key, true)
+            new FormField({ Label: "Name", Name: "value", Value: this.Value, Required: true} ),
+            new FormField({ Label: "Key", Name: "key", Value: this.Key, Required: true} )
         ]
     }
 }
@@ -219,29 +192,16 @@ class Path {
         this.Domain = jsonObj?.domain ?? "";
     }
 
-    // Return this object as a JSON object
-    toJson(){
-        return {
-            "key": this.Key,
-            "value": encodeURIComponent(this.Value),
-        }
-    }
-
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "Path",
-            ContentID: this.Key,
-            ContentName: this.Key
-        }
-    }
+    getType(){ return "Path" }
+    getID(){ return this.Key; }
+    getName() { return this.Key; }
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldInput("Code", "key", this.Key, true),
-            new FormFieldInput("Path", "value", decodeURIComponent(this.Value), true),
-            new FormFieldInput("Domain", "value", decodeURIComponent(this.Domain), true),
+            new FormField({ Label: "Code", Name: "key", Value: this.Key, Required: true} ),
+            new FormField({ Label: "Path", Name: "value", Value: decodeURIComponent(this.Value), Required: true, EncodeOnSave: true} ),
+            new FormField({ Label: "Domain", Name: "domain", Value: decodeURIComponent(this.Domain), Required: true, EncodeOnSave: true} )
         ]
     }
 }
@@ -333,29 +293,16 @@ class Site {
         this.Site = decodeURIComponent(this.Value)
     }
 
-    // Return this object as a JSON object
-    toJson(){
-        return {
-            "key": this.Key,
-            "value": encodeURIComponent(this.Value),
-        }
-    }
-
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "Site",
-            ContentID: this.Key,
-            ContentName: this.Key
-        }
-    }
+    getType(){ return "Site" }
+    getID(){ return this.Key; }
+    getName() { return this.Key; }
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldInput("Name", "key", this.Key, true),
-            new FormFieldInput("Value", "value", decodeURIComponent(this.Value), true),
-            new FormFieldLink("Open", "site", this.Site, true)
+            new FormField({ Label: "Name", Name: "key", Value: this.Key, Required: true} ),
+            new FormField({ Label: "Value", Name: "value", Value: decodeURIComponent(this.Value), Required: true, EncodeOnSave:true} ),
+            new FormField({ Type: "link", Label: "Open", Name: "key", Value: this.Site, Required: true, ExcludeOnSave: true } )
         ]
     }
 
@@ -409,19 +356,15 @@ class User {
         this.UpdatedStatus = this.getUpdatedStatus();
     }
 
-    // Get the content object of this class
-    getContentDetails(){
-        return { 
-            ContentType: "User",
-            ContentID: this.UserKey,
-            ContentName: `${this.FirstName} ${this.LastName}`
-        }
-    }
+    getType(){ return "User" }
+    getID(){ return this.UserKey; }
+    getName() { return `${this.FirstName} ${this.LastName}`; }
+
 
     // Get the fields list for this object
     getFields(){
         return [ 
-            new FormFieldInfo("User", "user", `${this.FirstName} ${this.LastName}`, true)
+            new FormField({ Type: "info", Label: "User", Name: "key", Value: `${this.FirstName} ${this.LastName}`, Required: true, ExcludeOnSave: true} )
         ]
     }
 

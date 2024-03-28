@@ -1,4 +1,57 @@
 /* FORMS */
+class FormField {
+    constructor(details){
+        this.Type = details?.Type ?? "input";
+        this.Label = details?.Label ?? "Default";
+        this.Name = details?.Name ?? "";
+        this.Value = details?.Value ?? "";
+        this.Required = details?.Required ?? false;
+        this.Options = details?.Options ?? []
+        this.ExcludeOnSave = details?.ExcludeOnSave ?? false;
+        this.EncodeOnSave = details?.EncodeOnSave ?? false;
+        this.Html = this.setHtml();
+    }
+
+    // set the HTML based on type
+    setHtml(){
+        switch(this.Type){
+            case "info":
+                return `<h3>${this.Label}: ${this.Value}</h3>`;
+
+            case "link":
+                return `<i class="fa-solid fa-eye pointer color-blue" data-href="${this.Value}" onclick="MyUrls.navigateTo(this.getAttribute('data-href'), '_blank')" /> ${this.Label}`;
+
+            case "input":
+                return `<label for="${this.Name}">${this.Label}:</label><br/>
+                        <input type="text" name="${this.Name}" class="width-70 width-20-desktop" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} />`; 
+
+            case "textarea":
+                return `<label for="${this.Name}">${this.Label}:</label><br/>
+                         <Textarea  class="width-70 width-20-desktop" type="text" name="${this.Name}" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} rows="10"/>${this.Value}</Textarea>`;
+
+            case "select":
+                let promptList = "";
+                for(let option of this.Options){
+                    let label = option;
+                    let val = option;
+                    if(typeof(option) == "object"){
+                        label = option[0] ?? ""
+                        val = option[1] ?? ""
+                    }
+                    if(label != "" && val != ""){
+                        promptList += `<option value=${val}>${label}</option>`
+                    }
+                }
+                        return `<label for="${this.Name}">${this.Label}:</label><br/>
+                        <select  class="width-70 width-20-desktop" value="${this.Value}" ${this.Required}>${promptList}</select>`;
+
+            default:
+                return `${this.Label}: ${this.Value}`
+        }
+    }
+}
+
+
 class FormFieldInfo { 
     constructor(label, inputName, inputValue="", required=false){
         this.Label = label;

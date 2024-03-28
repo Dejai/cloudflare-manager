@@ -26,17 +26,18 @@
 
         <!-- Subheaders/Tabs -->
         <div id="headerContent" class="flex-row flex-justify-left flex-gap-20 width-100 padding-left-1">
-            <i id="mainLoadingIcon" class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
             <h2 id="loginRequired" class="hidden showOnLoginRequired width-100">Login required!</h2>
             <h2 id="unauthorized" class="hidden showOnLoginRequired width-100">You are not authorized to use this page. :( </h2>
-            <div id="manageTabs" class="width-100 flex-row flex-wrap flex-justify-left flex-align-center flex-gap-20"></div>
+            <div id="manageTabs" class="width-100 flex-row flex-wrap flex-justify-left flex-align-center flex-gap-20">
+                <i id="mainLoadingIcon" class="fa-solid fa-dharmachakra dtk-spinning dtk-spinning-1500" style="font-size:44px;"></i>
+            </div>
         </div>
         <hr/>
         <!-- List of Content -->    
         <div class="contentContainer showOnTabSelected showOnContentSave flex-column flex-align-left flex-justify-left flex-gap-10 padding-left-1">
             <h3 class="width-100 hidden showOnTabSelected hideOnContentSelect flex-row flex-justify-left flex-align-center flex-gap-20">
                 <div id="searchBarContainer"></div>
-                <button id="canAddNewContent" class="hidden" onclick="onAddContent()">ADD</button>
+                <button id="addNewContentButton" class="hidden">ADD</button>
             </h3>
 
             <!-- Shows the list of adventures to pick from -->
@@ -45,9 +46,9 @@
             <div id="displayContentSection" class="hidden showOnContentSelect hideOnTabSwitch hideOnContentSave padding-top-1 flex-column flex-align-left flex-gap-20">
                 <div class="flex-row flex-justify-left flex-align-center flex-gap-30">
                     <h3 id="formHeader" class="margin-none">Manage <span></span></h3>
-                    <div>
-                        <button id="displaySaveButton" onclick="onSaveContent(this)">SAVE</button>
-                        <button onclick="onCancelContent()">CANCEL</button>    
+                    <div id="contentActionButtons">
+                        <button id="contentSaveButton">SAVE</button>
+                        <button id="contentCancelButton" onclick="onCloseContent()">CANCEL</button>    
                     </div>
                 </div>
                 <div class="flex-column flex-align-left flex-gap-10">
@@ -55,11 +56,11 @@
                     <div id="subSection" class="hidden showIfSubTabs hideOnTabSwitch margin-top-1 margin-left-1 flex-column flex-align-left width-100">
                         <div id="subTabsList" class="flex-row flex-justify-left flex-align-center flex-gap-10 width-80 width-40-desktop"></div>
                         <div class="flex-row flex-justify-left flex-align-center margin-top-1 width-100 width-40-desktop">
-                            <div id="subListSearch" class="width-50 width-40-desktop"></div>
-                            <button id="canAddNewSubContent" class="hidden" onclick="onAddSubContent()">ADD</button>
+                            <div id="subListSearch" class="clearOnCloseForm width-50 width-40-desktop"></div>
+                            <button id="addNewSubContentButton" class="hidden">ADD</button>
                         </div>
                         <p class="hidden showOnSubTabClick hideOnSelectContent hideOnTabSwitch italic"> <span id="subContentCounter" class="color-orange">0</span> records</p>
-                        <div id="subTabContent"></div>
+                        <div id="subTabContent" class="clearOnCloseForm"></div>
                     </div>
                 </div>
                 

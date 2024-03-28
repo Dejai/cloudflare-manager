@@ -27,7 +27,7 @@
         "Children":[
             {
                 "Name": "Responses",
-                "Display": "Table",
+                "ContentDisplay": "table",
                 "Endpoints": {
                     "Type": "FILES",
                     "Sync": "events/responses/sync",
@@ -40,6 +40,7 @@
     {
         "Name": "Users",
         "CanAddNew": false,
+        "CanSave": false,
         "Endpoints": { 
             "Type": "FILES",
             "Get": "/users",

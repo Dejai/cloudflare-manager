@@ -70,6 +70,18 @@ button { cursor: pointer; border:none; font-weight: bold; }
 .width-40 { width: 40%; }
 .width-25 { width: 25%; }
 
+/* Max-widths */
+.max-width-100 { max-width: 100%; }
+.max-width-90 { max-width: 90%; }
+.max-width-80 { max-width: 80%; }
+.max-width-75 { max-width: 75%; }
+.max-width-70 { max-width: 70%; }
+.max-width-50 { max-width: 50%; }
+.max-width-49 { max-width: 49%; }
+.max-width-45 { max-width: 45%; }
+.max-width-40 { max-width: 40%; }
+.max-width-25 { max-width: 25%; }
+
 /* Min-widths */
 .min-width-100 { min-width: 100%; }
 .min-width-90 { min-width: 90%; }

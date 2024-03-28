@@ -1,3 +1,15 @@
+const MyUtils = {
+    Cookies: {
+        setTab(tab){ MyCookies.setCookie( MyCookies.getCookieName("CFM-TAB"), tab); },
+        getTab(){ return MyCookies.getCookie(MyCookies.getCookieName("CFM-TAB")) },
+        deleteTab(){ MyCookies.deleteCookie(MyCookies.getCookieName("CFM-TAB")) },
+
+        setContent(content){ MyCookies.setCookie( MyCookies.getCookieName("CFM-CONTENT"), content); },
+        getContent(){ return MyCookies.getCookie(MyCookies.getCookieName("CFM-CONTENT")) },
+        deleteContent(){ MyCookies.deleteCookie(MyCookies.getCookieName("CFM-CONTENT")) }
+    }
+}
+
 
 // Get the prefix on a date value
 function doubleDigitize(val){
@@ -14,18 +26,7 @@ function getNumberOfMatches(selector){
     }
 }
 
-// Get an object as JSON, with key in the given case
-function getAsJson(theObject, keyCase="camel"){
-    let json = {}
-    for(let pair of Object.entries(theObject))
-    {
-        let key = pair[0]
-        let val = pair[1]
-        let jsonKey = (keyCase == "camel") ? key.substring(0,1).toLowerCase() + key.substring(1) : key;
-        json[jsonKey] = val
-    }
-    return json
-}
+
 
 // Merge fields from an object into a string
 function mergeFields(value, object=undefined){
@@ -36,6 +37,7 @@ function mergeFields(value, object=undefined){
     }
 
     for(let pair of Object.entries(object)){
+        console.log(pair);
         let key = pair[0] ?? "";
         let val = pair[1] ?? "";
         results = results.replaceAll(`{${key}}`, val)
@@ -102,7 +104,6 @@ Object.defineProperty(Date.prototype, "ToDateFormat", {
     configurable: true
 });
 
-
 // Convert a string to a mapped HTML object
 Object.defineProperty(String.prototype, "ToHtml", {
     value: function (tag, attributes="") {
@@ -138,7 +139,6 @@ Object.defineProperty(Object.prototype, "UpdateFields", {
     }
 })
 
-
 // Add a way to convert an object to JSON String
 Object.defineProperty(Object.prototype, "ToJsonString", {
     value: function(keyCase="pascal") {
@@ -158,6 +158,12 @@ Object.defineProperty(Object.prototype, "ToJsonString", {
         }
     }
 })
+
+
+
+
+
+
 
 
 
@@ -215,7 +221,6 @@ function onSetActiveTab(tabName){
     MyUrls.modifySearch({"tab": tabName});
     
 }
-
 
 // Set the current selected entity option
 function onSetSelectedEntity(contentID=""){

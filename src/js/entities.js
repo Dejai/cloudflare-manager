@@ -1,22 +1,15 @@
 class EntityManager {
     constructor(){
         this.EntityMap = {}
-
-        // Current managed things
         this.Entity = undefined;
-        this.Content = undefined; 
     }
-    mapEntity(key, obj){
-        this.EntityMap[key] = obj
-    }
-
-    // Getters
-    getEntity(){ return this.Entity }
-    getEntityByKey(key){ this.setEntity(key); return this.Entity; }
-    getContentDetails(){ return this.Content }
-    
-    // Setters
+    mapEntity(key, obj){ this.EntityMap[key] = obj }
     setEntity(key){ this.Entity = this.EntityMap[key] ?? undefined; }
+    getEntity(key=undefined){ 
+        // If given key, but not set entity, then try to set it
+        if(key != undefined && this.Entity == undefined){ this.setEntity(key); }
+        return this.Entity;
+    }
 }
 
 // Mapping the JSON to models
@@ -24,20 +17,19 @@ const EntityMap = (name, content) => {
     try { 
         switch(name){
             case "Adventures":
-                return content.map( x => new Adventure(x) )
+                return new Adventure(details);
             case "Users":
-                return content.map( x => new User(x) )
+                return new User(details);
             case "Groups":
-                return content.map( x => new Group(x) )
+                return new Group(details);
             case "Paths":
-                return content.map( x => new Path(x) )
+                return new Path(details);
             case "Events":
-                return content.map( x => new Event(x) )
-            case "EventResponses":
+                return new Event(details);
             case "Responses":
-                return content.map( x => new EventResponse(x) )
+                return new EventResponse(details);
             case "Sites":
-                return content.map( x => new Site(x) )
+                return new Site(details);
             default:
                 console.error("Could not map this type of Entity: " + name);
                 return []
@@ -48,19 +40,165 @@ const EntityMap = (name, content) => {
     }
 }
 
+class Content { 
+
+    constructor(entity, details) {
+        this.Entity = entity;
+        this.Object = this.setObject(entity, details);
+        this.ContentID = this.Object?.getID() ?? "";
+        this.ContentType = this.Object?.getType() ?? "";
+        this.ContentName = this.Object?.getName() ?? "";
+        this.ContentFields = this.Object?.getFields() ?? [];
+    }
+
+    // Selecting this content for management
+    async onSelectContent (){
+
+        // Set the save button
+        this.setSaveButton();
+
+        // Adjust visibility
+        MyDom.hideContent(".hideOnContentSelect");
+        MyDom.setContent("#formHeader", { "innerHTML": `Edit ${this.ContentType}`})
+    
+        let template = await MyTemplates.getTemplateAsync("/templates2/formRow.html", this.Object?.getFields() );
+        MyDom.setContent("#displayFormSection", { "innerHTML": template }) 
+
+        // Set any chldren tab if any
+        this.Entity.getChildTabButtons(this);
+
+        MyDom.showContent(".showOnContentSelect")
+        MyUrls.modifySearch({"content": this.ContentID})
+        MyUtils.Cookies.setContent(this.ContentID);
+    }
+
+    // Get this content to be displayed in HTML
+    getContentHtml(format){
+        try { 
+            format = format.toLowerCase();
+            switch(format){
+                case "pills":
+                    let pill = document.createElement("div");
+                    pill.classList = "entityCard flex-row flex-justify-center flex-align-center flex-gap-10 border-round pointer searchable";
+                    pill.innerHTML = `<span>${this.ContentName}</span> <i class="fa-solid fa-pen-to-square"></i>`;
+                    pill.setAttribute("data-content-id", this.ContentID)
+                    pill.addEventListener( "click", () => {
+                        this.onSelectContent ();
+                    });
+                    return pill;
+                case "table":
+                    let thead = document.createElement("thead");
+                    thead.innerHTML = this.ContentFields.map( field => field.Label )?.map( label => label.ToHtml("th") )?.join("")?.ToHtml("tr");
+                    thead.classList = "align-left"
+
+                    let tbody = document.createElement("tbody");
+                    tbody.innerHTML = this.ContentFields.map( field => field.Value )?.map( value => value.ToHtml("td") )?.join("")?.ToHtml("tr", `class="searchable"`);
+                    return { head: thead, body: tbody };
+                default:
+                    console.log("Not a valid content type");
+                    return "";
+            }
+        } catch(ex){
+            console.error(ex);
+            return "";
+        }
+    }
+
+    // Saving this content
+    async onSaveContent(){
+        try { 
+            var formDetails = MyDom.getFormDetails("#displayFormSection");
+            var fields = formDetails?.fields;
+            var errors = formDetails?.errors;
+            if(fields == undefined){
+                throw new Error("No fields provided");
+            }
+            if(errors.length > 0){
+                var errorMessage = errors.join(" ; ");
+                throw new Error(errorMessage);
+            }
+
+            // Check the fields on the content to determine which ones to save
+            let saveObject = {};
+            for(let pair of Object.entries(fields)) {
+                let key = pair[0];
+                let val = pair[1];
+                let match = this.ContentFields.filter( x => x.Name == key)?.[0];
+                if(!(match?.ExcludeOnSave ?? false)){
+                    saveObject[key] = match.EncodeOnSave ? encodeURIComponent(val) : val;
+                }
+            }
+
+            // If no fields to save, then don't save anything
+            if(Object.entries(saveObject).length == 0){
+                throw new Error("No fields to save");
+            }
+
+            // Get JSON & save
+            let jsonString = JSON.stringify(saveObject);
+            console.log(jsonString);
+            // Use the entity to make the API call (since it)
+            // let results = this.Entity.saveContent(jsonString);
+            // onCloseContent()
+            MyUtils.Cookies.deleteContent();
+            return true;
+        } catch(ex){
+            console.error(ex);
+            return false;
+        }
+    }
+
+    // Set the content's "save button"
+    setSaveButton(){
+        var oldButton = document.getElementById("contentSaveButton");
+        var newButton = oldButton.cloneNode(true);
+        newButton.innerHTML = `SAVE ${this.ContentType.toUpperCase()}`;
+        let _hidden = (!this.Entity.CanSave) ? newButton.classList.add("hidden") : newButton.classList.remove("hidden");
+        newButton.addEventListener("click", () => {
+            this.onSaveContent()
+        });
+        oldButton.parentNode.replaceChild(newButton, oldButton);
+    }
+
+    // Set the object for this content
+    setObject(entity, details){
+        switch(entity.Name){
+            case "Adventures":
+                return new Adventure(details);
+            case "Users":
+                return new User(details);
+            case "Groups":
+                return new Group(details);
+            case "Paths":
+                return new Path(details);
+            case "Events":
+                return new Event(details);
+            case "Responses":
+                return new EventResponse(details);
+            case "Sites":
+                return new Site(details);
+            default:
+                return undefined;
+        }
+    }
+}
+
 // A single cloudflare entity
 class CloudflareEntity { 
 
     constructor(details, parent=undefined){
         this.Name = details?.Name ?? "";
+        this.NameSingle = this.Name.substring(0, this.Name.length-1);
         this.Endpoints = details?.Endpoints ?? undefined;
-        this.Display = details?.Display ?? "Pills";
         this.CanAddNew = details?.CanAddNew ?? true;
+        this.CanSave = details?.CanSave ?? true;
         this.Content = [];
+        this.ContentDisplay = details?.ContentDisplay ?? "pills";
         this.Children = details?.Children?.map( y => new CloudflareEntity(y, this) ) ?? [];
 
         // Fluid properties
         this.ParentEntity = parent;
+        this.IsChild = this.ParentEntity != undefined;
         this.CurrentContent = undefined;
         this.NewContent = undefined;
     }
@@ -71,65 +209,111 @@ class CloudflareEntity {
         return this.NewContent
     }
 
-    // Set current content (that is being viewed/managed)
-    setCurrentContent(content=undefined){
-        this.CurrentContent = content
-    }
+    // Clicking this entity's tab
+    async onClickTab(){
+        try {
+            if(!this.IsChild){
+                MyDom.hideContent(".hideOnTabSwitch")
+            }
+            this.setAddButton();
 
-    // Set the menu list HTML
-    async getContentListHtml(){
-        let template = "";
-        if(this.Content.length == 0){
-            return `<p>No ${this.Name} Found</p>`;
-        }
-        
-        switch(this.Display){
-            case "Pills":
-                let contentMap = this.Content.map( x => x.getContentDetails() );
-                template = await MyTemplates.getTemplateAsync("templates2/entityCard.html", contentMap );
-                break;
-            case "Table":
-                let contentFields = this.Content.map( x => x.getFields() );
-                let headerRow = "";
-                let tableRows = "";
-                for(let fields of contentFields){
-                    if(headerRow == ""){
-                        headerRow = fields.map( field => field.Label )?.map( label => label.ToHtml("th") )?.join("")?.ToHtml("tr");
-                    } else { 
-                        tableRows += fields.map( field => field.Value )?.map( value => value.ToHtml("td") )?.join("")?.ToHtml("tr", `class="searchable"`);
-                    }
+            // Set the active tab color
+            let tabClass = this.IsChild ? "childTab" : "headerTab";
+            MyDom.removeClass(`.${tabClass}.cfmTab`, "selected")
+            MyDom.addClass(`.${tabClass}.cfmTab[data-tab-name='${this.Name}']`, "selected")
+
+            // Load the list of content
+            let contentHtml = this.Content.map( content => content.getContentHtml(this.ContentDisplay) );
+            if(this.ContentDisplay.toLowerCase() == "table") {
+                contentHtml = [this.#getContentTable(contentHtml)];
+            }
+            let listContainerID = this.IsChild ? "subTabContent" : "listOfContent"
+            let listOfContent = document.getElementById(listContainerID)
+            listOfContent.innerHTML = "";
+            for(let html of contentHtml){
+                listOfContent.appendChild(html);
+            }
+            let addButtonId = this.IsChild ? "#addNewSubContentButton" : "#addNewContentButton"
+            let _canAddNew = (this.CanAddNew) ? MyDom.showContent(addButtonId) : MyDom.hideContent(addButtonId)
+
+            // Add the search bar
+            let searchContainerID = this.IsChild ? "subListSearch" : "searchBarContainer"
+            MySearcher.addSearchBar(this.Name, `#${listContainerID}`, `#${searchContainerID}`);
+
+            // Modifying things if NOT a child
+            if(!this.IsChild){
+                MyUrls.modifySearch( { "tab": this.Name, "content": "" } );
+                MyUtils.Cookies.setTab(this.Name);
+            }
+
+            // Add a counter based on keydown in the input
+            if(this.IsChild){
+                const tableRowCounter = () => {
+                    let count = getNumberOfMatches("#subTabContent tbody tr:not(.searchableHidden)")
+                    MyDom.setContent("#subContentCounter", { "innerHTML": count} )
                 }
-                template = await MyTemplates.getTemplateAsync("templates2/table/table.html", { "Header": headerRow, "Body": tableRows } );
-                break;
-            default:
-                template = `<p>Display Type Not Found: ${this.Display}</p>`;
-                break;
+                document.querySelector("#subListSearch .searchBarInput")?.addEventListener("keyup", tableRowCounter);
+                document.querySelector("#subListSearch .searchClearIcon")?.addEventListener("click", tableRowCounter);
+                tableRowCounter();
+            }
+            
+            // Showing content
+            let _showContent = this.IsChild ? MyDom.showContent(".showOnSubTabClick") : MyDom.showContent(".showOnTabSelected");
+        } catch(ex){
+            console.error(ex);
         }
-        return template;
     }
 
-    // Get the entity tabs/subtabs
-    async getTabHtml(){ 
-        return await MyTemplates.getTemplateAsync(`templates2/tabs/headerTab.html`, { "Name": this.Name } ); 
-    }
-    async getChildTabsHtml(){ 
-        return await MyTemplates.getTemplateAsync(`templates2/tabs/childTab.html`, this.Children ); 
+    // Get a tab/button for this entity, to allow clicking
+    getTabButton(){
+        let tag = this.IsChild ? "h4" : "h3";
+        let tabClass = this.IsChild ? "childTab" : "headerTab";
+        let tab = document.createElement(tag);
+        tab.innerHTML = this.Name;
+        tab.setAttribute("class", `${tabClass} cfmTab pointer tab margin-none`);
+        tab.setAttribute("data-tab-name", this.Name);
+        tab.addEventListener( "click", () => {
+            this.onClickTab();
+        });
+        return tab; 
+        // <h4 class="childTab cfmTab pointer margin-none" data-tab-name="{{Name}}" onclick="onClickSubTab(this)">{{Name}}</h4>
+        // return `<h3 class="headerTab cfmTab pointer tab margin-none" data-tab-name="${this.Name}" onclick="${this.test()}">${this.Name}</h3>`
     }
 
-    // Get one of the content items based on content ID 
-    getMatchingContent(contentID){
-        return this.Content?.filter( x => x.getContentDetails()?.ContentID == contentID )?.[0] ?? undefined;
+    // Get the child tab buttons (if applicable)
+    async getChildTabButtons(parentContent){
+        if(this.Children.length > 0){
+            let subTabsList = document.getElementById("subTabsList");
+            subTabsList.innerHTML = "";
+            for(let childEntity of this.Children){
+                await childEntity.fetchContent(parentContent);
+                let tab = childEntity.getTabButton();
+                subTabsList.appendChild(tab)
+            }
+            MyDom.showContent(".showIfSubTabs");
+
+            
+        }
     }
-    // Get one of the child entities based on name
-    getMatchingChildEntity(name){
-        return this.Children?.filter( x => x.Name == name )?.[0] ?? undefined
+
+    // Set the content's "save button"
+    setAddButton(){
+        var oldButton = document.getElementById("addNewContentButton");
+        var newButton = oldButton.cloneNode(true);
+        newButton.innerHTML = `ADD ${this.NameSingle.toUpperCase()}`;
+        let _hidden = (!this.CanAddNew) ? newButton.classList.add("hidden") : newButton.classList.remove("hidden");
+        newButton.addEventListener("click", () => {
+            let newContent = new Content(this, {});
+            this.onSaveContent()
+        });
+        oldButton.parentNode.replaceChild(newButton, oldButton);
     }
 
 
     // API: Get content
-    async fetchContent(){
+    async fetchContent(parentContent=undefined){
         let type = this.Endpoints?.Type?.toLowerCase() ?? undefined
-        let path = this.#getApiPath("Get");
+        let path = this.#getApiPath("Get", parentContent);
         if(type == undefined || path == undefined){
             return
         }
@@ -140,61 +324,59 @@ class CloudflareEntity {
         } else if (type == "files") {
             results = await MyCloudFlare.Files("GET", path)
         }
-        this.Content = EntityMap(this.Name, results)
+        this.Content = (results?.length > 1) ? results.map( obj => new Content(this, obj) ) : [];
     }
 
-    // Saving the values of the content
-    async saveContent(fieldsJson){
-        let type = this.Endpoints?.Type?.toLowerCase() ?? undefined
-        let path = this.#getApiPath("Post");
-        if(path == undefined || type == undefined || fieldsJson == undefined || this.CurrentContent == undefined){
-            console.log("leaving early")
-            return "Some required fields are missing";
+    // API: Save some content
+    async saveContent(jsonString){
+        try {
+            let type = this.Endpoints?.Type?.toLowerCase() ?? undefined
+            let path = this.#getApiPath("Post");
+            if(type == undefined || path == undefined){
+                throw new Error("Cannot process API call without type & path")
+            }
+            let results = [];
+            if(type == "kv") { 
+                results = await MyCloudFlare.KeyValues("POST", path, { body: jsonString } )
+            } else if (type == "files") {
+                results = await MyCloudFlare.Files("POST", path, { body: jsonString } )
+            }
+            // Check for errors
+            if( (results?.status ?? 0) == 400){
+                let msg = results?.data ?? results?.error ?? "Something went wrong"
+                throw new Error(msg);
+            }
+        } catch(ex){
+            console.error(ex);
+            return false;
         }
-
-        // Update the current content with the fields
-        this.CurrentContent.UpdateFields(fieldsJson)
-
-        // If it's new content, then save it to the list
-        if(this.NewContent != undefined) { 
-            this.Content.push(this.NewContent)
-        }
-
-        // Save the JSON string
-        let hasToJson = typeof this.CurrentContent?.toJson == "function"
-        if(!hasToJson){
-            console.log("Can't save without custom toJson() function")
-            return "Cannot save this entity without a custom toJson() function"
-        }
-        let jsonString = JSON.stringify(this.CurrentContent.toJson());
-
-        // Make call based on type
-        let results = [];
-        if(type == "kv") { 
-            results = await MyCloudFlare.KeyValues("POST", path, { body: jsonString } )
-        } else if (type == "files") {
-            results = await MyCloudFlare.Files("POST", path, { body: jsonString } )
-        }
-
-        // Check for errors
-        if(results?.status ?? "" == 400){
-            return results?.data ?? results?.error ?? "Something went wrong"
-        }
-        
-        return "";
     }
 
     // Helper: Get the path for an API call, filled in with variables if necessary
-    #getApiPath(method){
+    #getApiPath(method, parentContent=undefined){
         let results = this.Endpoints[method] ?? undefined;
-
-        // First, add merge fields from current content
-        results = mergeFields(results, this.CurrentContent);
-
-        // Then, merge fields from the parent content
-        results = mergeFields(results, this.ParentEntity?.CurrentContent);
-
+        console.log(results);
+        console.log(parentContent);
+        // If a parent content is given, then do a merge field check
+        if(parentContent != undefined){
+            console.log(parentContent);
+            results = mergeFields(results, parentContent.Object);
+            console.log(results);
+        }
         return results;
     }
     
+    // Set a list of contents as table
+    #getContentTable(listOfContent){
+        let table = document.createElement("table");
+        table.classList = "cfmTable"
+        table.appendChild(listOfContent[0]?.head)
+        for(let content of listOfContent){
+            table.appendChild(content.body);
+        }
+
+        
+
+        return table;
+    }
 }

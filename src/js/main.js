@@ -42,115 +42,23 @@ MyDom.ready( async () => {
         let entities = await fetch("./config/app.json").then( (x) => x.json() ).then( (y) => y.map( obj => new CloudflareEntity(obj)))
 
         // Setting tabs
-        let tabs = "";
+        let mainLoadingIcon = document.getElementById("mainLoadingIcon");
         for(let entity of entities ) {
             await entity.fetchContent();
-            MyEntityManager.mapEntity(entity.Name, entity)
-            tabs += await entity.getTabHtml();
+            // MyEntityManager.mapEntity(entity.Name, entity)
+            let tab = entity.getTabButton();
+            mainLoadingIcon.parentElement.insertBefore(tab, mainLoadingIcon);
         }
         MyDom.hideContent("#mainLoadingIcon");
-        MyDom.setContent("#manageTabs", { "innerHTML": tabs } )
-        onLoadFromURL()        
+        onLoadFromURL();      
     } catch (err){
         MyLogger.LogError(err);
     } 
 });
 
-
-// Clicking a tab
-async function onClickTab(tab, keepContent=false){
-    try { 
-        MyDom.hideContent(".hideOnTabSwitch")
-
-        // Get the tab name + entity
-        let tabName = tab.getAttribute("data-tab-name")
-        let entity = MyEntityManager.getEntityByKey(tabName)
-
-        // Set the active tab colr
-        MyDom.removeClass(".headerTab.cfmTab", "selected")
-        MyDom.addClass(`.headerTab.cfmTab[data-tab-name='${tabName}']`, "selected")
-        
-        // Load the list of content
-        let template = await entity.getContentListHtml()
-        MyDom.setContent("#listOfContent", { "innerHTML": template })
-        MyDom.setContent("#entityName", { "innerHTML": entity.Name })
-        let _canAddNew = (entity.CanAddNew) ? MyDom.showContent("#canAddNewContent") : MyDom.hideContent("#canAddNewContent")
-
-        let searchObj = { "tab": tabName }
-        if(!keepContent){
-            searchObj["content"] = ""
-        }
-
-        // Add the search bar
-        MySearcher.addSearchBar(entity.Name, "#listOfContent", "#searchBarContainer");
-
-        
-        MyUrls.modifySearch(searchObj);
-        MyDom.showContent(".showOnTabSelected")
-    } catch(ex){
-        console.error(ex)
-    }
-}
-
-// Clicking a subtab (similar fetching, but don't clear tab info)
-async function onClickSubTab(tab){
-    try { 
-        let tabName = tab.getAttribute("data-tab-name")
-        
-        // Set the active tab colr
-        MyDom.removeClass(".childTab.cfmTab", "selected")
-        MyDom.addClass(`.childTab.cfmTab[data-tab-name='${tabName}']`, "selected")
-
-        // Get the tab name + entity
-        let entity = MyEntityManager.getEntity();
-        let childEntity = entity.getMatchingChildEntity(tabName);
-        await childEntity.fetchContent();
-        
-        // Load the list of content
-        let template = await childEntity.getContentListHtml()
-        MyDom.setContent("#subTabContent", { "innerHTML": template })
-        let _canAddNew = (childEntity.CanAddNew) ? MyDom.showContent("#canAddNewSubContent") : MyDom.hideContent("#canAddNewSubContent")
-        MyUrls.modifySearch( {"sub": tabName } );
-
-        // Add the search bar
-        MySearcher.addSearchBar(childEntity.Name, "#subTabContent", "#subListSearch");
-        
-        // Add a counter based on keydown in the input
-        const tableRowCounter = () => {
-            let count = getNumberOfMatches("#subTabContent tbody tr:not(.searchableHidden)")
-            MyDom.setContent("#subContentCounter", { "innerHTML": count} )
-        }
-        document.querySelector("#subListSearch .searchBarInput")?.addEventListener("keyup", tableRowCounter);
-        document.querySelector("#subListSearch .searchClearIcon")?.addEventListener("click", tableRowCounter);
-        tableRowCounter();
-
-        MyDom.showContent(".showOnSubTabClick")
-
-    } catch(ex){
-        console.error(ex)
-    }
-}
-
-// Select the content from the list
-async function onSelectContent(item){
-    try { 
-        let entity = MyEntityManager.getEntity() 
-        let contentID = item.getAttribute("data-content-id")
-        let content = entity?.getMatchingContent(contentID);
-        if(content != undefined){
-            await loadContentSection("Edit", content)
-
-            MyDom.hideContent(".hideOnSelectContent");
-        }
-    } catch (ex){
-        console.error(ex)
-    }
-}
-
 // Load the selected/new content in the form
 async function loadContentSection(action, content){
     let entity = MyEntityManager.getEntity();
-    entity.setCurrentContent(content);
     let contJson = content.getContentDetails()
 
     MyDom.hideContent(".hideOnContentSelect");
@@ -169,89 +77,38 @@ async function loadContentSection(action, content){
     MyUrls.modifySearch({"content":contJson.ContentID})
 }
 
-// Adding a new entity
-function onAddContent(){
-    try { 
-        let entity = MyEntityManager.getEntity();
-        let newContent = entity.createNewContent();
-        loadContentSection("Add", newContent);
-    } catch(ex){
-        console.error(ex)
-    }
-}
-
-async function onSaveContent(button){
-
-    var saveStatus = new SaveStatus(button);
-    saveStatus.saving();
-
-    // Get form details
-    var formDetails = MyDom.getFormDetails("#displayFormSection");
-    var fields = formDetails?.fields;
-    var errors = formDetails?.errors;
-    if(errors.length > 0){
-        var errorMessage = errors.join(" ; ");
-        saveStatus.error(errorMessage);
-        return;
-    }
-
-    // Get/update existing group or add a new one.
-    let entity = MyEntityManager.getEntity()
-    let saveResults = await entity.saveContent(fields)
-
-    if(saveResults != ""){
-        saveStatus.error(saveResults, 7);
-        return;
-    }
-
-    let template = await entity.getContentListHtml()
-    MyDom.setContent("#listOfContent", { "innerHTML": template })
-
-    saveStatus.success();
-    setTimeout( () => {
-        onCloseContent();
-    }, 500)
-}
-
-function onCancelContent(){
-    onCloseContent();
-}
-
+// Close the content section
 function onCloseContent(){
-    let entity = MyEntityManager.getEntity();
-    entity.setCurrentContent(undefined);
     MyDom.hideContent(".hideOnContentSave");
     MyDom.showContent(".showOnTabSelected");
-    MyDom.setContent("#subTabContent", {"innerHTML": ""})
-    MyDom.setContent("#subListSearch", {"innerHTML": ""})
+    MyDom.setContent(".clearOnCloseForm", {"innerHTML": ""})
     MyUrls.modifySearch({"content":"", "sub": ""})
+    MyUtils.Cookies.deleteContent();
 }
 
 // Load from URL
 async function onLoadFromURL(){
     try{
-
-
         // First, click tab
-        var tab = MyUrls.getSearchParam("tab") ?? "";
+        var tab = MyUtils.Cookies.getTab() ?? ""
         let tabButton = document.querySelector(`.headerTab[data-tab-name="${tab}"]`)
         if(tabButton != undefined){
-            await onClickTab(tabButton, true);
+            tabButton.click();
         }
 
         // Second, click content
-        var content = MyUrls.getSearchParam("content") ?? "";
+        var content = MyUtils.Cookies.getContent() ?? "";
         let contentItem = document.querySelector(`[data-content-id="${content}"]`)
         if(contentItem != undefined){
-            await onSelectContent(contentItem);
+            contentItem.click();
         }
 
         // Third, click subtab
-        var subTab = MyUrls.getSearchParam("sub") ?? "";
-        let subTabButton = document.querySelector(`.childTab[data-tab-name="${subTab}"]`)
-        if(contentItem != undefined && subTabButton != undefined){
-            onClickSubTab(subTabButton);
-        }
+        // var subTab = MyUrls.getSearchParam("sub") ?? "";
+        // let subTabButton = document.querySelector(`.childTab[data-tab-name="${subTab}"]`)
+        // if(contentItem != undefined && subTabButton != undefined){
+        //     onClickSubTab(subTabButton);
+        // }
     } catch(err){
         MyLogger.LogError(err);
     }
