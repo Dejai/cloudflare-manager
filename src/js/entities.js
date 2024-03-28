@@ -106,6 +106,10 @@ class Content {
 
     // Saving this content
     async onSaveContent(){
+        let button = document.getElementById("contentSaveButton");
+        var saveStatus = new SaveStatus(button);
+        saveStatus.saving();
+
         try { 
             var formDetails = MyDom.getFormDetails("#displayFormSection");
             var fields = formDetails?.fields;
@@ -136,14 +140,19 @@ class Content {
 
             // Get JSON & save
             let jsonString = JSON.stringify(saveObject);
-            console.log(jsonString);
             // Use the entity to make the API call (since it)
-            // let results = this.Entity.saveContent(jsonString);
-            // onCloseContent()
-            MyUtils.Cookies.deleteContent();
-            return true;
+            let results = await this.Entity.saveContent(jsonString);
+            if(results){
+                MyUtils.Cookies.deleteContent();
+                await this.Entity.fetchContent();
+                saveStatus.saving();
+                onCloseContent();
+                saveStatus.success(`SAVED ${this.ContentName}`);
+            } 
+            return results;
         } catch(ex){
             console.error(ex);
+            saveStatus.error(ex.message);
             return false;
         }
     }
@@ -204,6 +213,7 @@ class CloudflareEntity {
         this.IsChild = this.ParentEntity != undefined;
         this.CurrentContent = undefined;
         this.NewContent = undefined;
+        this.LastSync = undefined;
     }
 
     // Clicking this entity's tab
@@ -258,6 +268,7 @@ class CloudflareEntity {
             }
 
             // Showing content
+            MyDom.setContent("#lastSyncDate", {"innerHTML": this.LastSync ?? ""} );
             let _showContent = this.IsChild ? MyDom.showContent(".showOnSubTabClick") : MyDom.showContent(".showOnTabSelected");
         } catch(ex){
             console.error(ex);
@@ -307,6 +318,10 @@ class CloudflareEntity {
 
     // API: Get content
     async fetchContent(parentContent=undefined){
+        
+        // Always sync before any fetching
+        this.#syncContent()
+
         let type = this.Endpoints?.Type?.toLowerCase() ?? undefined
         let path = this.#getApiPath("Get", parentContent);
         if(type == undefined || path == undefined){
@@ -321,21 +336,8 @@ class CloudflareEntity {
         }
         this.Content = (results.hasOwnProperty("length") ) ? results.map( obj => new Content(this, obj) ) : [new Content(this, results)];
 
-        // If a sort is given, sort by that key
-        if(this.SortBy != "" && this.SortType != ""){
-            let sortKey = this.SortBy;
-            switch(this.SortType){
-                case "Number":
-                    this.Content.sort( (a,b) => { return a.Object[sortKey] - b.Object[sortKey] })
-                    break;
-                case "Date":
-                    this.Content.sort( (a,b) => { return b.Object[sortKey] - a.Object[sortKey] })
-                    break;
-                default:
-                    this.Content.sort( (a, b) => { return a.Object[sortKey]?.localeCompare(b.Object[sortKey]) } )
-                    break;
-            }
-        }
+        // Attempt a sort of the content (only works if app settings are set);
+        this.#sortContent();
     }
 
     // API: Save some content
@@ -357,6 +359,9 @@ class CloudflareEntity {
                 let msg = results?.data ?? results?.error ?? "Something went wrong"
                 throw new Error(msg);
             }
+
+            
+            return true;
         } catch(ex){
             console.error(ex);
             return false;
@@ -382,5 +387,38 @@ class CloudflareEntity {
             table.appendChild(content.body);
         }
         return table;
+    }
+
+    // Sort Content
+    #sortContent(){
+        if(this.SortBy != "" && this.SortType != ""){
+            let sortKey = this.SortBy;
+            switch(this.SortType){
+                case "Number":
+                    this.Content.sort( (a,b) => { return a.Object[sortKey] - b.Object[sortKey] })
+                    break;
+                case "Date":
+                    this.Content.sort( (a,b) => { return b.Object[sortKey] - a.Object[sortKey] })
+                    break;
+                default:
+                    this.Content.sort( (a, b) => { return a.Object[sortKey]?.localeCompare(b.Object[sortKey]) } )
+                    break;
+            }
+        }
+    }
+
+    async #syncContent(){
+        let type = this.Endpoints?.Type?.toLowerCase() ?? undefined
+        let path = this.#getApiPath("Sync");
+        if(type != "files" || path == undefined){
+            return;
+        }
+        console.info("Syncing: " + this.Name);
+        let results = await MyCloudFlare.Files("GET", path)
+        let syncDate = (new Date(results?.lastSync)).ToDateFormat("yyyy-MM-dd at hh:mm:ss tt");
+        this.LastSync = `Last synced: <span style="margin-left:0.5%"><em>${syncDate}</em></span>`;
+
+        console.log(results);
+        console.log(syncDate);
     }
 }

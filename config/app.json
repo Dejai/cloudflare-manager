@@ -5,6 +5,7 @@
         "Endpoints": {
             "Type": "FILES",
             "Get": "/adventures",
+            "Sync": "/adventures/sync",
             "Post": "/adventure"
         },
         "Children":[
@@ -27,6 +28,7 @@
         "Endpoints": {
             "Type": "FILES",
             "Get": "/events",
+            "Sync": "/events/sync",
             "Post": "/event"
         },
         "Children":[
@@ -50,6 +52,7 @@
         "Endpoints": { 
             "Type": "FILES",
             "Get": "/users",
+            "Sync": "/users/sync",
             "Post": "/user"
         }
     },

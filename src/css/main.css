@@ -29,7 +29,8 @@ button { cursor:pointer; }
 .searchBarInput:focus { border: none; outline:none; }
 
 /* Entity Cards */
-.entityCard { border: 1px solid white; padding: 1rem; box-shadow: #D4D1CD; }
+.entityCard { border: 1px solid white; padding: 1rem; box-shadow: #D4D1CD; transition: all ease 0.3s; }
+.entityCard:hover{ transform: scale(1.05); }
 .entityItem.selected { background-color:blue !important; color:white !important; padding:1%;}
 
 /* Summary button */

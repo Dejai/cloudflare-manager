@@ -45,7 +45,6 @@ MyDom.ready( async () => {
         let mainLoadingIcon = document.getElementById("mainLoadingIcon");
         for(let entity of entities ) {
             await entity.fetchContent();
-            // MyEntityManager.mapEntity(entity.Name, entity)
             let tab = entity.getTabButton();
             mainLoadingIcon.parentElement.insertBefore(tab, mainLoadingIcon);
         }
@@ -55,27 +54,6 @@ MyDom.ready( async () => {
         MyLogger.LogError(err);
     } 
 });
-
-// Load the selected/new content in the form
-async function loadContentSection(action, content){
-    let entity = MyEntityManager.getEntity();
-    let contJson = content.getContentDetails()
-
-    MyDom.hideContent(".hideOnContentSelect");
-    MyDom.setContent("#formHeader", { "innerHTML": `${action} ${contJson.ContentType}`})
-
-    let template = await MyTemplates.getTemplateAsync("/templates2/formRow.html", content.getFields() );
-    MyDom.setContent("#displayFormSection", { "innerHTML": template }) 
-
-    if(entity.Children.length > 0){
-        let subTabs = await entity.getChildTabsHtml();
-        MyDom.showContent(".showIfSubTabs");
-        MyDom.setContent("#subTabsList", {"innerHTML": subTabs})
-    }
-
-    MyDom.showContent(".showOnContentSelect")
-    MyUrls.modifySearch({"content":contJson.ContentID})
-}
 
 // Close the content section
 function onCloseContent(){
@@ -102,13 +80,6 @@ async function onLoadFromURL(){
         if(contentItem != undefined){
             contentItem.click();
         }
-
-        // Third, click subtab
-        // var subTab = MyUrls.getSearchParam("sub") ?? "";
-        // let subTabButton = document.querySelector(`.childTab[data-tab-name="${subTab}"]`)
-        // if(contentItem != undefined && subTabButton != undefined){
-        //     onClickSubTab(subTabButton);
-        // }
     } catch(err){
         MyLogger.LogError(err);
     }

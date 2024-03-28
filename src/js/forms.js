@@ -7,6 +7,7 @@ class FormField {
         this.Value = details?.Value ?? "";
         this.Required = details?.Required ? "required" : "";
         this.Hidden = details?.Hidden ? "hidden" : ""; 
+        this.Disabled = details?.Disabled ? "disabled" : "";
         this.Options = details?.Options ?? [];
 
         this.ShowInTable = details?.ShowInTable ?? true;
@@ -42,7 +43,8 @@ class FormField {
                         val = option[1] ?? ""
                     }
                     if(label != "" && val != ""){
-                        promptList += `<option value=${val}>${label}</option>`
+                        let selected = val == this.Value ? "selected" : "";
+                        promptList += `<option value="${val}" ${selected}>${label}</option>`
                     }
                 }
                         return `<label for="${this.Name}">${this.Label}:</label><br/>
