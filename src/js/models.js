@@ -430,17 +430,22 @@ class User {
     }
 }
 
-// The Access object
+// The User Access object
 class UserAccess { 
-    constructor(accessDetails){
-        this.Access = accessDetails ?? {};
+    constructor(details){
+        this.Scope = details?.Scope ?? "";
+        this.AccessLevel = details?.AccessLevel ?? "";
     }
-    getAccessList(){
-        var accessList = [];
-        for(var key of Object.keys(this.Access)){
-            var val = this.Access[key];
-            accessList.push( {"Scope": key, "Group": val});
-        }
-        return accessList;
+
+    getType(){ return "Access" }
+    getID(){ return this.Scope; }
+    getName() { return `${this.Scope} = ${this.AccessLevel}`; }
+
+    // Get the fields list for this object
+    getFields(){
+        return [ 
+            new FormField({ Label: "Scope", Name: "Scope", Value: this.Scope, Required: true} ),
+            new FormField({ Label: "AccessLevel", Name: "AccessLevel", Value: this.AccessLevel, Required: true} )
+        ]
     }
 }

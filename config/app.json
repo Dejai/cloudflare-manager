@@ -52,9 +52,18 @@
         "Endpoints": { 
             "Type": "FILES",
             "Get": "/users",
-            "Sync": "/users/sync",
-            "Post": "/user"
-        }
+            "Sync": "/users/sync"
+        },
+        "Children":[
+            {
+                "Name": "Access",
+                "ContentDisplay": "table",
+                "Endpoints": {
+                    "Type": "FILES",
+                    "Get": "/access/user/?key={UserKey}"
+                }
+            }
+        ]
     },
     {
         "Name": "Paths",

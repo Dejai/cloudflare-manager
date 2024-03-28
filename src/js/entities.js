@@ -188,6 +188,8 @@ class Content {
                 return new Site(details);
             case "Videos":
                 return new StreamVideo(details);
+            case "Access":
+                return new UserAccess(details);
             default:
                 return undefined;
         }
@@ -417,8 +419,5 @@ class CloudflareEntity {
         let results = await MyCloudFlare.Files("GET", path)
         let syncDate = (new Date(results?.lastSync)).ToDateFormat("yyyy-MM-dd at hh:mm:ss tt");
         this.LastSync = `Last synced: <span style="margin-left:0.5%"><em>${syncDate}</em></span>`;
-
-        console.log(results);
-        console.log(syncDate);
     }
 }
