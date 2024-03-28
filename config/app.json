@@ -1,6 +1,7 @@
 [
     {
         "Name": "Adventures",
+        "SortBy": "Name",
         "Endpoints": {
             "Type": "FILES",
             "Get": "/adventures",
@@ -8,10 +9,14 @@
         },
         "Children":[
             {
-                "Name": "Files",
-                "Display": "Table",
+                "Name": "Videos",
+                "ContentDisplay": "table",
+                "SortBy": "Order",
+                "SortType": "Number",
                 "Endpoints": {
-                    "Type": "FILES"
+                    "Type": "FILES",
+                    "Get": "/stream/?search={AdventureID}",
+                    "Post": "/stream/?video={ContentID}"
                 },
                 "CanAddNew": false
             }
@@ -41,6 +46,7 @@
         "Name": "Users",
         "CanAddNew": false,
         "CanSave": false,
+        "SortBy": "FirstName",
         "Endpoints": { 
             "Type": "FILES",
             "Get": "/users",

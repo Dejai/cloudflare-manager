@@ -5,8 +5,11 @@ class FormField {
         this.Label = details?.Label ?? "Default";
         this.Name = details?.Name ?? "";
         this.Value = details?.Value ?? "";
-        this.Required = details?.Required ?? false;
-        this.Options = details?.Options ?? []
+        this.Required = details?.Required ? "required" : "";
+        this.Hidden = details?.Hidden ? "hidden" : ""; 
+        this.Options = details?.Options ?? [];
+
+        this.ShowInTable = details?.ShowInTable ?? true;
         this.ExcludeOnSave = details?.ExcludeOnSave ?? false;
         this.EncodeOnSave = details?.EncodeOnSave ?? false;
         this.Html = this.setHtml();
@@ -23,7 +26,7 @@ class FormField {
 
             case "input":
                 return `<label for="${this.Name}">${this.Label}:</label><br/>
-                        <input type="text" name="${this.Name}" class="width-70 width-20-desktop" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} />`; 
+                        <input type="text" name="${this.Name}" class="width-70 width-20-desktop" placeholder="Enter ${this.Name}" value="${this.Value}" ${this.Required} ${this.Hidden} />`; 
 
             case "textarea":
                 return `<label for="${this.Name}">${this.Label}:</label><br/>

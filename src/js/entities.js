@@ -52,14 +52,14 @@ class Content {
     }
 
     // Selecting this content for management
-    async onSelectContent (){
+    async onSelectContent (action='Edit'){
 
         // Set the save button
         this.setSaveButton();
 
         // Adjust visibility
         MyDom.hideContent(".hideOnContentSelect");
-        MyDom.setContent("#formHeader", { "innerHTML": `Edit ${this.ContentType}`})
+        MyDom.setContent("#formHeader", { "innerHTML": `${action} ${this.ContentType}`})
     
         let template = await MyTemplates.getTemplateAsync("/templates2/formRow.html", this.Object?.getFields() );
         MyDom.setContent("#displayFormSection", { "innerHTML": template }) 
@@ -88,11 +88,11 @@ class Content {
                     return pill;
                 case "table":
                     let thead = document.createElement("thead");
-                    thead.innerHTML = this.ContentFields.map( field => field.Label )?.map( label => label.ToHtml("th") )?.join("")?.ToHtml("tr");
+                    thead.innerHTML = this.ContentFields.filter(field => field.ShowInTable)?.map( field => field.Label )?.map( label => label.ToHtml("th") )?.join("")?.ToHtml("tr");
                     thead.classList = "align-left"
 
                     let tbody = document.createElement("tbody");
-                    tbody.innerHTML = this.ContentFields.map( field => field.Value )?.map( value => value.ToHtml("td") )?.join("")?.ToHtml("tr", `class="searchable"`);
+                    tbody.innerHTML = this.ContentFields.filter(field => field.ShowInTable)?.map( field => field.Value )?.map( value => (value.toString() ?? "").ToHtml("td") ?? "" )?.join("")?.ToHtml("tr", `class="searchable"`);
                     return { head: thead, body: tbody };
                 default:
                     console.log("Not a valid content type");
@@ -177,6 +177,8 @@ class Content {
                 return new EventResponse(details);
             case "Sites":
                 return new Site(details);
+            case "Videos":
+                return new StreamVideo(details);
             default:
                 return undefined;
         }
@@ -194,6 +196,7 @@ class CloudflareEntity {
         this.CanSave = details?.CanSave ?? true;
         this.Content = [];
         this.ContentDisplay = details?.ContentDisplay ?? "pills";
+        this.SortBy = details?.SortBy ?? "";
         this.Children = details?.Children?.map( y => new CloudflareEntity(y, this) ) ?? [];
 
         // Fluid properties
@@ -203,17 +206,13 @@ class CloudflareEntity {
         this.NewContent = undefined;
     }
 
-    // Creating a new content entry
-    createNewContent(){
-        this.NewContent = EntityMap(this.Name, [{}])?.[0]
-        return this.NewContent
-    }
-
     // Clicking this entity's tab
     async onClickTab(){
         try {
+            console.log(this.Content);
             if(!this.IsChild){
-                MyDom.hideContent(".hideOnTabSwitch")
+                MyDom.hideContent(".hideOnTabSwitch");
+                MyDom.setContent(".clearOnTabSwitch", {"innerHTML": ""})
             }
             this.setAddButton();
 
@@ -249,14 +248,16 @@ class CloudflareEntity {
             // Add a counter based on keydown in the input
             if(this.IsChild){
                 const tableRowCounter = () => {
-                    let count = getNumberOfMatches("#subTabContent tbody tr:not(.searchableHidden)")
-                    MyDom.setContent("#subContentCounter", { "innerHTML": count} )
+                    let count = getNumberOfMatches("#subTabContent tbody tr:not(.searchableHidden)");
+                    let recordLabel = count == 1 ? "record" : "records";
+                    MyDom.setContent("#subContentCounter", { "innerHTML": count } )
+                    MyDom.setContent("#subContentCounterLabel", { "innerHTML": recordLabel } )
                 }
                 document.querySelector("#subListSearch .searchBarInput")?.addEventListener("keyup", tableRowCounter);
                 document.querySelector("#subListSearch .searchClearIcon")?.addEventListener("click", tableRowCounter);
                 tableRowCounter();
             }
-            
+
             // Showing content
             let _showContent = this.IsChild ? MyDom.showContent(".showOnSubTabClick") : MyDom.showContent(".showOnTabSelected");
         } catch(ex){
@@ -276,8 +277,6 @@ class CloudflareEntity {
             this.onClickTab();
         });
         return tab; 
-        // <h4 class="childTab cfmTab pointer margin-none" data-tab-name="{{Name}}" onclick="onClickSubTab(this)">{{Name}}</h4>
-        // return `<h3 class="headerTab cfmTab pointer tab margin-none" data-tab-name="${this.Name}" onclick="${this.test()}">${this.Name}</h3>`
     }
 
     // Get the child tab buttons (if applicable)
@@ -291,8 +290,6 @@ class CloudflareEntity {
                 subTabsList.appendChild(tab)
             }
             MyDom.showContent(".showIfSubTabs");
-
-            
         }
     }
 
@@ -304,11 +301,10 @@ class CloudflareEntity {
         let _hidden = (!this.CanAddNew) ? newButton.classList.add("hidden") : newButton.classList.remove("hidden");
         newButton.addEventListener("click", () => {
             let newContent = new Content(this, {});
-            this.onSaveContent()
+            newContent.onSelectContent("Add");
         });
         oldButton.parentNode.replaceChild(newButton, oldButton);
     }
-
 
     // API: Get content
     async fetchContent(parentContent=undefined){
@@ -324,7 +320,24 @@ class CloudflareEntity {
         } else if (type == "files") {
             results = await MyCloudFlare.Files("GET", path)
         }
-        this.Content = (results?.length > 1) ? results.map( obj => new Content(this, obj) ) : [];
+        this.Content = (results.hasOwnProperty("length") ) ? results.map( obj => new Content(this, obj) ) : [new Content(this, results)];
+
+        // If a sort is given, sort by that key
+        if(this.SortBy != "" && this.SortType != ""){
+            let sortKey = this.SortBy;
+            console.log("Sorting");
+            switch(this.SortType){
+                case "Number":
+                    this.Content.sort( (a,b) => { return a.Object[sortKey] - b.Object[sortKey] })
+                    break;
+                case "Date":
+                    this.Content.sort( (a,b) => { return b.Object[sortKey] - a.Object[sortKey] })
+                    break;
+                default:
+                    this.Content.sort( (a, b) => { return a.Object[sortKey]?.localeCompare(b.Object[sortKey]) } )
+                    break;
+            }
+        }
     }
 
     // API: Save some content
@@ -355,13 +368,9 @@ class CloudflareEntity {
     // Helper: Get the path for an API call, filled in with variables if necessary
     #getApiPath(method, parentContent=undefined){
         let results = this.Endpoints[method] ?? undefined;
-        console.log(results);
-        console.log(parentContent);
         // If a parent content is given, then do a merge field check
         if(parentContent != undefined){
-            console.log(parentContent);
             results = mergeFields(results, parentContent.Object);
-            console.log(results);
         }
         return results;
     }
@@ -374,9 +383,6 @@ class CloudflareEntity {
         for(let content of listOfContent){
             table.appendChild(content.body);
         }
-
-        
-
         return table;
     }
 }

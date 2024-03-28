@@ -31,13 +31,10 @@ function getNumberOfMatches(selector){
 // Merge fields from an object into a string
 function mergeFields(value, object=undefined){
     let results = value
-
     if(object == undefined){
         return results;
     }
-
     for(let pair of Object.entries(object)){
-        console.log(pair);
         let key = pair[0] ?? "";
         let val = pair[1] ?? "";
         results = results.replaceAll(`{${key}}`, val)

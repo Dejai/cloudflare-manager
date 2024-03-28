@@ -334,6 +334,28 @@ class StreamVideo {
         this.ManageUrl = `https://dash.cloudflare.com/3b3d6028d2018ee017d0b7b1338431cf/stream/videos/${this.ContentID}`;
     }
 
+    getType(){ return "Video" }
+    getID(){ return this.ContentID; }
+    getName() { return this.Name; }
+
+
+    // Get the fields list for this object
+    getFields(){
+        return [ 
+            new FormField({ Type: "input", Label: "Adventure", Name: "adventureID", Value: this.AdventureID, ShowInTable:false, Required: true} ),
+            new FormField({ Label: "Content ID", Name: "uid", Value: this.ContentID, Required: true, ShowInTable: false, Hidden:true } ),
+            new FormField({ Label: "Order", Name: "order", Value: this.Order, Required: true} ),
+            new FormField({ Label: "Name", Name: "name", Value: this.Name, Required: true} ),
+            new FormField({ Label: "Creator", Name: "creator", Value: this.Creator, Required: true} ),
+            new FormField({ Label: "Description", Name: "description", Value: this.Description, Required: false} ),
+            new FormField({ Label: "Date", Name: "date", Value: this.Date, Required: true} ),
+            new FormField({ Label: "Show Creator?", Name: "showCreator", Value: this.ShowCreator, Options: ["Yes", "No"], ShowInTable:false, Required: true} ),
+            new FormField({ Label: "Duration", Name: "duration", Value: this.Duration, ShowInTable:false, Required: true} ),
+            new FormField({ Label: "Preview Time", Name: "preview", Value: this.Preview, ShowInTable: false, Required: true} )
+        ]
+    }
+
+
     setAdventureName(adventureMap){
         this.AdventureName = adventureMap[this.AdventureID] ?? "Default";
     }

@@ -56,11 +56,14 @@
                     <div id="subSection" class="hidden showIfSubTabs hideOnTabSwitch margin-top-1 margin-left-1 flex-column flex-align-left width-100">
                         <div id="subTabsList" class="flex-row flex-justify-left flex-align-center flex-gap-10 width-80 width-40-desktop"></div>
                         <div class="flex-row flex-justify-left flex-align-center margin-top-1 width-100 width-40-desktop">
-                            <div id="subListSearch" class="clearOnCloseForm width-50 width-40-desktop"></div>
+                            <div id="subListSearch" class="clearOnCloseForm clearOnTabSwitch width-50 width-40-desktop"></div>
                             <button id="addNewSubContentButton" class="hidden">ADD</button>
                         </div>
-                        <p class="hidden showOnSubTabClick hideOnSelectContent hideOnTabSwitch italic"> <span id="subContentCounter" class="color-orange">0</span> records</p>
-                        <div id="subTabContent" class="clearOnCloseForm"></div>
+                        <p class="hidden showOnSubTabClick hideOnSelectContent hideOnTabSwitch hideOnContentSave italic">
+                            <span id="subContentCounter" class="color-orange">0</span> 
+                            <span id="subContentCounterLabel"></span> 
+                        </p>
+                        <div id="subTabContent" class="clearOnCloseForm clearOnTabSwitch"></div>
                     </div>
                 </div>
                 
