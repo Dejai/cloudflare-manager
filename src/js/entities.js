@@ -95,7 +95,7 @@ class Content {
                     tbody.innerHTML = this.ContentFields.filter(field => field.ShowInTable)?.map( field => field.Value )?.map( value => (value.toString() ?? "").ToHtml("td") ?? "" )?.join("")?.ToHtml("tr", `class="searchable"`);
                     return { head: thead, body: tbody };
                 default:
-                    console.log("Not a valid content type");
+                    console.info("Not a valid content type");
                     return "";
             }
         } catch(ex){
@@ -209,7 +209,6 @@ class CloudflareEntity {
     // Clicking this entity's tab
     async onClickTab(){
         try {
-            console.log(this.Content);
             if(!this.IsChild){
                 MyDom.hideContent(".hideOnTabSwitch");
                 MyDom.setContent(".clearOnTabSwitch", {"innerHTML": ""})
@@ -325,7 +324,6 @@ class CloudflareEntity {
         // If a sort is given, sort by that key
         if(this.SortBy != "" && this.SortType != ""){
             let sortKey = this.SortBy;
-            console.log("Sorting");
             switch(this.SortType){
                 case "Number":
                     this.Content.sort( (a,b) => { return a.Object[sortKey] - b.Object[sortKey] })
